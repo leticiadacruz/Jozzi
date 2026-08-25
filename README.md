@@ -2,9 +2,9 @@
 
 **Método e Instinto.** Site da JOZZI.
 
-> **Estado:** protótipo de direção. Seções **00** a **04** construídas. As
-> seções **05 Contato** e **06 Onde ficamos** estão especificadas neste
-> documento mas **não foram implementadas**.
+> **Estado:** protótipo de direção. Seções **00** a **05** construídas. A seção
+> **06 Onde ficamos** está especificada neste documento mas **não foi
+> implementada**.
 
 ---
 
@@ -67,6 +67,7 @@ nunca como slogan.
 | Tinta | `#16150F` | Texto e fundos invertidos |
 | Ardósia | `#6F8290` | Herdada do logotipo. Fios do aparato — é a única cor legível sobre papel **e** sobre tinta |
 | Sinal | `#2033C9` | Interação e numeração ativa. **Teto: 3% da superfície** |
+| Sinal claro | `#8B95FF` | O mesmo sinal sobre tinta. `#2033C9` sobre fundo invertido dá ~2:1 e é ilegível — não é uma cor nova, é a mesma função adaptada, como o aparato que troca de cor na travessia |
 
 Nenhum gradiente. Nenhuma sombra. Nenhum `border-radius`. Fios de 1px.
 Profundidade vem de inversão de fundo, não de sombra.
@@ -118,10 +119,11 @@ Um gesto, uma curva, três durações.
   tipográfico, não demonstração. Uma passada automática, 1,6s depois da entrada,
   **uma única vez**. O título nunca vira animação contínua.
 
-- **Cursor** — sobre o índice de Serviços, o ponteiro nativo dá lugar a um
-  rótulo curto em mono. Um rótulo, não um círculo, e sem atraso nem mola: o
-  rastro elástico é o clichê a evitar. Só existe com ponteiro fino e sem
-  movimento reduzido.
+- **Cursor** — sobre elementos com `data-cursor`, o ponteiro nativo dá lugar a
+  um rótulo curto em mono, lido do próprio elemento. Um rótulo, não um círculo,
+  e sem atraso nem mola: o rastro elástico é o clichê a evitar. Só existe com
+  ponteiro fino e sem movimento reduzido. Hoje: *Ver* no índice de Serviços,
+  *Copiar* / *Copiado* no endereço de e-mail.
 
 Sem `prefers-reduced-motion`: as máscaras viram estado final imediato, o Lenis
 não inicializa, a esteira não existe, o cursor não existe. Nenhum conteúdo
@@ -283,17 +285,38 @@ informação. Se as marcas passarem de umas doze, o índice de créditos (marca 
 setor · escopo, em rigor documental) volta a ser a melhor solução — com três,
 ele renderizaria como uma tabela de três linhas visivelmente incompleta.
 
-### 05 — Contato · o clímax
+### 05 — Contato · construído
 
-Fundo invertido. O e-mail é o elemento de maior escala do site — ocupa o lugar
-do título. WhatsApp e e-mail são as duas ações. **Sem formulário agora**; a
-estrutura fica preparada para receber um depois, curto e secundário.
+Segunda inversão do site. **A troca de fundo é a transição** — não existe
+animação própria desta seção.
 
-| Campo | Extensão | Estado |
-| --- | --- | --- |
-| E-mail oficial | dado | ✗ a fornecer |
-| WhatsApp | dado | ✗ a fornecer |
-| Linha de expectativa | ~40–60 caracteres | ✗ a fornecer |
+O endereço é o maior elemento, quebrado por `<wbr>` onde o navegador precisar.
+A legenda dele e o WhatsApp dividem a mesma faixa horizontal, alinhados pelo
+topo: as duas portas são uma composição só, não duas colunas e não dois
+cartões. A posição do WhatsApp não depende do comprimento do endereço.
+
+Sem formulário, sem backend, sem terceiros. Duas âncoras reais.
+
+**Copiar o endereço:** clicar copia em vez de abrir o cliente de e-mail — mas
+só onde o rótulo do cursor avisou antes do clique. No toque não há rótulo,
+então o `mailto:` vale como link normal, que é o comportamento certo num
+telefone. A confirmação troca no lugar, sem toast e sem modal, e um
+`<span role="status">` entrega a mesma informação à tecnologia assistiva.
+
+O corpo do endereço é `--fs-display × .82` — mesma técnica de ajuste óptico do
+índice de Serviços, não um corpo novo na escala.
+
+**Azul:** zero em repouso. Só em hover, foco e confirmação de cópia. Fica bem
+abaixo do teto de 3% — e abaixo do que a direção permitiria para esta seção.
+
+Falta preencher:
+
+| Campo | Estado |
+| --- | --- |
+| E-mail oficial | ✗ **só o domínio está confirmado** — `jozzicreative.com.br`, creditado nos sites dos clientes. A parte antes do `@` está como `a-definir` |
+| WhatsApp | ✗ o `href` aponta para `https://wa.me/` **sem número**: nunca disca um número errado. Os três números encontrados nos projetos são dos **clientes**, não da Jozzi |
+| Linha de expectativa de resposta | ✗ a fornecer, curta e concreta |
+| Horário de atendimento | ✗ se houver |
 
 ### 06 — Onde ficamos · mapa autoral
 

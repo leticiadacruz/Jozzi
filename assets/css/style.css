@@ -55,6 +55,10 @@
   --tinta:    #16150F;
   --ardosia:  #6F8290;
   --sinal:    #2033C9;
+  /* o mesmo sinal, adaptado para o fundo invertido: #2033C9 sobre
+     tinta dá ~2:1 e é ilegível. Não é uma cor nova — é a mesma
+     função, como o aparato que troca de cor na travessia. */
+  --sinal-claro: #8B95FF;
 
   /* derivados — todo neutro tem viés quente, nenhum é cinza de sistema */
   --fg:    var(--tinta);
@@ -282,6 +286,7 @@ a { color: inherit; text-decoration: none; }
   --fg-3:  rgba(240, 236, 227, .48);
   --fio:   rgba(240, 236, 227, .20);
   --fio-2: rgba(240, 236, 227, .10);
+  --sinal: var(--sinal-claro);
 }
 
 
@@ -673,8 +678,6 @@ a { color: inherit; text-decoration: none; }
     z-index: 1;
   }
 
-  /* rótulo do cursor: só existe quando o script está de pé */
-  .js--cursor .serv__nome { cursor: none; }
 }
 
 
@@ -694,6 +697,10 @@ a { color: inherit; text-decoration: none; }
   will-change: transform;
 }
 .cursor.is-visivel { display: block; }
+
+/* o ponteiro nativo só sai onde há rótulo para substituí-lo, e só
+   quando o script está de pé */
+.js--cursor [data-cursor] { cursor: none; }
 
 
 /* 10e. SEÇÃO 04 — MARCAS ------------------------------------
@@ -781,6 +788,100 @@ a { color: inherit; text-decoration: none; }
 }
 
 
+/* 10f. SEÇÃO 05 — CONTATO ----------------------------------
+   Segunda inversão. A troca de fundo é a transição: nenhuma
+   animação própria desta seção.
+
+   O endereço é o maior elemento. A linha de apoio dele e o
+   WhatsApp dividem a MESMA faixa horizontal — as duas portas são
+   uma composição só, não duas colunas e não dois cartões. O
+   WhatsApp encaixa no vão que a linha de apoio deixa à direita, e
+   a posição não depende do comprimento do endereço.
+   ----------------------------------------------------------- */
+.contato {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: clamp(6rem, 22vh, 15rem);
+  padding-bottom: clamp(2.5rem, 9vh, 6rem);
+}
+
+.contato__campo {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(.8rem, 2.5vh, 1.6rem) var(--calha);
+}
+
+.contato__email {
+  grid-column: 1 / span 11;
+  grid-row: 1;
+  /* registro de display, ajustado para o endereço caber em duas
+     linhas — mesma técnica do índice de Serviços, não um corpo novo */
+  font-size: calc(var(--fs-display) * .82);
+  font-weight: 500;
+  letter-spacing: -.045em;
+  line-height: .95;
+  color: var(--fg);
+  text-decoration: none;
+  padding: .06em 0;
+  transition: color var(--t-micro) var(--curva);
+}
+
+.contato__zap {
+  grid-column: 9 / span 4;
+  grid-row: 2;
+  align-self: start;
+  font-size: var(--fs-display-2);
+  font-weight: 500;
+  letter-spacing: -.035em;
+  line-height: 1;
+  color: var(--fg);
+  text-decoration: none;
+  padding: .12em 0;
+  transition: color var(--t-micro) var(--curva);
+}
+
+.contato__email:hover,
+.contato__email:focus-visible,
+.contato__zap:hover,
+.contato__zap:focus-visible { color: var(--sinal); }
+
+/* a legenda encosta no endereço, e o WhatsApp começa na mesma
+   altura: as duas portas dividem a faixa pelo topo, não pela base.
+   Preso ao fundo, o "para uma proposta" ficava órfão do endereço. */
+.contato__ap--email { grid-column: 1 / span 5; grid-row: 2; align-self: start; }
+.contato__ap--zap   { grid-column: 9 / span 4; grid-row: 3; }
+
+/* confirmação de cópia: troca no lugar, sem toast e sem elemento
+   novo. Vazia não ocupa espaço. */
+.contato__estado:not(:empty) {
+  margin-left: .9em;
+  color: var(--sinal);
+}
+
+.contato__pe {
+  margin-top: clamp(3rem, 12vh, 8rem);
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--fio);
+}
+
+
+/* ---- ≤900: o vão à direita some, as portas empilham ---- */
+@media (max-width: 900px) {
+  .contato__campo { grid-template-columns: 1fr; }
+  .contato__email,
+  .contato__zap,
+  .contato__ap--email,
+  .contato__ap--zap { grid-column: 1; grid-row: auto; align-self: start; }
+  .contato__zap {
+    margin-top: clamp(2.5rem, 8vh, 4rem);
+    /* alvo de toque: com .12em o link ficava em 39px */
+    padding: .25em 0;
+  }
+}
+
+
 /* 11. RODAPÉ DO PROTÓTIPO ----------------------------------- */
 .fim {
   display: flex;
@@ -834,7 +935,10 @@ a { color: inherit; text-decoration: none; }
 
   .quem__txt { display: contents; }
 
-  .secao__ap   { order: 1; }
+  /* escopado em .quem: sem isso, o `order` vazava para o rótulo de
+     QUALQUER seção e jogava o <h2> do Contato — que é flex — para
+     o fim da composição */
+  .quem .secao__ap { order: 1; }
   .quem__t     { order: 2; }
   .quem__fig   { order: 3; margin: 0 0 clamp(1.8rem, 5vh, 2.6rem); max-width: 26rem; }
   .quem__corpo { order: 4; }

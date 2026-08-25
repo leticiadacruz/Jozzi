@@ -16,7 +16,7 @@
 
 <link rel="preload" href="assets/fonts/Switzer-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/IBMPlexMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/style.css?v=19">
+<link rel="stylesheet" href="assets/css/style.css?v=23">
 
 <script>document.documentElement.className += " js";</script>
 </head>
@@ -191,7 +191,7 @@
 
   <h2 class="secao__ap ap rv" id="serv-titulo">Serviços</h2>
 
-  <ul class="serv__lista" role="list">
+  <ul class="serv__lista" role="list" data-cursor="Ver">
 
     <li class="serv__item" role="listitem">
       <button class="serv__nome rv" type="button"
@@ -336,15 +336,65 @@
   </ul>
 </section>
 
+
+<!-- ============================================================
+     05 — CONTATO
+     Segunda inversão do site. A troca de fundo É a transição: não
+     há animação própria desta seção.
+
+     O endereço é o título — maior elemento da composição, quebrado
+     por <wbr> onde o navegador precisar. O WhatsApp é a segunda
+     porta, encaixado no vão que a linha de apoio do e-mail deixa à
+     direita. As duas portas dividem a mesma faixa horizontal: não
+     são duas colunas, e nenhuma delas é um cartão.
+
+     PENDENTE, e nada aqui pode ser inventado:
+       · e-mail oficial — só o domínio está confirmado
+         (jozzicreative.com.br, creditado nos sites dos clientes)
+       · número de WhatsApp — os três números encontrados nos
+         projetos são dos CLIENTES, não da Jozzi. O href aponta para
+         wa.me sem número: nunca disca um número errado
+       · linha de expectativa de resposta
+       · horário de atendimento, se houver
+     ============================================================ -->
+<section class="contato wrap inv" id="contato" data-secao data-inv
+         data-num="05" data-nome="Contato" aria-labelledby="contato-titulo">
+
+  <h2 class="secao__ap ap rv" id="contato-titulo">Contato</h2>
+
+  <div class="contato__campo">
+
+    <a class="contato__email rv" href="mailto:a-definir@jozzicreative.com.br"
+       data-copiar="a-definir@jozzicreative.com.br" data-cursor="Copiar"
+       aria-describedby="contato-email-ap">a-definir@<wbr>jozzicreative.<wbr>com.br</a>
+
+    <p class="contato__ap contato__ap--email ap rv" id="contato-email-ap">
+      Para uma proposta
+      <span class="contato__estado" role="status"></span>
+    </p>
+
+    <a class="contato__zap rv" href="https://wa.me/"
+       aria-describedby="contato-zap-ap">WhatsApp</a>
+
+    <p class="contato__ap contato__ap--zap ap rv" id="contato-zap-ap">
+      Para uma conversa &mdash; número a confirmar
+    </p>
+
+  </div>
+
+  <p class="contato__pe ap rv">Expectativa de resposta &mdash; a confirmar</p>
+
+</section>
+
 </main>
 
 
 <footer class="fim wrap">
   <p class="ap">Jozzi Creative Marketing Lab</p>
-  <p class="ap">Protótipo de direção &mdash; seções 00 a 04</p>
+  <p class="ap">Protótipo de direção &mdash; seções 00 a 05</p>
 </footer>
 
-<span class="cursor ap" id="cursor" aria-hidden="true">Ver</span>
+<span class="cursor ap" id="cursor" aria-hidden="true"></span>
 
 <script src="assets/js/lenis.min.js" defer></script>
 <script src="assets/js/main.js" defer></script>

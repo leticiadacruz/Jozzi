@@ -140,6 +140,35 @@ efeito no logo de um cliente.
 
 ---
 
+## Preencher o contato
+
+Quatro valores em `index.html`, dentro da seção `#contato`.
+
+**E-mail** — três lugares, todos com o endereço real:
+
+```html
+<a class="contato__email rv" href="mailto:ENDEREÇO"
+   data-copiar="ENDEREÇO" data-cursor="Copiar"
+   aria-describedby="contato-email-ap">parte<wbr>@dominio.<wbr>com.br</a>
+```
+
+Os `<wbr>` marcam onde o navegador **pode** quebrar a linha se precisar. Não
+são quebras forçadas: ponha um depois do `@` e outro depois do primeiro ponto
+do domínio, e o endereço se acomoda de 1440 a 375 sozinho.
+
+**WhatsApp** — trocar `https://wa.me/` por `https://wa.me/55DDNÚMERO`. Enquanto
+o número não existir, **deixar como está**: `wa.me` sem número abre o site do
+WhatsApp em vez de discar um número errado.
+
+**Linha de expectativa** — o `<p class="contato__pe">` no fim da seção. Curta e
+concreta, e só se for verdade operacional. "Respondemos no mesmo dia" só entra
+se for o compromisso real.
+
+Se um dia entrar formulário, será outra decisão — hoje não há backend, nem
+dependência de terceiros, e a seção não precisa de nenhum dos dois.
+
+---
+
 ## Trocar uma cor
 
 Em `assets/css/style.css`, seção **02. TOKENS**, no topo do arquivo. Todas as
@@ -196,6 +225,8 @@ transformar em laço.
   Agrupamento se faz com fio de 1px e espaço.
 - **Não criar ícone de serviço.**
 - **Não usar número grande decorativo.** A numeração vive no aparato, em 11px.
+- **Não inventar dado de contato.** Um e-mail plausível mas errado, publicado em
+  100px, é pior que um campo marcado como pendente.
 - **Não fazer o corpo dos nomes de serviço seguir a ordem da lista.** O corpo é
   função do comprimento da palavra. Se o primeiro serviço virar o maior e o
   último o menor, a composição vira ranking comercial.

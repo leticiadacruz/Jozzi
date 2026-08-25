@@ -8,6 +8,7 @@
    04. APARATO — seção, inversão, marca de posição, relógio
    05. SERVIÇOS — índice e revelação
    06. CURSOR
+   06b. COPIAR O ENDEREÇO
    07. ROLAGEM INTERPOLADA
    08. REDE DE SEGURANÇA
    ============================================================ */
@@ -390,22 +391,76 @@
   }
 
 
-  /* 06. CURSOR ----------------------------------------------- */
+  /* 06. CURSOR -----------------------------------------------
+     Um rótulo, não um círculo, e sem atraso: o rastro elástico é o
+     clichê a evitar. O texto vem do próprio elemento, em
+     data-cursor — o cursor não sabe nada sobre as seções.
+     -------------------------------------------------------- */
   var cursor = document.getElementById('cursor');
+  var quadroCursor = null;
+  var ultimoAlvo = null;
+  var ponteiroCursor = { x: 0, y: 0 };
+
+  function desenharCursor() {
+    quadroCursor = null;
+    cursor.style.transform =
+      'translate(' + ponteiroCursor.x + 'px,' + ponteiroCursor.y + 'px)';
+  }
 
   function ligarCursor() {
-    var lista = document.querySelector('.serv__lista');
-    if (!cursor || !lista || menosMovimento) return;
+    if (!cursor || menosMovimento) return;
     if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
 
     document.documentElement.classList.add('js--cursor');
 
-    lista.addEventListener('pointermove', function (e) {
-      cursor.style.transform = 'translate(' + e.clientX + 'px,' + e.clientY + 'px)';
-      cursor.classList.add('is-visivel');
-    });
-    lista.addEventListener('pointerleave', function () {
-      cursor.classList.remove('is-visivel');
+    document.addEventListener('pointermove', function (e) {
+      var alvo = e.target.closest ? e.target.closest('[data-cursor]') : null;
+
+      if (alvo !== ultimoAlvo) {
+        ultimoAlvo = alvo;
+        if (alvo) cursor.textContent = alvo.getAttribute('data-cursor');
+        cursor.classList.toggle('is-visivel', !!alvo);
+      }
+      if (!alvo) return;
+
+      ponteiroCursor.x = e.clientX;
+      ponteiroCursor.y = e.clientY;
+      if (!quadroCursor) quadroCursor = window.requestAnimationFrame(desenharCursor);
+    }, { passive: true });
+  }
+
+
+  /* 06b. COPIAR O ENDEREÇO -----------------------------------
+     Clicar copia, em vez de abrir o cliente de e-mail — mas só
+     onde o rótulo do cursor avisou antes do clique. No toque não
+     há rótulo, então o mailto vale como link normal, que é o
+     comportamento certo num telefone.
+
+     A confirmação troca no lugar: sem toast, sem modal, sem
+     elemento novo. O <span role="status"> entrega a mesma
+     informação à tecnologia assistiva.
+     -------------------------------------------------------- */
+  function ligarCopia() {
+    var alvo = document.querySelector('[data-copiar]');
+    var estado = document.querySelector('.contato__estado');
+    if (!alvo || !estado || !navigator.clipboard) return;
+
+    var volta = null;
+
+    alvo.addEventListener('click', function (e) {
+      if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+      e.preventDefault();
+
+      navigator.clipboard.writeText(alvo.getAttribute('data-copiar')).then(function () {
+        estado.textContent = 'Endereço copiado';
+        if (ultimoAlvo === alvo) cursor.textContent = 'Copiado';
+
+        window.clearTimeout(volta);
+        volta = window.setTimeout(function () {
+          estado.textContent = '';
+          if (ultimoAlvo === alvo) cursor.textContent = alvo.getAttribute('data-cursor');
+        }, 2000);
+      });
     });
   }
 
@@ -456,6 +511,7 @@
       ligarRelogio();
       ligarServicos();
       ligarCursor();
+      ligarCopia();
       ligarLenis();
     };
 
