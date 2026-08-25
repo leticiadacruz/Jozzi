@@ -16,7 +16,7 @@
 
 <link rel="preload" href="assets/fonts/Switzer-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/IBMPlexMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/style.css?v=4">
+<link rel="stylesheet" href="assets/css/style.css?v=7">
 
 <script>document.documentElement.className += " js";</script>
 </head>
@@ -51,7 +51,6 @@
       <path fill="currentColor" d="M931.46,0h0s-271.2,0-271.2,0h0s-268.24,0-268.24,0v13.02h191.65s-191.65,209.01-191.65,209.01v13.02h532.21v-13.02h-184.42L931.46,13.02h0s68.54,0,68.54,0V0h-68.54ZM655.98,222.03h-184.42L663.22,13.02h0s188.69,0,188.69,0l-195.92,209.01Z"/>
     </svg>
   </a>
-  <p class="topo__ap ap">Creative Marketing Lab</p>
 </header>
 
 
@@ -80,7 +79,6 @@
 
   <div class="abertura__pe">
     <p class="abertura__lede lede rv" data-atraso="480">Poucas marcas por vez, e atenção desproporcional a cada uma.</p>
-    <p class="abertura__coord ap rv" data-atraso="560">25&deg;25&prime;42&Prime;S &middot; 49&deg;16&prime;24&Prime;O</p>
   </div>
 
 </section>
@@ -91,7 +89,7 @@
      Assimetria extrema: texto à direita, imagem pequena e baixa à
      esquerda. É aqui que a primeira imagem do site entra.
      ============================================================ -->
-<section class="quem wrap" id="quem-somos" data-secao data-num="01" data-nome="Quem somos">
+<section class="quem wrap" id="quem-somos" data-secao data-num="01" data-nome="Quem somos" aria-labelledby="quem-titulo">
 
   <figure class="quem__fig fig rv">
     <div class="fig__campo" data-figura>
@@ -101,9 +99,9 @@
   </figure>
 
   <div class="quem__txt">
-    <p class="quem__ap ap rv"><span>01</span> Quem somos</p>
+    <h2 class="secao__ap ap rv" id="quem-titulo">Quem somos</h2>
 
-    <h2 class="quem__t d d--2 rv">Somos pequenos por decisão, não por estágio.</h2>
+    <p class="quem__t d d--2 rv">Somos pequenos por decisão, não por estágio.</p>
 
     <div class="quem__corpo">
       <p class="rv">A Jozzi opera como estúdio, não como agência: uma equipe enxuta que entra
@@ -113,22 +111,67 @@
       São cinco maneiras de resolver o mesmo problema — fazer uma marca ser reconhecida
       antes de ser lida.</p>
     </div>
-
-    <dl class="quem__dados ap rv">
-      <div><dt>Base</dt><dd>Curitiba, PR &mdash; Brasil</dd></div>
-      <div><dt>Formato</dt><dd>Estúdio. Equipe enxuta, sem camadas.</dd></div>
-      <div><dt>Frentes</dt><dd>Branding, Social Media, Design, Web Development, Tráfego Pago</dd></div>
-    </dl>
   </div>
 
+</section>
+
+
+<!-- ============================================================
+     02 — NOSSO OLHAR
+     Primeira inversão do site: papel vira tinta. A troca de fundo
+     é a pontuação entre capítulos.
+
+     Regra de composição: cada princípio ocupa METADE da largura, e
+     a metade alterna. O texto de sustentação mora sempre na metade
+     que a afirmação deixou vazia, alinhado pela base. Nenhum
+     princípio repete a posição do anterior — não é uma lista de
+     quatro blocos iguais.
+
+     Os quatro princípios foram aprovados. Não alterar a lógica
+     verbal sem aprovação. Os textos de sustentação são os rascunhos
+     apresentados no documento de voz e ainda aguardam aprovação.
+     ============================================================ -->
+<section class="olhar wrap inv" id="nosso-olhar" data-secao data-inv
+         data-num="02" data-nome="Nosso olhar" aria-labelledby="olhar-titulo">
+
+  <h2 class="secao__ap ap rv" id="olhar-titulo">Nosso olhar</h2>
+
+  <div class="olhar__lista">
+
+    <article class="prin prin--e">
+      <h3 class="prin__t rv">Marca não é o que você diz. É o que sobra.</h3>
+      <p class="prin__p rv">Identidade, tom, ritmo de publicação, tempo de resposta.
+      O que resta na cabeça de alguém depois que tudo isso passa é a marca.
+      O resto é material.</p>
+    </article>
+
+    <article class="prin prin--d">
+      <h3 class="prin__t rv">Volume não é presença.</h3>
+      <p class="prin__p rv">Publicar todo dia não constrói nada se cada peça pede a
+      mesma coisa. Presença é ser reconhecível antes de ser lido.</p>
+    </article>
+
+    <article class="prin prin--e">
+      <h3 class="prin__t rv">Bom gosto é decisão, não dom.</h3>
+      <p class="prin__p rv">Constrói-se vendo muita coisa e recusando quase tudo.
+      É trabalho — e é a parte do trabalho que ninguém vê.</p>
+    </article>
+
+    <article class="prin prin--d">
+      <h3 class="prin__t rv">Design que precisa de explicação já falhou.</h3>
+      <p class="prin__p rv">Se a peça só funciona com legenda, o problema não é do
+      público. É de quem desenhou.</p>
+    </article>
+
+  </div>
 </section>
 
 </main>
 
 
 <footer class="fim wrap">
-  <p class="ap">Protótipo de direção &mdash; seções 00 e 01</p>
-  <p class="ap">02&ndash;06 em aberto</p>
+  <p class="ap">Jozzi Creative Marketing Lab</p>
+  <p class="ap">Protótipo de direção &mdash; seções 00 a 02</p>
 </footer>
 
 <script src="assets/js/lenis.min.js" defer></script>

@@ -5,7 +5,7 @@
    01. PALAVRAS DO ELEMENTO VIVO
    02. ENTRADA POR MÁSCARA
    03. ESTEIRA DE PESO (o elemento vivo da abertura)
-   04. APARATO — seção, marca de posição, relógio
+   04. APARATO — seção, inversão, marca de posição, relógio
    05. ROLAGEM INTERPOLADA
    06. REDE DE SEGURANÇA
    ============================================================ */
@@ -14,15 +14,22 @@
 
   var menosMovimento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* A esteira é comportamento tipográfico, não demonstração. Os
+     números abaixo foram reduzidos de propósito: o efeito tem que
+     ser notado sem ser assistido. */
   var PESO_BASE = 450;   /* precisa bater com --peso-base no CSS */
-  var PESO_PICO = 115;   /* delta máximo do eixo wght sob o ponteiro */
-  var RAIO      = 280;   /* alcance da esteira — recalculado a partir
-                            do corpo real da fonte, para se comportar
-                            igual a 1440 e a 390 */
-  var ACHATA    = 3.6;   /* quanto a esteira é achatada na vertical.
-                            Com entrelinha 0.93 as linhas quase se
-                            tocam; sem isso a linha de baixo acende
-                            junto e a esteira perde a direção. */
+  var PESO_PICO = 62;    /* delta do eixo wght sob o ponteiro. Meio
+                            corte de peso, não um salto de peso. */
+  var RAIO      = 280;   /* alcance — recalculado a partir do corpo
+                            real da fonte, para se comportar igual a
+                            1440 e a 390. Curto: pega a palavra e
+                            quase nada além dela. */
+  var ACHATA    = 4.4;   /* achatamento vertical. Com entrelinha 0.93
+                            as linhas quase se tocam; sem isso a linha
+                            de baixo acende junto. */
+  var APROX     = 0.22;  /* velocidade de aproximação. Mais alto que
+                            antes: a resposta chega e sai mais rápido,
+                            em vez de ficar pairando. */
 
 
   /* 01. PALAVRAS DO ELEMENTO VIVO ---------------------------
@@ -69,7 +76,7 @@
        medida até a borda. Com o centro, uma palavra larga como
        "laboratório" joga as vizinhas para fora do alcance e a
        esteira fica irregular. */
-    RAIO = parseFloat(window.getComputedStyle(alvo).fontSize) * 2.4;
+    RAIO = parseFloat(window.getComputedStyle(alvo).fontSize) * 2.0;
 
     var base = alvo.getBoundingClientRect();
     deslocs = palavras.map(function (s) {
@@ -166,7 +173,7 @@
       var d  = Math.sqrt(dx * dx + dy * dy);
 
       var destino = PESO_BASE + PESO_PICO * Math.max(0, 1 - d / RAIO);
-      pesos[i] += (destino - pesos[i]) * 0.16;
+      pesos[i] += (destino - pesos[i]) * APROX;
 
       if (Math.abs(pesos[i] - PESO_BASE) > 0.6) seguir = true;
       palavras[i].style.fontVariationSettings = "'wght' " + pesos[i].toFixed(0);
@@ -207,14 +214,14 @@
     alvo.addEventListener('pointerleave', afastar);
     alvo.addEventListener('pointercancel', afastar);
 
-    /* uma passada única, 1,2s depois da entrada: é o que deixa
-       imediatamente claro que a página está viva, sem pedir
-       nada ao usuário. Acontece uma vez e nunca se repete. */
+    /* uma passada única, 1,6s depois da entrada — depois de um
+       tempo de imobilidade, para ler como um evento próprio e não
+       como sobra da entrada. Acontece uma vez e nunca se repete. */
     window.setTimeout(function () {
       if (dentro) return;
       var base = alvo.getBoundingClientRect();
       var inicio = performance.now();
-      var duracao = 1900;
+      var duracao = 1500;
 
       dentro = true;
       (function passada(agora) {
@@ -233,7 +240,7 @@
           acordar();
         }
       })(inicio);
-    }, 1200);
+    }, 1600);
   }
 
 
@@ -254,7 +261,7 @@
       apNum.textContent = num;
       apSec.textContent = nome;
       aparato.classList.remove('is-trocando');
-    }, menosMovimento ? 0 : 180);
+    }, menosMovimento ? 0 : 200);
   }
 
   function ligarSecoes() {
@@ -270,10 +277,34 @@
     document.querySelectorAll('[data-secao]').forEach(function (s) { obs.observe(s); });
   }
 
+  var apId    = document.querySelector('.aparato__id');
+  var apHora  = document.querySelector('.aparato__hora');
+  var invSecs = [].slice.call(document.querySelectorAll('[data-inv]'));
+
+  /* O aparato atravessa a tela inteira. Na passagem de papel para
+     tinta, o topo e o rodapé dele estão sobre fundos diferentes — por
+     isso cada bloco decide a própria cor pelo que está atrás DELE, e
+     não pela seção corrente. Sem isso o relógio some por meia tela. */
+  function pintarAparato() {
+    if (!invSecs.length) return;
+
+    [apId, apHora].forEach(function (el) {
+      if (!el) return;
+      var r = el.getBoundingClientRect();
+      var meio = r.top + r.height / 2;
+      var claro = invSecs.some(function (sec) {
+        var q = sec.getBoundingClientRect();
+        return meio >= q.top && meio <= q.bottom;
+      });
+      el.classList.toggle('is-claro', claro);
+    });
+  }
+
   var quadroMarca = null;
 
   function moverMarca() {
     quadroMarca = null;
+    pintarAparato();
     if (!apMarca) return;
 
     var escala = apMarca.parentNode.getBoundingClientRect().height;

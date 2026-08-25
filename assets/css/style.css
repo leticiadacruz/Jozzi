@@ -80,7 +80,6 @@
   --curva: cubic-bezier(.16, 1, .3, 1);
   --t-micro: 200ms;
   --t-entra: 600ms;
-  --t-troca: 180ms;
 
   /* eixo de peso do elemento vivo */
   --peso-base: 450;
@@ -228,7 +227,7 @@ a { color: inherit; text-decoration: none; }
   .aparato__num,
   .aparato__sec {
     display: inline-block;
-    transition: clip-path var(--t-troca) var(--curva);
+    transition: clip-path var(--t-micro) var(--curva);
   }
   .aparato.is-trocando .aparato__num,
   .aparato.is-trocando .aparato__sec { clip-path: inset(0 0 100% 0); }
@@ -238,7 +237,10 @@ a { color: inherit; text-decoration: none; }
     flex: 1;
     width: 1px;
     margin: 1.1rem 0;
-    background: rgba(22, 21, 15, .12);
+    /* ardósia é a única cor da paleta legível sobre papel E sobre
+       tinta. Por isso o fio e a marca nunca precisam trocar de cor
+       quando o fundo inverte — só os dois blocos de texto trocam. */
+    background: rgba(111, 130, 144, .34);
   }
   .aparato__marca {
     position: absolute;
@@ -246,8 +248,15 @@ a { color: inherit; text-decoration: none; }
     top: 0;
     width: 1px;
     height: 14px;
-    background: var(--fg-3);
+    background: rgba(111, 130, 144, .85);
   }
+
+  /* cada bloco troca de cor conforme o que está atrás DELE, não
+     conforme a seção corrente: o aparato ocupa a altura toda da tela
+     e, na travessia, o topo e o rodapé estão sobre fundos diferentes.
+     Sem transição — a troca acompanha a aresta do fundo. */
+  .aparato__id.is-claro,
+  .aparato__hora.is-claro { color: rgba(240, 236, 227, .48); }
 
   .aparato__hora {
     display: grid;
@@ -255,6 +264,23 @@ a { color: inherit; text-decoration: none; }
     white-space: nowrap;
   }
   .aparato__hora span { display: block; }
+}
+
+
+/* 06b. INVERSÃO ---------------------------------------------
+   Papel vira tinta. É a pontuação entre capítulos do site — não um
+   fundo escuro decorativo. Sem borda: a aresta de cor É a divisa.
+   ----------------------------------------------------------- */
+.inv {
+  background: var(--tinta);
+  color: var(--papel);
+  border-top: 0;
+
+  --fg:    var(--papel);
+  --fg-2:  rgba(240, 236, 227, .74);
+  --fg-3:  rgba(240, 236, 227, .48);
+  --fio:   rgba(240, 236, 227, .20);
+  --fio-2: rgba(240, 236, 227, .10);
 }
 
 
@@ -350,20 +376,12 @@ a { color: inherit; text-decoration: none; }
 }
 
 .abertura__pe {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 2rem;
   padding-top: 1.1rem;
   border-top: 1px solid var(--fio);
 }
 
 .abertura__lede { max-width: 30ch; }
 
-.abertura__coord {
-  white-space: nowrap;
-  text-align: right;
-}
 
 
 /* 10. SEÇÃO 01 — QUEM SOMOS ---------------------------------
@@ -403,12 +421,22 @@ a { color: inherit; text-decoration: none; }
   color: var(--fg-3);
 }
 
-.quem__ap {
-  display: flex;
-  gap: .55rem;
-  margin-bottom: clamp(1rem, 2.5vh, 1.8rem);
+/* o nome da seção é o h2. O número não se repete aqui: ele mora no
+   aparato. E acima de 1025 o próprio nome também não se repete —
+   o aparato já o mostra, a dois centímetros de distância. */
+.secao__ap {
+  margin: 0 0 clamp(1rem, 2.5vh, 1.8rem);
+  font-weight: 400;
 }
-.quem__ap span { color: var(--sinal); }
+@media (min-width: 1025px) {
+  .secao__ap {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden; clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
 
 .quem__t {
   max-width: 17ch;
@@ -422,29 +450,60 @@ a { color: inherit; text-decoration: none; }
   color: var(--fg-2);
 }
 
-.quem__dados {
-  display: grid;
-  gap: 0;
-  margin-top: clamp(2rem, 5vh, 3.2rem);
-  max-width: 52ch;
+/* 10b. SEÇÃO 02 — NOSSO OLHAR -------------------------------
+   Cada princípio ocupa metade da largura, e a metade alterna. O
+   texto de sustentação mora na metade vazia, alinhado pela base da
+   afirmação. É o que impede a seção de virar quatro blocos iguais
+   sem depender de fio, cartão ou número grande.
+   ----------------------------------------------------------- */
+.olhar {
+  padding-top: clamp(6rem, 22vh, 15rem);
+  padding-bottom: clamp(6rem, 20vh, 15rem);
 }
-.quem__dados > div {
+
+.olhar__lista {
   display: grid;
-  grid-template-columns: 7.5rem 1fr;
-  gap: 1rem;
-  padding: .7rem 0;
-  border-top: 1px solid var(--fio-2);
+  /* espaçamento calibrado para caberem dois princípios por tela.
+     Com três, cada afirmação deixa de ser declaração e vira item. */
+  gap: clamp(6rem, 25vh, 16rem);
+  margin-top: clamp(2rem, 7vh, 5rem);
 }
-.quem__dados > div:first-child { border-top: 1px solid var(--fio); }
-.quem__dados dt { color: var(--fg-3); }
-/* rótulo em caixa alta, valor em caixa normal: uma lista inteira
-   de versais em 11px é uma parede, não uma ficha técnica */
-.quem__dados dd {
+
+.prin {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 0 var(--calha);
+}
+
+.prin__t {
+  grid-row: 1;
+  align-self: end;
   margin: 0;
-  color: var(--fg-2);
-  text-transform: none;
-  letter-spacing: .02em;
+  font-size: var(--fs-display-2);
+  /* 460 e não 500: tipo claro sobre fundo escuro engorda
+     opticamente. É compensação, não capricho. */
+  font-weight: 460;
+  text-transform: uppercase;
+  /* versais pedem menos aperto que caixa baixa: a -.035em do resto
+     do display fecharia os contracontornos aqui */
+  letter-spacing: -.012em;
+  line-height: 1.0;
+  text-wrap: balance;
 }
+
+.prin__p {
+  grid-row: 1;
+  align-self: end;
+  margin: 0;
+  max-width: 34ch;
+  color: var(--fg-2);
+}
+
+.prin--e .prin__t { grid-column: 1 / span 7; }
+.prin--e .prin__p { grid-column: 9 / span 4; }
+
+.prin--d .prin__t { grid-column: 6 / span 7; }
+.prin--d .prin__p { grid-column: 1 / span 4; }
 
 
 /* 11. RODAPÉ DO PROTÓTIPO ----------------------------------- */
@@ -468,9 +527,29 @@ a { color: inherit; text-decoration: none; }
   .quem__txt { grid-column: 7 / span 6; }
 }
 
+/* ≤1024 — as metades ficam apertadas para uma afirmação em display;
+   o texto desce para baixo da afirmação, mantendo o recuo alternado
+   como resto do gesto. */
+@media (max-width: 1024px) {
+  .prin__p { grid-row: 2; align-self: start; margin-top: 1.4rem; }
+  .prin--e .prin__t { grid-column: 1 / span 10; }
+  .prin--e .prin__p { grid-column: 1 / span 6; }
+  .prin--d .prin__t { grid-column: 3 / span 10; }
+  .prin--d .prin__p { grid-column: 3 / span 6; }
+}
+
 /* ≤768 — uma coluna. A imagem entra entre o título e o texto,
    para o mobile ter ritmo editorial e não empilhamento. */
 @media (max-width: 768px) {
+  /* a alternância era um gesto de largura: sem largura, ela sai.
+     No telefone o ritmo vem do vazio entre os princípios. */
+  .prin { grid-template-columns: 1fr; }
+  .prin__t,
+  .prin--e .prin__t, .prin--d .prin__t,
+  .prin__p,
+  .prin--e .prin__p, .prin--d .prin__p { grid-column: 1; }
+  .prin__p { max-width: none; margin-top: 1.2rem; }
+
   .quem {
     grid-template-columns: 1fr;
     align-items: start;
@@ -480,18 +559,11 @@ a { color: inherit; text-decoration: none; }
 
   .quem__txt { display: contents; }
 
-  .quem__ap    { order: 1; }
+  .secao__ap   { order: 1; }
   .quem__t     { order: 2; }
   .quem__fig   { order: 3; margin: 0 0 clamp(1.8rem, 5vh, 2.6rem); max-width: 26rem; }
   .quem__corpo { order: 4; }
-  .quem__dados { order: 5; }
 
-  .abertura__pe {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: .7rem;
-  }
-  .abertura__coord { text-align: left; }
   /* sem trava de medida: a coluna já é estreita, e 12ch aqui
      picava a frase em seis linhas */
   .abertura__t { max-width: none; }
@@ -520,10 +592,6 @@ a { color: inherit; text-decoration: none; }
      site onde o mobile é mais generoso que o desktop */
   .quem__fig { max-width: none; }
 
-  .quem__dados > div {
-    grid-template-columns: 1fr;
-    gap: .25rem;
-  }
   .fim { flex-direction: column; gap: .35rem; }
 }
 
