@@ -72,6 +72,39 @@ emprestada.
 
 ---
 
+## Preencher um serviço
+
+Em `index.html`, dentro do `<li>` do serviço, trocar os dois parágrafos
+`serv__falta` pelo texto real:
+
+```html
+<div class="serv__txt">
+  <p>Como a Jozzi trabalha nessa frente. 120 a 160 caracteres.</p>
+  <p class="serv__posicao">A frase de posição sobre a disciplina.</p>
+</div>
+```
+
+E o campo da imagem:
+
+```html
+<img class="serv__plate" src="assets/img/servico-branding.avif"
+     alt="Descrição curta" width="1200" height="1600" loading="lazy">
+```
+
+O texto responde **"como trabalhamos"**, não "o que entregamos". Essa é a
+diferença entre a seção parecer método e parecer catálogo.
+
+A frase de posição de **Tráfego Pago** já está escolhida: *"Anúncio não conserta
+marca."* Veio do Nosso Olhar e foi reservada para lá.
+
+**Acrescentar um sexto serviço** exige três coisas: o `<li>` novo, uma linha em
+`.serv__item:nth-child(6)` com `--fit` e `--optico`, e uma linha
+`.serv__item:nth-child(6) .serv__nome { grid-row: 6 }` — além de mudar o campo e
+o texto para `grid-row: 1 / span 7` e `grid-row: 7`. O `--fit` sai do
+comprimento da palavra: `(1 + 6 ÷ nº de caracteres) ÷ 2`.
+
+---
+
 ## Trocar uma cor
 
 Em `assets/css/style.css`, seção **02. TOKENS**, no topo do arquivo. Todas as
@@ -120,12 +153,17 @@ transformar em laço.
 - **Não adicionar biblioteca de animação.** Os gestos do sistema são CSS. Uma
   biblioteca traria dezenas de curvas novas e o movimento deixaria de parecer
   da Jozzi.
-- **Não criar corpo de letra entre 24 e 44px.** É a faixa deliberadamente vazia
-  da escala — onde vive o subtítulo de todo template.
+- **Não criar corpo de letra entre 24 e 44px** no desktop. É a faixa
+  deliberadamente vazia da escala — onde vive o subtítulo de todo template.
+  Em telas estreitas a regra vira razão: o menor display nunca fica abaixo de
+  1,8 vez o corpo do texto.
 - **Não criar cartão** — retângulo com preenchimento, canto arredondado e sombra.
   Agrupamento se faz com fio de 1px e espaço.
 - **Não criar ícone de serviço.**
 - **Não usar número grande decorativo.** A numeração vive no aparato, em 11px.
+- **Não fazer o corpo dos nomes de serviço seguir a ordem da lista.** O corpo é
+  função do comprimento da palavra. Se o primeiro serviço virar o maior e o
+  último o menor, a composição vira ranking comercial.
 - **Não repetir "Creative Marketing Lab".** Ele aparece uma vez, no rodapé, como
   dado institucional. Não é assinatura e não é slogan.
 - **Não preencher espaço vazio.** O vazio é composição. Se uma seção "parece

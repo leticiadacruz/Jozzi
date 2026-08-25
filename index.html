@@ -16,7 +16,7 @@
 
 <link rel="preload" href="assets/fonts/Switzer-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/IBMPlexMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/style.css?v=7">
+<link rel="stylesheet" href="assets/css/style.css?v=15">
 
 <script>document.documentElement.className += " js";</script>
 </head>
@@ -166,13 +166,130 @@
   </div>
 </section>
 
+
+<!-- ============================================================
+     03 — SERVIÇOS
+     Índice tipográfico + revelação, em duas zonas.
+
+     A zona direita NÃO é um painel: é a metade direita da página,
+     sangrando até a margem, sem moldura e sem preenchimento. E a
+     descrição mora embaixo do ÍNDICE, não junto da imagem — é o que
+     quebra o mapeamento [item] -> [cartão].
+
+     Escala dos nomes: função do comprimento da palavra, meio caminho
+     entre corpo único e larguras iguais. A regra é sobre a palavra,
+     não sobre a disciplina, para a variação não ser lida como
+     importância comercial.
+
+     Conteúdo: nenhuma copy escrita. Os campos abaixo dizem o que
+     precisam receber e quanto comportam. A frase "Anúncio não
+     conserta marca." está reservada para a posição de Tráfego Pago,
+     mas não foi inserida — falta aprovação para aquele slot.
+     ============================================================ -->
+<section class="serv wrap" id="servicos" data-secao
+         data-num="03" data-nome="Serviços" aria-labelledby="serv-titulo">
+
+  <h2 class="secao__ap ap rv" id="serv-titulo">Serviços</h2>
+
+  <ul class="serv__lista" role="list">
+
+    <li class="serv__item" role="listitem">
+      <button class="serv__nome rv" type="button"
+              id="serv-bt-branding" aria-controls="serv-rev-branding" aria-expanded="false">
+        <span class="serv__num ap">01</span>Branding
+      </button>
+
+      <div class="serv__rev" id="serv-rev-branding" aria-labelledby="serv-bt-branding" aria-hidden="true">
+        <div class="serv__plate">
+          <span class="ap">Imagem</span>
+        </div>
+        <div class="serv__txt">
+          <p class="serv__falta ap">Como trabalhamos &mdash; 120 a 160 caracteres</p>
+          <p class="serv__falta ap">Posição da Jozzi &mdash; uma frase</p>
+        </div>
+      </div>
+    </li>
+
+    <li class="serv__item" role="listitem">
+      <button class="serv__nome rv" type="button"
+              id="serv-bt-social-media" aria-controls="serv-rev-social-media" aria-expanded="false">
+        <span class="serv__num ap">02</span>Social Media
+      </button>
+
+      <div class="serv__rev" id="serv-rev-social-media" aria-labelledby="serv-bt-social-media" aria-hidden="true">
+        <div class="serv__plate">
+          <span class="ap">Imagem</span>
+        </div>
+        <div class="serv__txt">
+          <p class="serv__falta ap">Como trabalhamos &mdash; 120 a 160 caracteres</p>
+          <p class="serv__falta ap">Posição da Jozzi &mdash; uma frase</p>
+        </div>
+      </div>
+    </li>
+
+    <li class="serv__item" role="listitem">
+      <button class="serv__nome rv" type="button"
+              id="serv-bt-design" aria-controls="serv-rev-design" aria-expanded="false">
+        <span class="serv__num ap">03</span>Design
+      </button>
+
+      <div class="serv__rev" id="serv-rev-design" aria-labelledby="serv-bt-design" aria-hidden="true">
+        <div class="serv__plate">
+          <span class="ap">Imagem</span>
+        </div>
+        <div class="serv__txt">
+          <p class="serv__falta ap">Como trabalhamos &mdash; 120 a 160 caracteres</p>
+          <p class="serv__falta ap">Posição da Jozzi &mdash; uma frase</p>
+        </div>
+      </div>
+    </li>
+
+    <li class="serv__item" role="listitem">
+      <button class="serv__nome rv" type="button"
+              id="serv-bt-web-development" aria-controls="serv-rev-web-development" aria-expanded="false">
+        <span class="serv__num ap">04</span>Web Development
+      </button>
+
+      <div class="serv__rev" id="serv-rev-web-development" aria-labelledby="serv-bt-web-development" aria-hidden="true">
+        <div class="serv__plate">
+          <span class="ap">Imagem</span>
+        </div>
+        <div class="serv__txt">
+          <p class="serv__falta ap">Como trabalhamos &mdash; 120 a 160 caracteres</p>
+          <p class="serv__falta ap">Posição da Jozzi &mdash; uma frase</p>
+        </div>
+      </div>
+    </li>
+
+    <li class="serv__item" role="listitem">
+      <button class="serv__nome rv" type="button"
+              id="serv-bt-trafego-pago" aria-controls="serv-rev-trafego-pago" aria-expanded="false">
+        <span class="serv__num ap">05</span>Tráfego Pago
+      </button>
+
+      <div class="serv__rev" id="serv-rev-trafego-pago" aria-labelledby="serv-bt-trafego-pago" aria-hidden="true">
+        <div class="serv__plate">
+          <span class="ap">Imagem</span>
+        </div>
+        <div class="serv__txt">
+          <p class="serv__falta ap">Como trabalhamos &mdash; 120 a 160 caracteres</p>
+          <p class="serv__falta ap">Posição da Jozzi &mdash; uma frase</p>
+        </div>
+      </div>
+    </li>
+
+  </ul>
+</section>
+
 </main>
 
 
 <footer class="fim wrap">
   <p class="ap">Jozzi Creative Marketing Lab</p>
-  <p class="ap">Protótipo de direção &mdash; seções 00 a 02</p>
+  <p class="ap">Protótipo de direção &mdash; seções 00 a 03</p>
 </footer>
+
+<span class="cursor ap" id="cursor" aria-hidden="true">Ver</span>
 
 <script src="assets/js/lenis.min.js" defer></script>
 <script src="assets/js/main.js" defer></script>

@@ -6,8 +6,10 @@
    02. ENTRADA POR MÁSCARA
    03. ESTEIRA DE PESO (o elemento vivo da abertura)
    04. APARATO — seção, inversão, marca de posição, relógio
-   05. ROLAGEM INTERPOLADA
-   06. REDE DE SEGURANÇA
+   05. SERVIÇOS — índice e revelação
+   06. CURSOR
+   07. ROLAGEM INTERPOLADA
+   08. REDE DE SEGURANÇA
    ============================================================ */
 (function () {
   'use strict';
@@ -338,7 +340,77 @@
   }
 
 
-  /* 05. ROLAGEM INTERPOLADA --------------------------------- */
+  /* 05. SERVIÇOS — ÍNDICE E REVELAÇÃO -----------------------
+     Um só DOM para as duas composições. Acima de 1025 os campos
+     ficam empilhados na mesma área da grade e só troca qual está
+     desmascarado; abaixo, o campo ativo abre no próprio fluxo.
+
+     O nome é <button>: ponteiro, toque e teclado entram pelo mesmo
+     caminho, e o foco também ativa — nada existe só no hover.
+     -------------------------------------------------------- */
+  var itens = [].slice.call(document.querySelectorAll('.serv__item'));
+  var ativo = -1;
+
+  function ativarServico(i) {
+    if (i === ativo || !itens[i]) return;
+    ativo = i;
+
+    itens.forEach(function (li, n) {
+      var ligado = n === i;
+      li.classList.toggle('is-ativo', ligado);
+      li.querySelector('.serv__nome').setAttribute('aria-expanded', String(ligado));
+      li.querySelector('.serv__rev').setAttribute('aria-hidden', String(!ligado));
+    });
+  }
+
+  function ligarServicos() {
+    if (!itens.length) return;
+
+    /* só agora a seção adota a composição de duas zonas. Sem esta
+       classe — script ausente ou quebrado — ela fica em fluxo, com
+       os cinco campos visíveis. Nada some por falta de JavaScript. */
+    document.documentElement.classList.add('js--serv');
+
+    itens.forEach(function (li, i) {
+      var bt = li.querySelector('.serv__nome');
+
+      bt.addEventListener('pointerenter', function (e) {
+        /* toque dispara pointerenter junto com o clique; deixa o
+           clique resolver, senão o primeiro toque ativa duas vezes */
+        if (e.pointerType === 'touch') return;
+        ativarServico(i);
+      });
+      bt.addEventListener('focus', function () { ativarServico(i); });
+      bt.addEventListener('click', function () { ativarServico(i); });
+    });
+
+    /* o primeiro já entra revelado: sem isso a seção é cinco
+       palavras num campo vazio até alguém descobrir o ponteiro */
+    ativarServico(0);
+  }
+
+
+  /* 06. CURSOR ----------------------------------------------- */
+  var cursor = document.getElementById('cursor');
+
+  function ligarCursor() {
+    var lista = document.querySelector('.serv__lista');
+    if (!cursor || !lista || menosMovimento) return;
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+    document.documentElement.classList.add('js--cursor');
+
+    lista.addEventListener('pointermove', function (e) {
+      cursor.style.transform = 'translate(' + e.clientX + 'px,' + e.clientY + 'px)';
+      cursor.classList.add('is-visivel');
+    });
+    lista.addEventListener('pointerleave', function () {
+      cursor.classList.remove('is-visivel');
+    });
+  }
+
+
+  /* 07. ROLAGEM INTERPOLADA --------------------------------- */
   function ligarLenis() {
     if (menosMovimento || typeof window.Lenis === 'undefined') return;
 
@@ -362,7 +434,7 @@
   }
 
 
-  /* 06. REDE DE SEGURANÇA -----------------------------------
+  /* 08. REDE DE SEGURANÇA -----------------------------------
      Se qualquer coisa acima falhar, nada fica escondido.
      -------------------------------------------------------- */
   window.setTimeout(revelarTudo, 3500);
@@ -382,6 +454,8 @@
       ligarSecoes();
       ligarMarca();
       ligarRelogio();
+      ligarServicos();
+      ligarCursor();
       ligarLenis();
     };
 

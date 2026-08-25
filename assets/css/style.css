@@ -83,6 +83,7 @@
 
   /* eixo de peso do elemento vivo */
   --peso-base: 450;
+
 }
 
 
@@ -506,6 +507,195 @@ a { color: inherit; text-decoration: none; }
 .prin--d .prin__p { grid-column: 1 / span 4; }
 
 
+/* 10c. SEÇÃO 03 — SERVIÇOS ----------------------------------
+   Duas zonas. À esquerda o índice; à direita a metade da página que
+   vira imagem. Nada de painel: sem moldura, sem preenchimento, sem
+   fundo próprio — o campo sangra até a margem da página.
+
+   A descrição não acompanha a imagem: ela mora embaixo do índice.
+   É o que impede a leitura [item] -> [cartão].
+
+   O PADRÃO é o fluxo: nome, imagem e texto empilhados, todos os
+   cinco visíveis. É o que se vê sem JavaScript, e funciona. A
+   composição de duas zonas só entra quando o módulo está de pé
+   (`.js--serv`) — senão os cinco campos ocupariam a mesma célula da
+   grade e se sobreporiam.
+   ----------------------------------------------------------- */
+.serv {
+  padding-top: clamp(5rem, 16vh, 11rem);
+  padding-bottom: clamp(5rem, 16vh, 11rem);
+  border-top: 1px solid var(--fio);
+}
+
+.serv__lista { list-style: none; margin: 0; padding: 0; }
+.serv__item + .serv__item { margin-top: clamp(1.1rem, 3vh, 2rem); }
+
+/* o nome é um botão de verdade: ponteiro, toque e teclado entram
+   pelo mesmo caminho, e nada existe só no hover */
+.serv__nome {
+  display: block;
+  width: 100%;
+  margin: 0 0 0 var(--optico, 0);
+  padding: .12em 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  font-family: inherit;
+  /* Registro de display com ajuste óptico. Ancorado em --fs-display
+     e não em --fs-display-2: sobre o display-2, o nome mais longo
+     caía em 38px, dentro da faixa proibida de 24 a 44. */
+  font-size: calc(var(--fs-display) * var(--serv-fit, 1) * var(--fit, 1));
+  font-weight: 500;
+  letter-spacing: -.03em;
+  line-height: 1.06;
+  color: var(--fg-2);
+  transition: color var(--t-micro) var(--curva);
+}
+
+.serv__num {
+  display: inline-block;
+  width: 2.6rem;
+  vertical-align: middle;
+  color: var(--fg-3);
+  transition: color var(--t-micro) var(--curva);
+}
+
+.serv__item.is-ativo .serv__nome,
+.serv__item.is-ativo .serv__num { color: var(--sinal); }
+
+/* ajuste óptico por palavra — a regra é o comprimento, não a
+   disciplina. Design é a terceira da lista e a maior de todas: a
+   ordem dos corpos não acompanha a numeração, e é isso que impede
+   a leitura como ranking comercial. */
+.serv__item:nth-child(1) { --fit: .875; --optico: 0;       }  /* Branding · 8 · B */
+.serv__item:nth-child(2) { --fit: .75;  --optico: -.012em; }  /* Social Media · 12 · S */
+.serv__item:nth-child(3) { --fit: 1;    --optico: 0;       }  /* Design · 6 · D */
+.serv__item:nth-child(4) { --fit: .70;  --optico: -.018em; }  /* Web Development · 15 · W */
+.serv__item:nth-child(5) { --fit: .75;  --optico: -.022em; }  /* Tráfego Pago · 12 · T */
+
+.serv__rev {
+  display: grid;
+  gap: clamp(1.2rem, 3vh, 1.8rem);
+  margin: clamp(1.2rem, 3vh, 1.8rem) 0 clamp(1.8rem, 4vh, 2.6rem);
+  max-width: 26rem;
+}
+
+.serv__plate {
+  position: relative;
+  /* no fluxo, o 3:4 come uma tela inteira entre dois nomes e o
+     índice deixa de ser percorrível. 1:1 é uma das três proporções
+     do sistema e resolve sem inventar recorte novo. */
+  aspect-ratio: 1;
+  background: var(--papel-2);
+  display: grid;
+  place-items: center;
+}
+.serv__plate .ap { color: var(--fg-3); }
+
+.serv__falta { margin: 0; color: var(--fg-3); }
+.serv__falta + .serv__falta { margin-top: .7rem; }
+
+
+/* ---- com o módulo de pé: só o item ativo revela ---- */
+.js--serv .serv__rev { display: none; }
+.js--serv .serv__item.is-ativo .serv__rev {
+  display: grid;
+  animation: revelar var(--t-entra) var(--curva) both;
+}
+
+@media (max-width: 480px) {
+  .serv__rev { max-width: none; }
+}
+
+
+/* ---- com o módulo de pé, ≥1025: as duas zonas ---- */
+@media (min-width: 1025px) {
+  .js--serv .serv {
+    --serv-fit: .84;   /* o nome mais longo tem que caber na zona */
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    /* os cinco nomes em min-content: o campo é mais alto que o
+       índice, e sem travar as linhas ele espalharia os nomes até
+       preencher a altura — o índice viraria menu. A sobra vai toda
+       para a última linha, onde mora o texto. */
+    grid-template-rows: repeat(5, min-content) auto;
+    gap: clamp(.4rem, 1.4vh, 1rem) var(--calha);
+    align-items: start;
+  }
+
+  /* botões e campos viram itens diretos da grade da seção, para
+     poderem ocupar zonas diferentes sem sair do <li> */
+  /* o `.is-ativo .serv__rev` do bloco de fluxo tem especificidade
+     maior e venceria pela cascata, mesmo vindo antes. Precisa ser
+     anulado nominalmente, senão o campo ativo vira uma caixa dentro
+     do <li> e não chega à grade da seção. */
+  .js--serv .serv__lista,
+  .js--serv .serv__item,
+  .js--serv .serv__rev,
+  .js--serv .serv__item.is-ativo .serv__rev {
+    display: contents;
+    animation: none;
+  }
+
+  .js--serv .serv__nome { grid-column: 1 / span 7; }
+  .js--serv .serv__item:nth-child(1) .serv__nome { grid-row: 1; }
+  .js--serv .serv__item:nth-child(2) .serv__nome { grid-row: 2; }
+  .js--serv .serv__item:nth-child(3) .serv__nome { grid-row: 3; }
+  .js--serv .serv__item:nth-child(4) .serv__nome { grid-row: 4; }
+  .js--serv .serv__item:nth-child(5) .serv__nome { grid-row: 5; }
+
+  /* todos os campos na MESMA área: empilhados, nada se move */
+  .js--serv .serv__plate {
+    aspect-ratio: 3 / 4;
+    grid-column: 9 / span 4;
+    grid-row: 1 / span 6;
+    align-self: start;
+  }
+  .js--serv .serv__txt {
+    grid-column: 1 / span 5;
+    grid-row: 6;
+    align-self: start;
+    padding-top: clamp(2rem, 6vh, 4rem);
+  }
+
+  .js--serv .serv__plate,
+  .js--serv .serv__txt {
+    clip-path: inset(0 0 100% 0);
+    animation: none;
+    /* o campo que sai só colapsa DEPOIS que o que entra já cobriu:
+       vira uma passagem de imagem, não um piscar */
+    transition: clip-path var(--t-micro) var(--curva) var(--t-micro);
+  }
+  .js--serv .serv__item.is-ativo .serv__plate,
+  .js--serv .serv__item.is-ativo .serv__txt {
+    clip-path: inset(0 0 0 0);
+    transition-delay: 0s;
+    z-index: 1;
+  }
+
+  /* rótulo do cursor: só existe quando o script está de pé */
+  .js--cursor .serv__nome { cursor: none; }
+}
+
+
+/* 10d. CURSOR -----------------------------------------------
+   Um rótulo, não um círculo. Preso ao ponteiro, sem atraso e sem
+   mola: o rastro elástico é justamente o clichê a evitar.
+   ----------------------------------------------------------- */
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 30;
+  display: none;
+  padding-left: .75rem;
+  color: var(--sinal);
+  pointer-events: none;
+  will-change: transform;
+}
+.cursor.is-visivel { display: block; }
+
+
 /* 11. RODAPÉ DO PROTÓTIPO ----------------------------------- */
 .fim {
   display: flex;
@@ -609,6 +799,7 @@ a { color: inherit; text-decoration: none; }
   }
   .aparato__num,
   .aparato__sec { transition: none; }
+  .js--serv .serv__item.is-ativo .serv__rev { animation: none; }
 }
 
 @media print {

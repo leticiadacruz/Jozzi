@@ -2,10 +2,9 @@
 
 **Método e Instinto.** Site da JOZZI.
 
-> **Estado:** protótipo de direção. Seções **00 Abertura**, **01 Quem somos** e
-> **02 Nosso olhar** construídas. As seções 03 a 06 estão especificadas neste
-> documento mas **não foram implementadas** — a decisão é validar o núcleo da
-> identidade digital antes de avançar.
+> **Estado:** protótipo de direção. Seções **00 Abertura**, **01 Quem somos**,
+> **02 Nosso olhar** e **03 Serviços** construídas. As seções 04 a 06 estão
+> especificadas neste documento mas **não foram implementadas**.
 
 ---
 
@@ -72,8 +71,9 @@ nunca como slogan.
 Nenhum gradiente. Nenhuma sombra. Nenhum `border-radius`. Fios de 1px.
 Profundidade vem de inversão de fundo, não de sombra.
 
-Nas seções 00 a 02 o Sinal **não aparece**. Ele começa a trabalhar no Contato.
-Isso é disciplina, não esquecimento.
+Nas seções 00 a 02 o Sinal **não aparece**: três seções inteiras sem acento
+nenhum. Ele estreia em Serviços, marcando a frente ativa do índice, e volta a
+trabalhar no Contato. Um nome em azul por vez fica muito abaixo do teto de 3%.
 
 ### Tipografia
 
@@ -87,9 +87,15 @@ Dois registros, e nada entre eles.
 | Texto | 16–17px | Switzer 400 |
 | Aparato | 11px versal, `+.145em` | IBM Plex Mono 400 |
 
-**A faixa de 24 a 44px não existe.** É onde vive o subtítulo de todo template.
-Se um texto parece precisar dela, ele pertence ao registro de texto ou ao de
-display — não a um terceiro inventado no meio.
+**A faixa de 24 a 44px não existe** — no desktop. É onde vive o subtítulo de
+todo template. Se um texto parece precisar dela, ele pertence ao registro de
+texto ou ao de display, não a um terceiro inventado no meio.
+
+A regra em pixels vale acima de 1025px. **A regra geral, válida em qualquer
+largura, é a razão:** existem dois registros e nada entre eles, e o menor corpo
+de display nunca fica abaixo de **1,8 vez** o corpo do texto. A 390px o texto é
+16px e o menor display é 31px — 1,9 vez. Foi assim que a faixa absoluta
+apareceu: ela é a expressão dessa razão numa tela de 1440.
 
 Entreletra: `-.045em` no display, `-.035em` no display 2, `-.012em` nas versais
 (caixa alta pede menos aperto que caixa baixa). Medida do texto corrido: 58 a
@@ -112,8 +118,14 @@ Um gesto, uma curva, três durações.
   tipográfico, não demonstração. Uma passada automática, 1,6s depois da entrada,
   **uma única vez**. O título nunca vira animação contínua.
 
+- **Cursor** — sobre o índice de Serviços, o ponteiro nativo dá lugar a um
+  rótulo curto em mono. Um rótulo, não um círculo, e sem atraso nem mola: o
+  rastro elástico é o clichê a evitar. Só existe com ponteiro fino e sem
+  movimento reduzido.
+
 Sem `prefers-reduced-motion`: as máscaras viram estado final imediato, o Lenis
-não inicializa, a esteira não existe. Nenhum conteúdo depende de animação.
+não inicializa, a esteira não existe, o cursor não existe. Nenhum conteúdo
+depende de animação.
 
 ### Aparato
 
@@ -193,21 +205,40 @@ genérica de agência** — nem provisoriamente.
 Especificados, **não construídos**. Cada um lista o que precisa de conteúdo
 antes de existir.
 
-### 03 — Serviços · índice tipográfico + revelação
+### 03 — Serviços · construído
 
-Cinco linhas em display 2, em escalas ligeiramente diferentes, com campo de
-revelação em posição assimétrica fixa. No mobile, expansão no lugar — acordeão
-na linguagem editorial, sem cartão.
+Duas zonas. À esquerda o índice; à direita a metade da página que vira imagem —
+sem moldura, sem preenchimento, sangrando até a margem. **A descrição não
+acompanha a imagem:** ela mora embaixo do índice. É isso que impede a leitura
+`[item] → [cartão]`, que é o que faz um índice virar componente de UI.
 
-Por serviço, o componente comporta:
+Os cinco campos ocupam a **mesma área da grade**, empilhados. A troca não move
+nada: só muda qual deles está desmascarado, e o que sai só colapsa depois que o
+que entra já cobriu. Verificado: a caixa da imagem e a posição dos cinco nomes
+são idênticas em qualquer estado.
+
+**O corpo de cada nome é função do comprimento da palavra**, meio caminho entre
+corpo único e larguras iguais (`--fit` no CSS). Design é a terceira da lista e a
+maior de todas: a ordem dos corpos não acompanha a numeração, e é isso que
+impede a leitura como ranking comercial. Cada nome leva ainda uma correção
+óptica de primeira letra (`--optico`) — alinha o glifo, não a caixa.
+
+Sem JavaScript a seção fica em fluxo, com os cinco campos visíveis. A composição
+de duas zonas só entra quando o módulo está de pé. Abaixo de 1025px, o item
+ativo abre no próprio fluxo e a imagem passa de 3:4 para 1:1 — no fluxo, o 3:4
+come uma tela inteira entre dois nomes.
+
+Falta preencher, por serviço:
 
 | Campo | Registro | Extensão | Estado |
 | --- | --- | --- | --- |
-| Nome | Display 2 | dado | ✓ Branding, Social Media, Design, Web Development, Tráfego Pago |
-| Número | Aparato | dado | ✓ 01–05 |
-| Descrição curta | Texto | ~120–160 caracteres | ✗ a fornecer |
-| Imagem | 3:4 ou 1:1 | — | ✗ a fornecer |
-| Posição da Jozzi | Lede | ~60–90 caracteres, uma frase | ✗ opcional, a fornecer |
+| Descrição curta | Texto | 120 a 160 caracteres | ✗ a fornecer |
+| Imagem | 3:4 no desktop, 1:1 no fluxo | — | ✗ a fornecer |
+| Posição da Jozzi | Texto | uma frase, 60 a 90 caracteres | ✗ a fornecer |
+
+O texto tem que responder **"como a Jozzi trabalha nessa frente"**, não "o que a
+Jozzi entrega". Os rótulos dos campos vazios no HTML dizem isso literalmente,
+para quem escrever não errar o alvo.
 
 **Reservado:** o princípio *"Anúncio não conserta marca."* sai do Nosso Olhar e
 pertence a **Tráfego Pago**, como posição específica sobre mídia paga.
