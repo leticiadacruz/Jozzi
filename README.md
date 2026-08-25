@@ -2,9 +2,9 @@
 
 **Método e Instinto.** Site da JOZZI.
 
-> **Estado:** protótipo de direção. Seções **00 Abertura**, **01 Quem somos**,
-> **02 Nosso olhar** e **03 Serviços** construídas. As seções 04 a 06 estão
-> especificadas neste documento mas **não foram implementadas**.
+> **Estado:** protótipo de direção. Seções **00** a **04** construídas. As
+> seções **05 Contato** e **06 Onde ficamos** estão especificadas neste
+> documento mas **não foram implementadas**.
 
 ---
 
@@ -243,22 +243,45 @@ para quem escrever não errar o alvo.
 **Reservado:** o princípio *"Anúncio não conserta marca."* sai do Nosso Olhar e
 pertence a **Tráfego Pago**, como posição específica sobre mídia paga.
 
-### 04 — Marcas · ticker na entrada, índice editorial no corpo
+### 04 — Marcas · construído
 
-Composição tipográfica em torno dos nomes reais. Informação adicional aparece na
-interação. **Sem ano.** Estrutura preparada para receber novas marcas sem
-redesenho — um item por marca, campos em atributos.
+Blocos esparsos numa diagonal sobre campo aberto. Cada marca é um agrupamento
+pequeno — nome, setor, escopo — e a regra de posição é: **cada marca avança três
+colunas e uma linha em relação à anterior**, dando a volta a cada três. Coluna
+1, 4, 7, 1, 4, 7…
+
+**Todas as marcas no mesmo corpo.** Entre clientes, diferença de escala não é
+lida como composição: é lida como declaração sobre a relação, e um cliente que
+vê o próprio nome menor que o de outro tem um problema comercial. A variação é
+toda de posição.
+
+Primeira seção desde a abertura **sem nenhuma interação**. Depois da densidade
+de Serviços, o silêncio é o ritmo. Não há ticker, hover nem laço: a entrada é a
+mesma máscara de sempre, e a diagonal já sequencia a chegada dos blocos pela
+posição vertical, sem escalonamento programado.
 
 Confirmadas: **Collab**, **Claudia Choma**, **Widepine Cafés**.
 **NORR não é cliente até confirmação.**
 
+**Sem logotipos, por decisão.** Auditoria dos arquivos: Collab tem SVG oficial
+(CorelDRAW, com logotipo, assinatura e símbolo separados) e PNG 1080×188;
+Claudia Choma tem SVG (viewBox 750×111); **Widepine Cafés só tem PNG** —
+1063×132 — e um PDF. Qualidade desigual aparece quando os três estão no mesmo
+campo, três logotipos lado a lado são uma parede de logos em miniatura, e o
+nome de um cliente composto na tipografia do estúdio diz mais do que um
+logotipo emprestado. Nenhum arquivo foi redesenhado, redimensionado ou tratado.
+
+Falta preencher, por marca:
+
 | Campo | Extensão | Estado |
 | --- | --- | --- |
-| Nome | dado | ✓ três marcas |
-| Setor | ~15–25 caracteres | ✗ a fornecer |
-| Escopo | ~30–60 caracteres | ✗ a fornecer |
+| Setor | 15 a 25 caracteres | ✗ a fornecer |
+| Escopo | 30 a 60 caracteres | ✗ a fornecer |
 
-Não inventar setor, escopo, ano ou qualquer outra informação.
+Sem ano, por decisão anterior. Não inventar setor, escopo ou qualquer outra
+informação. Se as marcas passarem de umas doze, o índice de créditos (marca ·
+setor · escopo, em rigor documental) volta a ser a melhor solução — com três,
+ele renderizaria como uma tabela de três linhas visivelmente incompleta.
 
 ### 05 — Contato · o clímax
 

@@ -105,6 +105,41 @@ comprimento da palavra: `(1 + 6 ÷ nº de caracteres) ÷ 2`.
 
 ---
 
+## Acrescentar uma marca
+
+Duas coisas. O `<li>` novo em `index.html`, dentro de `.marcas__lista`:
+
+```html
+<li class="cliente" role="listitem">
+  <h3 class="cliente__nome d d--2 rv">Nome da marca</h3>
+  <dl class="cliente__dados ap rv">
+    <div><dt>Setor</dt><dd>Setor real</dd></div>
+    <div><dt>Escopo</dt><dd>O que a Jozzi fez</dd></div>
+  </dl>
+</li>
+```
+
+E, se passar de doze marcas, uma linha em `style.css` na seção 10e:
+
+```css
+.cliente:nth-child(13) { grid-column: 1 / span 5; grid-row: 13; }
+```
+
+A coluna segue 1, 4, 7, 1, 4, 7… e a linha é o número da marca. A colocação
+automática do Grid **não** serve: a partir da quarta marca ela encaixaria o
+bloco ao lado do anterior em vez de abrir linha nova, e a diagonal quebraria.
+
+**Todas as marcas ficam no mesmo corpo.** Não aumentar o nome de um cliente
+para "dar destaque": entre clientes, escala é declaração sobre a relação, não
+composição.
+
+Sobre logotipos: hoje a seção usa só os nomes tipográficos. Se um dia entrarem
+logos, precisam ser vetor bom para **todas** as marcas — um PNG no meio de dois
+SVGs aparece. Nunca redesenhar, redimensionar fora de proporção ou aplicar
+efeito no logo de um cliente.
+
+---
+
 ## Trocar uma cor
 
 Em `assets/css/style.css`, seção **02. TOKENS**, no topo do arquivo. Todas as
