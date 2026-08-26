@@ -729,6 +729,7 @@ a { color: inherit; text-decoration: none; }
 
 .serv__plate {
   position: relative;
+  width: 100%;
   /* no fluxo, o 3:4 come uma tela inteira entre dois nomes e o
      índice deixa de ser percorrível. 1:1 é uma das três proporções
      do sistema e resolve sem inventar recorte novo. */
@@ -736,17 +737,43 @@ a { color: inherit; text-decoration: none; }
   background: var(--papel-2);
   display: grid;
   place-items: center;
+  overflow: hidden;
+  /* o rótulo "Imagem" fica sobre bege, não sobre papel: no fundo
+     mais escuro o aparato cai para 4,19:1 e não alcança o mínimo de
+     texto pequeno. Sobe só aqui. */
+  --fg-3: rgb(var(--marrom-rgb) / .72);
 }
 .serv__plate .ap { color: var(--fg-3); }
 
-/* ---- CAMPOS DE IMAGEM ----
-   Valem para a <div> marcada de hoje e para o <img> de amanhã: o
-   arquivo preenche a caixa e é RECORTADO, nunca esticado.
+/* O número do serviço ativo, impresso sobre o próprio campo de
+   imagem — como um carimbo. mix-blend-mode: multiply é o que faz
+   funcionar tanto sobre o bege de hoje (tinge) quanto sobre a foto
+   de amanhã (escurece por cima, sem apagar a imagem). É o mesmo
+   número que já existe em .serv__num, só que a serviço vira parte
+   estrutural da imagem, não apenas rótulo do índice. */
+.serv__plate-num {
+  position: absolute;
+  left: .55rem;
+  bottom: .3rem;
+  z-index: 1;
+  font-size: clamp(4.5rem, 15vw, 10rem);
+  font-weight: 500;
+  line-height: .8;
+  letter-spacing: -.045em;
+  color: var(--texto);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  user-select: none;
+}
+
+
+/* ---- CAMPOS DE IMAGEM: seção 01 e Onde ficamos ----
+   O arquivo É o elemento sizado: preenche a caixa e é RECORTADO,
+   nunca esticado.
 
    O recorte 3:4 -> 1:1 do mobile tira um oitavo em cima e um oitavo
    embaixo. A área segura é o miolo vertical. */
 .fig__campo,
-.serv__plate,
 .onde__mapa {
   width: 100%;
   object-fit: cover;
@@ -758,16 +785,38 @@ a { color: inherit; text-decoration: none; }
   --fg-3: rgb(var(--marrom-rgb) / .72);
 }
 img.fig__campo,
-img.serv__plate,
 img.onde__mapa {
   display: block;
   /* `height: auto` é obrigatório: sem ele o atributo height="1600"
      do arquivo vira altura usada e o `aspect-ratio` da classe é
-     ignorado. E não pode ser `height: 100%` — dentro da grade de
-     Serviços o campo abrange seis linhas, e a altura forçada
-     esticava o <img> para 0.49 em vez de manter 3:4.
-     A proporção é de `aspect-ratio`; o recorte é de `object-fit`. */
+     ignorado. A proporção é de `aspect-ratio`; o recorte é de
+     `object-fit`. */
   height: auto;
+  background: var(--papel-2);
+}
+
+/* ---- CAMPO DE IMAGEM: Serviços ----
+   .serv__plate é sempre o CONTÊINER — nunca é substituído pelo
+   <img>. Precisa continuar existindo porque o numeral do serviço
+   (.serv__plate-num) mora dentro dele, junto da foto. A foto entra
+   como filho, preenchendo por posição absoluta:
+
+     <div class="serv__plate">
+       <span class="serv__plate-num" aria-hidden="true">01</span>
+       <img class="serv__plate__foto" src="..." alt="..."
+            width="1200" height="1600" loading="lazy" decoding="async">
+     </div>
+
+   O placeholder <span class="ap">Imagem</span> sai quando a foto
+   entra — os dois nunca convivem. */
+.serv__plate__foto {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
   background: var(--papel-2);
 }
 
@@ -853,14 +902,20 @@ img.onde__mapa {
     animation: none;
     /* o campo que sai só colapsa DEPOIS que o que entra já cobriu:
        vira uma passagem de imagem, não um piscar */
-    transition: clip-path var(--t-micro) var(--curva) var(--t-micro);
+    transition:
+      clip-path var(--t-micro) var(--curva) var(--t-micro),
+      transform var(--t-entra) var(--curva);
   }
+  /* só a imagem ganha o assentamento de escala — no texto ficaria
+     estranho, e o gesto precisa continuar sendo de uma coisa só */
+  .js--serv .serv__plate { transform: scale(1.04); }
   .js--serv .serv__item.is-ativo .serv__plate,
   .js--serv .serv__item.is-ativo .serv__txt {
     clip-path: inset(0 0 0 0);
     transition-delay: 0s;
     z-index: 1;
   }
+  .js--serv .serv__item.is-ativo .serv__plate { transform: scale(1); }
 
 }
 
@@ -921,7 +976,15 @@ img.onde__mapa {
    limite de deslocamento do resto do sistema. Os três blocos não se
    movem juntos: é o bastante para a diagonal respirar e pouco o
    bastante para não virar parallax. */
-.cliente { transform: translateY(var(--desloc, 0px)); }
+/* sem transition aqui: o JS já recalcula --desloc e --escala em
+   todo quadro de rolagem, e o Lenis já suaviza a rolagem por baixo.
+   Uma transição CSS por cima do valor contínuo só atrasaria o
+   elemento atrás do scroll — dupla suavização lê como flutuante. */
+.cliente {
+  transform: translateY(var(--desloc, 0px)) scale(var(--escala, 1));
+  transform-origin: left center;
+  will-change: transform;
+}
 
 .cliente__nome {
   margin: 0 0 clamp(.9rem, 2.2vh, 1.4rem);
@@ -1176,6 +1239,48 @@ img.onde__mapa {
     display: inline-block;
     padding: .9rem 0;
   }
+}
+
+
+/* 10h. NUMERAL D'ÁGUA ----------------------------------------
+   A resposta ao teste "sem texto, ainda tem identidade?": cada
+   seção carrega o próprio número em escala de pôster, cortado pela
+   borda da tela. Não é decoração solta — é o mesmo dado que o
+   aparato já mostra em 11px, só que a seção o veste por dentro.
+
+   Cor: --fg da própria seção, a 6%. Sempre a MESMA cor do texto que
+   está por cima — nunca uma cor nova — então o numeral nunca briga
+   com a paleta local; ele é a paleta, esticada e quase apagada.
+   ----------------------------------------------------------- */
+[data-secao] {
+  position: relative;
+  z-index: 0;
+  overflow: clip;
+}
+
+.marca-agua {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  margin: 0;
+  font-size: clamp(9rem, 34vw, 26rem);
+  font-weight: 500;
+  line-height: .78;
+  letter-spacing: -.04em;
+  color: rgb(var(--marca-agua-rgb, var(--marrom-rgb)) / .06);
+  transform: translate(14%, 16%);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* cada fundo empresta o próprio canal — o numeral nunca é uma cor
+   importada de fora da seção em que vive */
+.olhar .marca-agua,
+.contato .marca-agua { --marca-agua-rgb: var(--off-white-rgb); }
+
+@media (max-width: 768px) {
+  .marca-agua { font-size: clamp(7rem, 44vw, 14rem); transform: translate(10%, 10%); }
 }
 
 

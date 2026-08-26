@@ -102,12 +102,21 @@ começar pela recusa, não ter cota fixa de posts, mostrar uma direção só, po
 recusar campanha. Foram confirmados um a um. Se algum deixar de ser verdade,
 ele sai; não é questão de redação.
 
-Falta ainda o campo da imagem:
+Falta ainda o campo da imagem. **`.serv__plate` nunca é substituído** — o
+numeral de cada serviço mora dentro dele, carimbado sobre a foto. Trocar só o
+que está por dentro:
 
 ```html
-<img class="serv__plate" src="assets/img/servico-branding.avif"
-     alt="Descrição curta" width="1200" height="1600" loading="lazy">
+<div class="serv__plate">
+  <span class="serv__plate-num" aria-hidden="true">01</span>
+  <img class="serv__plate__foto" src="assets/img/servico-branding.avif"
+       alt="Descrição curta" width="1200" height="1600"
+       loading="lazy" decoding="async">
+</div>
 ```
+
+O `<span class="ap">Imagem</span>` sai; o `<img>` entra no lugar dele, como
+irmão do numeral — nunca substituindo o `<div>` que os contém.
 
 O texto responde **"como trabalhamos"**, não "o que entregamos". Essa é a
 diferença entre a seção parecer método e parecer catálogo.
@@ -273,6 +282,27 @@ A gramática tem quatro níveis e cada um tem um lugar. Estão descritos no
   `main.js`. Acima disso vira parallax.
 - **O peso do item ativo em Serviços** (`430` → `560`) usa o eixo variável da
   Switzer. Se a fonte for trocada por uma estática, o estado ativo some.
+- **A escala de Marcas** (`--escala`, teto de 5%) sai da mesma função que já
+  calcula `--desloc` em `moverDiagonal()`. Mexer numa mexe na outra.
+
+---
+
+## O numeral d'água
+
+Cada seção tem um número gigante e quase apagado (6% de opacidade) cortado
+pela borda — `<span class="marca-agua" aria-hidden="true">`. Não é sobra no
+HTML: é a resposta a "sem texto, a página ainda tem identidade?" e reaproveita
+o número que o `data-num` da própria seção já carrega.
+
+Para trocar a intensidade: `.marca-agua { color: ... / .06 }`, em
+`style.css`. Mais que ~10% já compete com o texto de verdade. Para trocar o
+canto onde sangra: `bottom/right` + `transform: translate()`, na mesma regra.
+
+Em Serviços existe um segundo numeral, diferente: `.serv__plate-num` carimba o
+número do serviço ativo sobre a própria imagem, com
+`mix-blend-mode: multiply`. Esse não é opcional — quando a foto entrar, ele é
+o que faz a seção parecer composta e não um retângulo esperando conteúdo. Ver
+"Preencher um serviço" acima para o HTML exato.
 
 ---
 
@@ -291,7 +321,7 @@ A gramática tem quatro níveis e cada um tem um lugar. Estão descritos no
 - **Não criar cartão** — retângulo com preenchimento, canto arredondado e sombra.
   Agrupamento se faz com fio de 1px e espaço.
 - **Não criar ícone de serviço.**
-- **Não usar número grande decorativo.** A numeração vive no aparato, em 11px.
+- **Não criar número grande NOVO.** As duas exceções existentes — o numeral d'água e o carimbo de Serviços — usam dado que já existe em outro lugar (`data-num`, `.serv__num`). Um terceiro número grande, inventado do zero, não tem essa licença.
 - **Não inventar dado de contato.** Um e-mail plausível mas errado, publicado em
   100px, é pior que um campo marcado como pendente.
 - **Não fazer o corpo dos nomes de serviço seguir a ordem da lista.** O corpo é

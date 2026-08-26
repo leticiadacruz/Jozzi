@@ -149,12 +149,13 @@ mais quer que se leia — a frase da abertura e as quatro afirmações do olhar.
 Mesmo mecanismo que alimenta a esteira de peso: as palavras já estavam
 quebradas.
 
-**3 · Interpolação por scroll.** Dois usos, ambos com teto de 12px, que é o
-limite de deslocamento do sistema. O aparato preenche o trecho já percorrido —
-a trilha deixa de ser um fio com um ponto e passa a medir. E os três blocos da
-diagonal de Marcas se deslocam em tempos ligeiramente diferentes ao cruzar o
-meio da tela: o bastante para a diagonal respirar, pouco o bastante para não
-virar parallax.
+**3 · Interpolação por scroll.** Dois usos, ambos com teto de 12px de
+deslocamento. O aparato preenche o trecho já percorrido — a trilha deixa de ser
+um fio com um ponto e passa a medir. E os três blocos da diagonal de Marcas se
+deslocam em tempos ligeiramente diferentes ao cruzar o meio da tela — mais um
+teto de 5% de escala no bloco mais próximo do centro, a única transformação de
+escala do sistema fora de Serviços. O bastante para a diagonal respirar, pouco
+o bastante para não virar parallax.
 
 **4 · Resposta do estado ativo.** Em Serviços o item ativo responde **no eixo
 variável da Switzer** — 430 para 560 — que é o mesmo recurso da esteira da
@@ -252,12 +253,22 @@ decorativo. Ritmo: 00 papel · 01 papel · **02 tinta** · 03 papel · 04 papel 
 Nenhuma seção repete a estrutura da anterior. Se duas seguidas usam a mesma
 grade, uma das duas é redesenhada.
 
-Sem cartão. Sem ícone. Sem número grande decorativo. Sem elemento adicionado
-porque "a seção precisava de algo". **O espaço vazio é parte da composição** —
-não é sobra a ser preenchida.
+Sem cartão. Sem ícone. Sem elemento adicionado porque "a seção precisava de
+algo". **O espaço vazio é parte da composição** — não é sobra a ser preenchida.
 
 Margens reais de cartaz, sem caixa central de 1200px. Todo elemento se ancora em
 coluna nomeada; nada está centrado "porque sim".
+
+**Uma exceção deliberada à regra de "sem número grande":** o numeral d'água.
+Cada seção carrega o próprio número (`data-num`) em escala de pôster, cortado
+pela borda da tela, 6% da cor de texto da própria seção. Não é decoração
+solta — é o mesmo dado que o aparato já mostra em 11px, só que a seção o veste
+por dentro. É a resposta a uma pergunta concreta: *se alguém remover todo o
+texto, a página ainda tem identidade reconhecível?* Antes, não. Implementado
+como `<span class="marca-agua" aria-hidden="true">` logo na abertura de cada
+`[data-secao]`, que ganhou `position: relative; overflow: clip;` para conter o
+sangramento. Sempre `aria-hidden` — decoração pura, fora da árvore de
+acessibilidade, e por isso fora também da régua de contraste de texto.
 
 ### Imagem
 
@@ -341,6 +352,23 @@ de duas zonas só entra quando o módulo está de pé. Abaixo de 1025px, o item
 ativo abre no próprio fluxo e a imagem passa de 3:4 para 1:1 — no fluxo, o 3:4
 come uma tela inteira entre dois nomes.
 
+**O número do serviço é carimbado sobre a própria imagem.** `.serv__plate-num`
+repete o número que já está no índice (`01`–`05`), grande, com
+`mix-blend-mode: multiply`: sobre o bege de hoje ele tinge; sobre a foto de
+amanhã ele escurece por cima sem apagar a imagem, como tinta impressa por
+cima. É o que faz o campo de imagem parar de ser "um retângulo vazio à espera
+de conteúdo" — mesmo antes da foto chegar, a seção já tem uma composição.
+
+**`.serv__plate` é sempre o contêiner, nunca é substituído pelo `<img>`.** O
+numeral mora dentro dele; a foto entra como um segundo filho,
+`.serv__plate__foto`, absolutamente posicionada para preencher a caixa. Isso é
+diferente do padrão usado em `.fig__campo`/`.onde__mapa`, onde o próprio `<img>`
+é o elemento sizado. Ver `MANUTENCAO.md` para o trecho exato.
+
+A imagem ativa também ganha um assentamento sutil de escala na entrada — 1,04
+para 1,00 — a única transformação de escala real do sistema, e só na imagem;
+o texto nunca escala.
+
 **Textos aprovados e no ar.** As cinco frentes são cinco formas de recusa, e o
 verbo muda em cada uma: Branding recusa caminhos, Social Media recusa datas,
 Design recusa alternativas, Web Development recusa dependência, Tráfego Pago
@@ -380,10 +408,17 @@ pequeno — nome, setor, escopo — e a regra de posição é: **cada marca avan
 colunas e uma linha em relação à anterior**, dando a volta a cada três. Coluna
 1, 4, 7, 1, 4, 7…
 
-**Todas as marcas no mesmo corpo.** Entre clientes, diferença de escala não é
-lida como composição: é lida como declaração sobre a relação, e um cliente que
-vê o próprio nome menor que o de outro tem um problema comercial. A variação é
-toda de posição.
+**O corpo em repouso é o mesmo para todas.** Entre clientes, diferença de
+escala PERMANENTE não é lida como composição: é lida como declaração sobre a
+relação, e um cliente que vê o próprio nome menor que o de outro tem um
+problema comercial.
+
+O que existe é diferente: uma variação **momentânea**, presa ao scroll — o
+bloco mais perto do meio da tela cresce até 5% e volta assim que passa do
+centro (`--escala`, calculado em `moverDiagonal()`, teto de 12px de
+deslocamento já existente mais 5% de escala). Não é hierarquia fixa entre as
+marcas; é o leitor cruzando o campo. Nenhuma marca "vale mais" — todas passam
+pelo mesmo pico, na mesma posição da tela, na sua vez.
 
 Primeira seção desde a abertura **sem nenhuma interação**. Depois da densidade
 de Serviços, o silêncio é o ritmo. Não há ticker, hover nem laço: a entrada é a

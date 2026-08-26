@@ -349,6 +349,15 @@
       var d = (r.top + r.height / 2 - meio) / window.innerHeight;
       var y = Math.max(-TETO, Math.min(TETO, d * TETO * (1 + i * 0.45)));
       el.style.setProperty('--desloc', y.toFixed(1) + 'px');
+
+      /* a marca mais perto do meio da tela cresce um pouco — a
+         mesma regra que já dizia que nenhuma marca tem corpo maior
+         que outra continua valendo em repouso; a variação aqui é
+         momentânea, do scroll, e some assim que o bloco passa do
+         centro. Não é hierarquia, é o leitor cruzando o campo. */
+      var prox = Math.max(0, 1 - Math.min(1, Math.abs(d) * 2.2));
+      var escala = 1 + prox * .05;
+      el.style.setProperty('--escala', escala.toFixed(3));
     });
   }
 
