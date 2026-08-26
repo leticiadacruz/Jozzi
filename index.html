@@ -12,13 +12,30 @@
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_BR">
 <meta property="og:title" content="Jozzi — Laboratório de marca em Curitiba">
+<meta property="og:site_name" content="Jozzi">
 <meta property="og:description" content="Poucas marcas por vez, e atenção desproporcional a cada uma.">
 
 <link rel="preload" href="assets/fonts/Switzer-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/IBMPlexMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/style.css?v=26">
+<link rel="stylesheet" href="assets/css/style.css?v=31">
 
-<script>document.documentElement.className += " js";</script>
+<script>
+(function () {
+  var h = document.documentElement;
+  h.className += ' js';
+
+  /* Rede de segurança de fora do main.js: se o script principal não
+     subir, o estado escondido da máscara não pode deixar o site em
+     branco. A rede de dentro do main.js cobre o outro caso — script
+     de pé, observador falho.
+
+     2s: o main.js tem `defer`, então roda antes do DOMContentLoaded.
+     Se ele existe, a marca já está posta muito antes disso. */
+  setTimeout(function () {
+    if (h.className.indexOf('js--pronto') === -1) h.className += ' js--sem-motor';
+  }, 2000);
+})();
+</script>
 </head>
 
 <body>

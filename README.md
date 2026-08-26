@@ -108,7 +108,16 @@ A mono nunca aparece acima de 13px e nunca compete com a Switzer.
 Um gesto, uma curva, três durações.
 
 - **Máscara** — `clip-path` abrindo de baixo para cima, com no máximo 10px de
-  deslocamento. É o único jeito de algo aparecer no site.
+  deslocamento, na animação `revelar`. É o único jeito de algo aparecer no site.
+
+  **O estado de repouso de `.rv` é opacidade, não recorte** — e isso não é
+  detalhe de implementação. O `IntersectionObserver` calcula a interseção sobre
+  a caixa **já recortada**: um elemento com `clip-path: inset(0 0 102% 0)` tem
+  razão de interseção zero e nunca atinge um limiar de 0,01. Com a máscara no
+  repouso, o observador nunca revelou nada, em lugar nenhum — a entrada só
+  parecia funcionar porque a rede de segurança revelava tudo aos 3,5s. Se
+  alguém devolver o `clip-path` para o estado de repouso, a animação de entrada
+  morre em silêncio outra vez.
 - **Curva** — `cubic-bezier(.16, 1, .3, 1)`. Se uma animação nova precisar de
   outra curva, ela não entra.
 - **Durações** — 200ms para micro-interação e troca de estado, 600ms para
@@ -124,9 +133,30 @@ Um gesto, uma curva, três durações.
   ponteiro fino e sem movimento reduzido. Hoje: *Ver* no índice de Serviços,
   *Copiar* / *Copiado* no endereço de e-mail.
 
+- **Estados de clique** — `:active` nos dois links do Contato e no link do
+  Maps, na mesma cor do foco. No telefone não existe hover, e sem `:active` o
+  toque não devolve nada antes de a página trocar.
+
 Sem `prefers-reduced-motion`: as máscaras viram estado final imediato, o Lenis
 não inicializa, a esteira não existe, o cursor não existe. Nenhum conteúdo
 depende de animação.
+
+### Rede de segurança, em duas camadas
+
+Nada pode ficar escondido por causa da máscara.
+
+1. **Fora do `main.js`**, no `<head>`: se o script principal não subir em 2s, a
+   classe `js--sem-motor` revela tudo. O `main.js` tem `defer`, então roda antes
+   do `DOMContentLoaded` — se existe, marca `js--pronto` muito antes do prazo.
+2. **Dentro do `main.js`**, aos 3,5s: se o observador não subiu, revela tudo. Se
+   subiu, desbloqueia só o que o leitor já alcançou e deixa o resto com ele.
+
+A camada 2 já cobriu demais uma vez: revelava a página inteira, e por isso o
+sistema de movimento passou meses morto sem ninguém notar. Ela cobre a falha,
+não o funcionamento.
+
+Um elemento ainda não revelado continua focável, então `.rv:focus-within`
+força a aparição — invisível e focável é a pior combinação possível.
 
 ### Aparato
 
@@ -165,6 +195,20 @@ coluna nomeada; nada está centrado "porque sim".
 
 Três proporções no site inteiro: **3:4, 16:9, 1:1**. Recorte fora dessas três não
 entra. Um único tratamento de cor para todas.
+
+**Os campos estão prontos para receber os arquivos.** `object-fit: cover` e
+`object-position: center` valem para a `<div>` marcada de hoje e para o `<img>`
+de amanhã: o arquivo preenche a caixa e é recortado, nunca esticado. Testado com
+arquivo real em 1440 e 390 — serviço 3:4 no desktop e 1:1 no fluxo, seção 01
+sempre 3:4, mapa sempre 1:1.
+
+**`height: auto` no `<img>` é obrigatório.** Sem ele o atributo `height` do
+arquivo vira altura usada e o `aspect-ratio` da classe é ignorado. E não pode
+ser `height: 100%`: dentro da grade de Serviços o campo abrange seis linhas, e a
+altura forçada estica o `<img>` para 0,49 em vez de manter 3:4.
+
+**Área segura:** o recorte 3:4 → 1:1 do mobile tira um oitavo em cima e um
+oitavo embaixo. Nada essencial pode viver nessas duas faixas.
 
 **Nunca stock photo. Nunca imagem genérica. Nunca imagem gerada.** A direção
 depende de material real da Jozzi e dos clientes. Enquanto não houver material,
@@ -377,6 +421,26 @@ Falta preencher:
 5. Ano de fundação e demais dados institucionais — sem lugar definido ainda; a
    ficha técnica que existia na seção 01 foi removida por repetir o parágrafo
    logo acima dela.
+
+---
+
+## Antes de publicar
+
+O site está com **`<meta name="robots" content="noindex">`**. Isso é
+deliberado enquanto for protótipo, e é a única coisa capaz de anular o trabalho
+de SEO inteiro se alguém esquecer. Junto dela, quatro itens que dependem de
+decisão e por isso não foram inventados:
+
+| | |
+| --- | --- |
+| `robots` | tirar o `noindex` |
+| `canonical` e `og:url` | dependem da URL final |
+| `og:image` | depende de uma imagem que ainda não existe |
+| `rel="icon"` | **não existe favicon.** Depende de decidir qual marca vai em 16px: o logotipo inteiro é ilegível nesse tamanho, e recortá-lo é decisão de marca |
+
+Já resolvido: `<title>`, `description`, `og:type`, `og:title`,
+`og:description`, `og:site_name`, `og:locale`, `lang="pt-BR"`, `theme-color`,
+hierarquia de títulos, landmarks e zero recurso externo.
 
 ---
 

@@ -312,22 +312,55 @@ a { color: inherit; text-decoration: none; }
    Um gesto: máscara de baixo para cima, com 10px de
    deslocamento. Uma curva. Nada mais.
    ----------------------------------------------------------- */
-.js .rv,
+/* O estado de repouso de .rv é OPACIDADE, não recorte.
+
+   O IntersectionObserver calcula a interseção sobre a caixa já
+   recortada: com `clip-path: inset(0 0 102% 0)` a razão de
+   interseção é sempre 0, e o limiar de 0,01 nunca era atingido.
+   O observador nunca revelou nada em lugar nenhum — o que só não
+   aparecia porque a rede de segurança revelava tudo aos 3,5s.
+
+   Baixar o limiar para 0 faz o Chromium disparar mesmo com razão
+   zero, mas isso depende de como cada navegador trata o caso.
+   Com a caixa intacta, o observador enxerga em qualquer um. A
+   máscara entra como animação no momento da revelação: mesmo
+   gesto, mesma curva, mesma duração. */
+.js .rv { opacity: 0; }
+
+.js .rv.is-dentro {
+  opacity: 1;
+  animation: revelar var(--t-entra) var(--curva) both;
+}
+
+/* um elemento ainda não revelado continua focável. Se o foco chegar
+   antes do observador, ele aparece na hora — invisível e focável é
+   a pior combinação possível. */
+.js .rv:focus-within { opacity: 1; }
+
+/* main.js não subiu: nada fica escondido. Mesma especificidade da
+   regra acima, resolvida por ordem — sem !important. */
+.js--sem-motor .rv {
+  opacity: 1;
+  animation: none;
+}
+
+/* as palavras da abertura não passam pelo observador — são
+   reveladas por tempo, linha a linha — então mantêm o recorte */
 .js [data-peso] .pal {
   clip-path: inset(0 0 102% 0);
   transform: translateY(10px);
 }
-
-.js .rv {
-  transition:
-    clip-path var(--t-entra) var(--curva),
-    transform var(--t-entra) var(--curva);
-}
-
-.js .rv.is-dentro,
 .js [data-peso] .pal.is-dentro {
   clip-path: inset(0 0 -8% 0);
   transform: none;
+}
+
+/* o gesto único do site: máscara de baixo para cima com 10px de
+   deslocamento. Serve à entrada de qualquer elemento e à abertura
+   do serviço ativo no fluxo do mobile. */
+@keyframes revelar {
+  from { clip-path: inset(0 0 102% 0); transform: translateY(10px); }
+  to   { clip-path: inset(0 0 -8% 0);  transform: none; }
 }
 
 .js [data-peso] { clip-path: inset(0 0 102% 0); }
@@ -597,6 +630,33 @@ a { color: inherit; text-decoration: none; }
 }
 .serv__plate .ap { color: var(--fg-3); }
 
+/* ---- CAMPOS DE IMAGEM ----
+   Valem para a <div> marcada de hoje e para o <img> de amanhã: o
+   arquivo preenche a caixa e é RECORTADO, nunca esticado.
+
+   O recorte 3:4 -> 1:1 do mobile tira um oitavo em cima e um oitavo
+   embaixo. A área segura é o miolo vertical. */
+.fig__campo,
+.serv__plate,
+.onde__mapa {
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+img.fig__campo,
+img.serv__plate,
+img.onde__mapa {
+  display: block;
+  /* `height: auto` é obrigatório: sem ele o atributo height="1600"
+     do arquivo vira altura usada e o `aspect-ratio` da classe é
+     ignorado. E não pode ser `height: 100%` — dentro da grade de
+     Serviços o campo abrange seis linhas, e a altura forçada
+     esticava o <img> para 0.49 em vez de manter 3:4.
+     A proporção é de `aspect-ratio`; o recorte é de `object-fit`. */
+  height: auto;
+  background: var(--papel-2);
+}
+
 /* O par de textos do serviço, no registro de texto. Antes eram dois
    campos de aparato marcando o que faltava; com o conteúdo real, a
    cor de "pendente" (--fg-3) sairia como texto apagado, e sem regra
@@ -847,10 +907,14 @@ a { color: inherit; text-decoration: none; }
   transition: color var(--t-micro) var(--curva);
 }
 
+/* :active fecha a lacuna do toque — no telefone não existe hover,
+   e sem ele o toque não devolve nada antes de a página trocar */
 .contato__email:hover,
 .contato__email:focus-visible,
+.contato__email:active,
 .contato__zap:hover,
-.contato__zap:focus-visible { color: var(--sinal); }
+.contato__zap:focus-visible,
+.contato__zap:active { color: var(--sinal); }
 
 /* a legenda encosta no endereço, e o WhatsApp começa na mesma
    altura: as duas portas dividem a faixa pelo topo, não pela base.
@@ -953,7 +1017,8 @@ a { color: inherit; text-decoration: none; }
               border-color var(--t-micro) var(--curva);
 }
 .onde__acao a:hover,
-.onde__acao a:focus-visible {
+.onde__acao a:focus-visible,
+.onde__acao a:active {
   color: var(--sinal);
   border-color: var(--sinal);
 }
@@ -1081,9 +1146,11 @@ a { color: inherit; text-decoration: none; }
   .js .rv.is-dentro,
   .js [data-peso] .pal,
   .js [data-peso] .pal.is-dentro {
+    opacity: 1;
     clip-path: none;
     transform: none;
     transition: none;
+    animation: none;
   }
   .aparato__num,
   .aparato__sec { transition: none; }
@@ -1091,7 +1158,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 @media print {
-  .aparato, .pular { display: none; }
+  .aparato, .pular, .cursor { display: none; }
   body { background: #fff; color: #000; }
-  .js .rv { clip-path: none; transform: none; }
+  .js .rv { opacity: 1; clip-path: none; transform: none; animation: none; }
 }

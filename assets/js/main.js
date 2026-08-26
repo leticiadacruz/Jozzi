@@ -129,7 +129,7 @@
         revelar(e.target, 0);
         observador.unobserve(e.target);
       });
-    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.01 });
+    }, { rootMargin: '0px 0px -12% 0px', threshold: 0 });
 
     document.querySelectorAll('.rv:not([data-atraso])').forEach(function (el) { observador.observe(el); });
   }
@@ -490,13 +490,35 @@
 
 
   /* 08. REDE DE SEGURANÇA -----------------------------------
-     Se qualquer coisa acima falhar, nada fica escondido.
+     Cobre a falha, não o funcionamento.
+
+     A versão anterior chamava revelarTudo() aos 3,5s sem
+     condição — e revelava as 38 peças abaixo da dobra junto
+     com as duas visíveis. Resultado: a entrada por máscara só
+     acontecia na primeira tela, e as seções 01 a 06 nunca
+     animavam. O sistema de movimento estava morto em 95% do
+     site sem que nada parecesse quebrado.
+
+     Agora: se o observador não subiu, revela tudo. Se subiu,
+     só desbloqueia o que o leitor já alcançou — o resto
+     continua a cargo dele.
      -------------------------------------------------------- */
-  window.setTimeout(revelarTudo, 3500);
+  function redeDeSeguranca() {
+    if (!observador) { revelarTudo(); return; }
+
+    document.querySelectorAll('.rv:not(.is-dentro)').forEach(function (el) {
+      if (el.getBoundingClientRect().top < window.innerHeight) {
+        el.classList.add('is-dentro');
+      }
+    });
+  }
+
+  window.setTimeout(redeDeSeguranca, 3500);
 
 
   /* PARTIDA ------------------------------------------------- */
   function iniciar() {
+    document.documentElement.className += ' js--pronto';
     montarPalavras();
 
     var seguir = function () {

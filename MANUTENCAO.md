@@ -55,13 +55,22 @@ verbal delas sem aprovação.
 ```html
 <img class="fig__campo" src="assets/img/nome-do-arquivo.avif"
      alt="Descrição curta do que a foto mostra"
-     width="1200" height="1600" loading="lazy">
+     width="1200" height="1600" loading="lazy" decoding="async">
 ```
 
 3. Trocar a legenda logo abaixo, dentro de `<figcaption>`.
 
 `width` e `height` são obrigatórios: sem eles a página "pula" enquanto a imagem
-carrega.
+carrega. O CSS já cuida do resto — `object-fit: cover` recorta em vez de
+esticar, e `height: auto` deixa a proporção da classe mandar.
+
+**Nunca escrever `height` ou `width` no CSS desses campos.** `height: 100%`
+estica a imagem dentro da grade de Serviços; tirar o `height: auto` faz o
+atributo `height="1600"` do arquivo virar altura real. Os dois já foram testados
+e quebram.
+
+**Área segura:** no mobile o campo de Serviços vira 1:1 e corta um oitavo em
+cima e um oitavo embaixo. O assunto tem que viver no miolo vertical do arquivo.
 
 **As três proporções permitidas no site inteiro são 3:4, 16:9 e 1:1.** Recorte
 fora dessas três não entra — é o que mantém a página parecendo composta.
