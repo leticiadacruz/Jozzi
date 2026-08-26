@@ -60,20 +60,40 @@ nunca como slogan.
 
 ### Paleta
 
-| | | |
+A paleta oficial da Jozzi. **As sete cores entram porque as sete têm função** —
+nenhuma foi forçada para mostrar a paleta.
+
+| | | Função |
 | --- | --- | --- |
-| Papel | `#F0ECE3` | Fundo dominante |
-| Tinta | `#16150F` | Texto e fundos invertidos |
-| Ardósia | `#6F8290` | Herdada do logotipo. Fios do aparato — é a única cor legível sobre papel **e** sobre tinta |
-| Sinal | `#2033C9` | Interação e numeração ativa. **Teto: 3% da superfície** |
-| Sinal claro | `#8B95FF` | O mesmo sinal sobre tinta. `#2033C9` sobre fundo invertido dá ~2:1 e é ilegível — não é uma cor nova, é a mesma função adaptada, como o aparato que troca de cor na travessia |
+| Off white | `#F3F0E8` | Papel, o fundo dominante |
+| Marrom | `#372215` | A tinta do texto sobre papel — 13,2:1 |
+| Verde | `#3B3D33` | O fundo das duas inversões, 02 e 05 |
+| Bege | `#DDDCCC` | Superfície secundária: os campos de imagem |
+| Azul | `#788692` | Instrumento do aparato e anel de foco |
+| Amarelo | `#EEE3B5` | O sinal sobre tinta, onde o azul não alcança |
+| Bordô | `#402428` | Seleção de texto |
+
+Tudo o mais é **transparência dessas mesmas sete**. Os canais estão em
+`--marrom-rgb`, `--off-white-rgb` e `--azul-rgb`: trocar o hexadecimal leva
+junto todas as derivações. Nenhuma cor crua sobrou fora dos tokens, exceto no
+bloco de impressão — lá `#fff` significa "sem tinta no papel" e `#000` significa
+"tinta cheia", que não são cores de marca.
+
+**Onde o azul pode e não pode ir.** Medido: `#788692` dá **3,28:1** sobre o
+papel. Isso basta para anel de foco e fio de instrumento, que exigem 3:1, e não
+basta para texto. Mais importante: o azul é **mais claro** que o texto em
+repouso, então pintar um elemento ativo de azul o deixaria *menos* contrastado
+que os inativos e o sinal se inverteria. Por isso, sobre papel, **interação se
+marca por contraste** — o item ativo vai para a tinta cheia. Sobre tinta o azul
+dá 2,96:1 e nem como foco serve: ali quem sinaliza é o amarelo, com 8,6:1.
 
 Nenhum gradiente. Nenhuma sombra. Nenhum `border-radius`. Fios de 1px.
-Profundidade vem de inversão de fundo, não de sombra.
+Profundidade vem de inversão de fundo.
 
-Nas seções 00 a 02 o Sinal **não aparece**: três seções inteiras sem acento
-nenhum. Ele estreia em Serviços, marcando a frente ativa do índice, e volta a
-trabalhar no Contato. Um nome em azul por vez fica muito abaixo do teto de 3%.
+**Contraste verificado em 1440 e 390 com composição de alfa:** 25 e 23 pares de
+texto medidos, **zero abaixo do mínimo**. O mais justo é o aparato em 11px, a
+4,56:1 contra o mínimo de 4,5. Sobre bege o aparato precisa de 72% em vez de
+65% para alcançar o mesmo — a regra está local nos campos de imagem.
 
 ### Tipografia
 

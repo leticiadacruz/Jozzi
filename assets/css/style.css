@@ -49,23 +49,52 @@
 
 /* 02. TOKENS ------------------------------------------------ */
 :root {
-  /* paleta aprovada */
-  --papel:    #F0ECE3;
-  --papel-2:  #E6E1D6;
-  --tinta:    #16150F;
-  --ardosia:  #6F8290;
-  --sinal:    #2033C9;
-  /* o mesmo sinal, adaptado para o fundo invertido: #2033C9 sobre
-     tinta dá ~2:1 e é ilegível. Não é uma cor nova — é a mesma
-     função, como o aparato que troca de cor na travessia. */
-  --sinal-claro: #8B95FF;
+  /* ---- PALETA OFICIAL DA JOZZI ----
+     Os sete valores da marca. Nada abaixo inventa cor: tudo o mais
+     é transparência destes mesmos sete. */
+  --off-white: #F3F0E8;
+  --verde:     #3B3D33;
+  --marrom:    #372215;
+  --azul:      #788692;
+  --bege:      #DDDCCC;
+  --bordo:     #402428;
+  --amarelo:   #EEE3B5;
 
-  /* derivados — todo neutro tem viés quente, nenhum é cinza de sistema */
-  --fg:    var(--tinta);
-  --fg-2:  rgba(22, 21, 15, .64);
-  --fg-3:  rgba(22, 21, 15, .40);
-  --fio:   rgba(22, 21, 15, .17);
-  --fio-2: rgba(22, 21, 15, .08);
+  /* Canais das três cores que precisam de transparência. Existem
+     para que a paleta continue morando num lugar só: trocar o hexa
+     acima leva junto todas as derivações. */
+  --marrom-rgb:    55 34 21;
+  --off-white-rgb: 243 240 232;
+  --azul-rgb:      120 134 146;
+
+  /* ---- FUNÇÕES ----
+     Cada cor tem um trabalho e só um. As sete entram porque as sete
+     têm função — nenhuma foi forçada para "mostrar a paleta".
+
+       off-white  papel, o fundo dominante
+       marrom     a tinta do texto sobre papel (13,2:1)
+       verde      o fundo das duas inversões (02 e 05)
+       bege       superfície secundária: os campos de imagem
+       azul       instrumento do aparato e anel de foco
+       amarelo    o sinal sobre tinta, onde o azul não alcança
+       bordô      seleção de texto                                */
+  --papel:     var(--off-white);
+  --papel-2:   var(--bege);
+  --tinta:     var(--verde);
+  --texto:     var(--marrom);
+  --sinal:     var(--azul);
+  --sinal-inv: var(--amarelo);
+  --realce:    var(--bordo);
+
+  /* derivados — só transparência das cores acima.
+     As frações foram medidas, não escolhidas: 75% dá 6,2:1 no texto
+     secundário e 65% dá 4,5:1 no aparato, que é 11px e precisa do
+     limite de texto pequeno. */
+  --fg:    var(--texto);
+  --fg-2:  rgb(var(--marrom-rgb) / .75);
+  --fg-3:  rgb(var(--marrom-rgb) / .65);
+  --fio:   rgb(var(--marrom-rgb) / .20);
+  --fio-2: rgb(var(--marrom-rgb) / .10);
 
   /* escala — o meio (24–44px) não existe de propósito */
   --fs-display:   clamp(2.6rem, 7.4vw + 1rem, 11rem);
@@ -114,7 +143,7 @@ body {
   overflow-x: hidden;
 }
 
-::selection { background: var(--sinal); color: var(--papel); }
+::selection { background: var(--realce); color: var(--papel); }
 
 p, h1, h2, dl, dd, figure { margin: 0; }
 
@@ -245,7 +274,7 @@ a { color: inherit; text-decoration: none; }
     /* ardósia é a única cor da paleta legível sobre papel E sobre
        tinta. Por isso o fio e a marca nunca precisam trocar de cor
        quando o fundo inverte — só os dois blocos de texto trocam. */
-    background: rgba(111, 130, 144, .34);
+    background: rgb(var(--azul-rgb) / .38);
   }
   .aparato__marca {
     position: absolute;
@@ -253,7 +282,7 @@ a { color: inherit; text-decoration: none; }
     top: 0;
     width: 1px;
     height: 14px;
-    background: rgba(111, 130, 144, .85);
+    background: rgb(var(--azul-rgb) / .90);
   }
 
   /* cada bloco troca de cor conforme o que está atrás DELE, não
@@ -261,7 +290,7 @@ a { color: inherit; text-decoration: none; }
      e, na travessia, o topo e o rodapé estão sobre fundos diferentes.
      Sem transição — a troca acompanha a aresta do fundo. */
   .aparato__id.is-claro,
-  .aparato__hora.is-claro { color: rgba(240, 236, 227, .48); }
+  .aparato__hora.is-claro { color: rgb(var(--off-white-rgb) / .62); }
 
   .aparato__hora {
     display: grid;
@@ -282,11 +311,13 @@ a { color: inherit; text-decoration: none; }
   border-top: 0;
 
   --fg:    var(--papel);
-  --fg-2:  rgba(240, 236, 227, .74);
-  --fg-3:  rgba(240, 236, 227, .48);
-  --fio:   rgba(240, 236, 227, .20);
-  --fio-2: rgba(240, 236, 227, .10);
-  --sinal: var(--sinal-claro);
+  --fg-2:  rgb(var(--off-white-rgb) / .78);
+  --fg-3:  rgb(var(--off-white-rgb) / .62);
+  --fio:   rgb(var(--off-white-rgb) / .22);
+  --fio-2: rgb(var(--off-white-rgb) / .11);
+  /* sobre verde o azul dá 2,96:1 e nem como anel de foco serve.
+     O amarelo dá 8,6:1 — é ele que sinaliza aqui. */
+  --sinal: var(--sinal-inv);
 }
 
 
@@ -586,7 +617,11 @@ a { color: inherit; text-decoration: none; }
   font-weight: 500;
   letter-spacing: -.03em;
   line-height: 1.06;
-  color: var(--fg-2);
+  /* os inativos descem para o tom do aparato: com o ativo em tinta
+     cheia e os inativos em --fg-2 a diferença ficava tênue demais
+     para ler como estado. 4,56:1 continua acima do mínimo de texto
+     grande, que é 3:1. */
+  color: var(--fg-3);
   transition: color var(--t-micro) var(--curva);
 }
 
@@ -598,8 +633,15 @@ a { color: inherit; text-decoration: none; }
   transition: color var(--t-micro) var(--curva);
 }
 
+/* O item ativo vai para a tinta cheia, não para o azul.
+   Medido: o azul da paleta dá 3,28:1 sobre papel e os nomes em
+   repouso dão 6,2:1 — pintar o ativo de azul o deixaria MENOS
+   contrastado que os inativos e o sinal se inverteria. Aqui a
+   interação se marca por contraste, que é como o resto do sistema
+   já marca hierarquia. O azul segue sendo o sinal onde alcança:
+   anel de foco, instrumento do aparato e, sobre tinta, o amarelo. */
 .serv__item.is-ativo .serv__nome,
-.serv__item.is-ativo .serv__num { color: var(--sinal); }
+.serv__item.is-ativo .serv__num { color: var(--fg); }
 
 /* ajuste óptico por palavra — a regra é o comprimento, não a
    disciplina. Design é a terceira da lista e a maior de todas: a
@@ -642,6 +684,11 @@ a { color: inherit; text-decoration: none; }
   width: 100%;
   object-fit: cover;
   object-position: center;
+  /* o rótulo destes campos fica sobre bege, não sobre papel: no
+     fundo mais escuro o aparato cai para 4,19:1 e não alcança o
+     mínimo de texto pequeno. Sobe só aqui — o resto do aparato
+     continua no tom silencioso. */
+  --fg-3: rgb(var(--marrom-rgb) / .72);
 }
 img.fig__campo,
 img.serv__plate,
@@ -1016,10 +1063,12 @@ img.onde__mapa {
   transition: color var(--t-micro) var(--curva),
               border-color var(--t-micro) var(--curva);
 }
+/* o texto escurece e o fio assume o azul: em 11px o azul sozinho
+   baixaria a legibilidade do estado de hover em vez de aumentá-la */
 .onde__acao a:hover,
 .onde__acao a:focus-visible,
 .onde__acao a:active {
-  color: var(--sinal);
+  color: var(--fg);
   border-color: var(--sinal);
 }
 
@@ -1157,6 +1206,9 @@ img.onde__mapa {
   .js--serv .serv__item.is-ativo .serv__rev { animation: none; }
 }
 
+/* Impressão é outro meio: #fff significa "sem tinta no papel" e
+   #000 significa "tinta cheia". Não são cores de marca — imprimir
+   o off-white gastaria tinta para reproduzir a ausência dela. */
 @media print {
   .aparato, .pular, .cursor { display: none; }
   body { background: #fff; color: #000; }

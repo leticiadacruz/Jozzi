@@ -212,12 +212,23 @@ certo.
 
 ## Trocar uma cor
 
-Em `assets/css/style.css`, seção **02. TOKENS**, no topo do arquivo. Todas as
-cores do site saem de lá. Não trocar cor em nenhum outro lugar.
+Em `assets/css/style.css`, seção **02. TOKENS**, no topo do arquivo. Estão lá os
+sete hexadecimais da paleta oficial e, logo abaixo, as funções. Todo o resto do
+site é transparência dessas sete — **não existe cor crua em nenhum outro lugar**.
 
-O **Sinal** (`#2033C9`) não pode passar de ~3% da superfície da tela. Ele existe
-para marcar interação e numeração ativa. Se começar a aparecer em blocos
-grandes, a direção se desfaz.
+Se trocar um hexadecimal, trocar também o canal correspondente logo abaixo
+(`--marrom-rgb`, `--off-white-rgb`, `--azul-rgb`). São eles que alimentam as
+transparências.
+
+**Depois de qualquer troca de cor, medir contraste outra vez.** O aparato em
+11px está a 4,56:1 contra um mínimo de 4,5 — é o par mais justo do site e o
+primeiro a cair.
+
+**O azul não serve para texto.** Dá 3,28:1 sobre papel: basta para anel de foco
+e fio, não para letra. E é mais claro que o texto em repouso, então pintar um
+item ativo de azul o deixa *menos* visível que os inativos. Sobre papel a
+interação se marca indo para a tinta cheia; sobre tinta, quem sinaliza é o
+amarelo.
 
 ---
 
