@@ -597,8 +597,13 @@ a { color: inherit; text-decoration: none; }
 }
 .serv__plate .ap { color: var(--fg-3); }
 
-.serv__falta { margin: 0; color: var(--fg-3); }
-.serv__falta + .serv__falta { margin-top: .7rem; }
+/* O par de textos do serviço, no registro de texto. Antes eram dois
+   campos de aparato marcando o que faltava; com o conteúdo real, a
+   cor de "pendente" (--fg-3) sairia como texto apagado, e sem regra
+   nenhuma os dois parágrafos se encostariam — `p` tem margin 0 na
+   base. Espaçamento e cor, nada além disso. */
+.serv__txt p { margin: 0; color: var(--fg-2); }
+.serv__txt p + p { margin-top: .8rem; }
 
 
 /* ---- com o módulo de pé: só o item ativo revela ---- */

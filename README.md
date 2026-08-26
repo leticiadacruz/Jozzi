@@ -229,17 +229,34 @@ de duas zonas só entra quando o módulo está de pé. Abaixo de 1025px, o item
 ativo abre no próprio fluxo e a imagem passa de 3:4 para 1:1 — no fluxo, o 3:4
 come uma tela inteira entre dois nomes.
 
-Falta preencher, por serviço:
+**Textos aprovados e no ar.** As cinco frentes são cinco formas de recusa, e o
+verbo muda em cada uma: Branding recusa caminhos, Social Media recusa datas,
+Design recusa alternativas, Web Development recusa dependência, Tráfego Pago
+recusa a própria verba. A tese vem da sustentação do terceiro princípio do
+Nosso Olhar — *"recusando quase tudo"*.
+
+Os quatro primeiros "Como trabalhamos" afirmam fatos sobre a operação e foram
+**confirmados um a um** antes de entrar. Não são redação: se um deixar de ser
+verdade, sai.
 
 | Campo | Registro | Extensão | Estado |
 | --- | --- | --- | --- |
-| Descrição curta | Texto | 120 a 160 caracteres | ✗ a fornecer |
+| Descrição curta | Texto | 120 a 160 caracteres | ✓ os cinco, 133 a 157 |
+| Posição da Jozzi | Texto | uma frase, 60 a 90 caracteres | ✓ as cinco, 61 a 76 |
 | Imagem | 3:4 no desktop, 1:1 no fluxo | — | ✗ a fornecer |
-| Posição da Jozzi | Texto | uma frase, 60 a 90 caracteres | ✗ a fornecer |
 
-O texto tem que responder **"como a Jozzi trabalha nessa frente"**, não "o que a
-Jozzi entrega". Os rótulos dos campos vazios no HTML dizem isso literalmente,
-para quem escrever não errar o alvo.
+O texto responde **"como a Jozzi trabalha nessa frente"**, não "o que a Jozzi
+entrega".
+
+**Web Development não afirma característica técnica universal.** "Sem framework"
+e "guia de manutenção junto" saíram: a Widepine Cafés é Shopify, e só um dos
+dois sites feitos à mão tem guia. O que ficou — controle do código e
+documentação — vale sempre; a autonomia do cliente está condicionada por
+*"onde faz sentido"*.
+
+**Nenhum número no site.** A régua da voz diz que número é a arma mais forte
+("quatro marcas por vez" derrota "poucas marcas por vez"), e nenhum foi
+confirmado. É o maior ganho disponível quando os dados existirem.
 
 **Reservado:** o princípio *"Anúncio não conserta marca."* sai do Nosso Olhar e
 pertence a **Tráfego Pago**, como posição específica sobre mídia paga.
@@ -353,7 +370,10 @@ Falta preencher:
 2. Aprovação dos quatro textos de sustentação do *Nosso olhar* — as quatro
    afirmações estão aprovadas, o segundo tempo de cada uma ainda não.
 3. Imagem real da seção 01, proporção 3:4.
-4. Os campos marcados como *a fornecer* nos componentes 03 a 06.
+4. Os campos marcados como *a fornecer* nos componentes 03 a 06 — em Serviços
+   restam só as cinco imagens.
+6. Qualquer número que possa ir ao ar: clientes por vez, projetos por ano,
+   prazo de resposta, tempo de existência.
 5. Ano de fundação e demais dados institucionais — sem lugar definido ainda; a
    ficha técnica que existia na seção 01 foi removida por repetir o parágrafo
    logo acima dela.

@@ -74,17 +74,26 @@ emprestada.
 
 ## Preencher um serviço
 
-Em `index.html`, dentro do `<li>` do serviço, trocar os dois parágrafos
-`serv__falta` pelo texto real:
+Os dez textos já estão no ar. Ficam em `index.html`, dentro do `<li>` do
+serviço, como dois parágrafos sem classe:
 
 ```html
 <div class="serv__txt">
-  <p>Como a Jozzi trabalha nessa frente. 120 a 160 caracteres.</p>
-  <p class="serv__posicao">A frase de posição sobre a disciplina.</p>
+  <p>Como trabalhamos — 120 a 160 caracteres.</p>
+  <p>A posição — 60 a 90 caracteres.</p>
 </div>
 ```
 
-E o campo da imagem:
+O primeiro parágrafo é sempre o "como trabalhamos", o segundo é sempre a
+posição. Os dois ficam no registro de texto; quem os separa é a ordem e o
+espaço, não estilo diferente.
+
+**Os quatro primeiros "como trabalhamos" afirmam fatos sobre a operação** —
+começar pela recusa, não ter cota fixa de posts, mostrar uma direção só, poder
+recusar campanha. Foram confirmados um a um. Se algum deixar de ser verdade,
+ele sai; não é questão de redação.
+
+Falta ainda o campo da imagem:
 
 ```html
 <img class="serv__plate" src="assets/img/servico-branding.avif"
@@ -94,8 +103,9 @@ E o campo da imagem:
 O texto responde **"como trabalhamos"**, não "o que entregamos". Essa é a
 diferença entre a seção parecer método e parecer catálogo.
 
-A frase de posição de **Tráfego Pago** já está escolhida: *"Anúncio não conserta
-marca."* Veio do Nosso Olhar e foi reservada para lá.
+A posição de **Tráfego Pago** veio do Nosso Olhar e ganhou o segundo tempo:
+*"Anúncio não conserta marca. Amplifica o que já existe, inclusive a confusão."*
+A primeira sentença é intocável — é frase de marca.
 
 **Acrescentar um sexto serviço** exige três coisas: o `<li>` novo, uma linha em
 `.serv__item:nth-child(6)` com `--fit` e `--optico`, e uma linha
