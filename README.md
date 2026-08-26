@@ -519,3 +519,4 @@ hierarquia de títulos, landmarks e zero recurso externo.
   **A licença proíbe subset e conversão de formato.** O `.woff2` no repositório é
   o arquivo oficial da Fontshare, sem alteração. Não rodar subsetter nele.
 - **IBM Plex Mono** — SIL Open Font License 1.1.
+# Jozzi
