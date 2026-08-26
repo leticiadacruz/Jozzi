@@ -123,7 +123,55 @@ Entreletra: `-.045em` no display, `-.035em` no display 2, `-.012em` nas versais
 
 A mono nunca aparece acima de 13px e nunca compete com a Switzer.
 
-### Movimento
+### Os três fundos
+
+`papel · papel · VERDE · papel · BEGE · BORDÔ · papel`
+
+Antes eram cinco seções idênticas em papel e duas em verde — a paleta existia
+nos tokens e não na tela. **Marcas ganhou o bege** e **Contato ganhou o bordô**.
+O bordô não é troca de cor: o manifesto e o clímax não podem dividir o mesmo
+fundo, e a 05 era a seção que a auditoria apontou como a mais genérica do site.
+
+O amarelo passa a existir **em repouso**, nomeando as duas portas do Contato —
+10,9:1 sobre bordô.
+
+### Movimento — a gramática, em quatro níveis
+
+O movimento tem hierarquia: alguns momentos são fortes porque os anteriores
+foram silenciosos. Uma curva e duas durações valem para os quatro níveis.
+
+**1 · Máscara de entrada.** O gesto universal. Todo `.rv` entra por
+`clip-path` de baixo para cima com 10px de deslocamento.
+
+**2 · Revelação por linha.** Um container com `[data-linhas]` não entra
+inteiro: entram as linhas dele, 55ms entre uma e outra. Reservado ao que o site
+mais quer que se leia — a frase da abertura e as quatro afirmações do olhar.
+Mesmo mecanismo que alimenta a esteira de peso: as palavras já estavam
+quebradas.
+
+**3 · Interpolação por scroll.** Dois usos, ambos com teto de 12px, que é o
+limite de deslocamento do sistema. O aparato preenche o trecho já percorrido —
+a trilha deixa de ser um fio com um ponto e passa a medir. E os três blocos da
+diagonal de Marcas se deslocam em tempos ligeiramente diferentes ao cruzar o
+meio da tela: o bastante para a diagonal respirar, pouco o bastante para não
+virar parallax.
+
+**4 · Resposta do estado ativo.** Em Serviços o item ativo responde **no eixo
+variável da Switzer** — 430 para 560 — que é o mesmo recurso da esteira da
+abertura. O nome não muda de tamanho nem de posição: muda de peso.
+
+**A abertura não entra: ela se monta,** em quatro tempos medidos —
+`120ms` o instrumento se desenha · `370ms` a marca · `610ms` a frase, linha a
+linha · `730–980ms` o rodapé. O silêncio entre os tempos é o que dá presença,
+não o tamanho de nenhum deles.
+
+O cursor assume o sinal do fundo em que está: azul sobre papel, amarelo sobre
+tinta. Mesma gramática de três rótulos, nada de novo.
+
+**Não existe animação infinita, parallax de fundo, nem nada que se mova sem uma
+ação do leitor ou sem a rolagem.**
+
+### Durações e curva
 
 Um gesto, uma curva, três durações.
 

@@ -285,6 +285,23 @@ a { color: inherit; text-decoration: none; }
     background: rgb(var(--azul-rgb) / .90);
   }
 
+  /* o trecho já percorrido fica cheio: a trilha deixa de ser um fio
+     com um ponto e passa a ser um instrumento que mede */
+  .aparato__feito {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1px;
+    height: 0;
+    background: rgb(var(--azul-rgb) / .75);
+  }
+
+  /* na carga, a escala se desenha de cima para baixo */
+  .js .aparato__escala { clip-path: inset(0 0 100% 0); }
+  .js .aparato.is-ligado .aparato__escala {
+    animation: revelar var(--t-entra) var(--curva) both;
+  }
+
   /* cada bloco troca de cor conforme o que está atrás DELE, não
      conforme a seção corrente: o aparato ocupa a altura toda da tela
      e, na travessia, o topo e o rodapé estão sobre fundos diferentes.
@@ -305,6 +322,24 @@ a { color: inherit; text-decoration: none; }
    Papel vira tinta. É a pontuação entre capítulos do site — não um
    fundo escuro decorativo. Sem borda: a aresta de cor É a divisa.
    ----------------------------------------------------------- */
+/* ---- OS TRÊS FUNDOS ----
+   O ritmo passa a ser papel · papel · VERDE · papel · BEGE · BORDÔ ·
+   papel. Antes eram cinco seções idênticas em papel e duas em verde:
+   a paleta existia nos tokens e não na tela.
+
+   O bordô no Contato não é troca de cor — é diferenciação narrativa.
+   O manifesto e o clímax não podem ter o mesmo fundo, e a 05 era a
+   seção que a auditoria apontou como a mais genérica do site. */
+.inv--bordo { --tinta: var(--bordo); }
+
+.campo {
+  background: var(--papel-2);
+  border-top: 0;
+  /* sobre bege o aparato cai para 4,19:1 e não alcança o mínimo de
+     texto pequeno. Sobe só aqui. */
+  --fg-3: rgb(var(--marrom-rgb) / .72);
+}
+
 .inv {
   background: var(--tinta);
   color: var(--papel);
@@ -358,6 +393,27 @@ a { color: inherit; text-decoration: none; }
    gesto, mesma curva, mesma duração. */
 .js .rv { opacity: 0; }
 
+/* NÍVEL 2 DA GRAMÁTICA — revelação por linha.
+   Um container com [data-linhas] não entra inteiro: quem entra são
+   as linhas dele, uma a uma. Reservado ao que o site mais quer que
+   se leia — a frase da abertura e as quatro afirmações do olhar. */
+.js [data-linhas] { opacity: 0; }
+.js [data-linhas].is-pronto { opacity: 1; }
+.js [data-linhas].rv.is-dentro { animation: none; }
+
+.js [data-linhas] .pal {
+  display: inline-block;
+  clip-path: inset(0 0 102% 0);
+  transform: translateY(10px);
+  transition:
+    clip-path var(--t-entra) var(--curva),
+    transform var(--t-entra) var(--curva);
+}
+.js [data-linhas] .pal.is-dentro {
+  clip-path: inset(0 0 -8% 0);
+  transform: none;
+}
+
 .js .rv.is-dentro {
   opacity: 1;
   animation: revelar var(--t-entra) var(--curva) both;
@@ -370,9 +426,13 @@ a { color: inherit; text-decoration: none; }
 
 /* main.js não subiu: nada fica escondido. Mesma especificidade da
    regra acima, resolvida por ordem — sem !important. */
-.js--sem-motor .rv {
+.js--sem-motor .rv,
+.js--sem-motor [data-linhas],
+.js--sem-motor [data-linhas] .pal {
   opacity: 1;
   animation: none;
+  clip-path: none;
+  transform: none;
 }
 
 /* as palavras da abertura não passam pelo observador — são
@@ -622,7 +682,13 @@ a { color: inherit; text-decoration: none; }
      para ler como estado. 4,56:1 continua acima do mínimo de texto
      grande, que é 3:1. */
   color: var(--fg-3);
-  transition: color var(--t-micro) var(--curva);
+  /* NÍVEL 4 — o estado ativo responde no eixo variável da Switzer,
+     que é o mesmo recurso da esteira da abertura. O nome não muda de
+     tamanho nem de posição: muda de peso. */
+  font-variation-settings: 'wght' 430;
+  transition:
+    color var(--t-micro) var(--curva),
+    font-variation-settings var(--t-micro) var(--curva);
 }
 
 .serv__num {
@@ -642,6 +708,7 @@ a { color: inherit; text-decoration: none; }
    anel de foco, instrumento do aparato e, sobre tinta, o amarelo. */
 .serv__item.is-ativo .serv__nome,
 .serv__item.is-ativo .serv__num { color: var(--fg); }
+.serv__item.is-ativo .serv__nome { font-variation-settings: 'wght' 560; }
 
 /* ajuste óptico por palavra — a regra é o comprimento, não a
    disciplina. Design é a terceira da lista e a maior de todas: a
@@ -762,11 +829,16 @@ img.onde__mapa {
   .js--serv .serv__item:nth-child(5) .serv__nome { grid-row: 5; }
 
   /* todos os campos na MESMA área: empilhados, nada se move */
+  /* a chapa atravessa a margem e sangra até a borda da tela. Contra
+     margens reais de cartaz, o sangramento é o que cria tensão — a
+     imagem deixa de estar "dentro da página" e passa a cortá-la. */
   .js--serv .serv__plate {
     aspect-ratio: 3 / 4;
     grid-column: 9 / span 4;
     grid-row: 1 / span 6;
     align-self: start;
+    width: calc(100% + var(--margem));
+    margin-right: calc(-1 * var(--margem));
   }
   .js--serv .serv__txt {
     grid-column: 1 / span 5;
@@ -809,6 +881,7 @@ img.onde__mapa {
   will-change: transform;
 }
 .cursor.is-visivel { display: block; }
+.cursor.is-inv { color: var(--sinal-inv); }
 
 /* o ponteiro nativo só sai onde há rótulo para substituí-lo, e só
    quando o script está de pé */
@@ -843,6 +916,12 @@ img.onde__mapa {
   display: grid;
   gap: clamp(3.5rem, 11vh, 7rem) var(--calha);
 }
+
+/* NÍVEL 3 — interpolação por scroll, com teto de 12px, que é o mesmo
+   limite de deslocamento do resto do sistema. Os três blocos não se
+   movem juntos: é o bastante para a diagonal respirar e pouco o
+   bastante para não virar parallax. */
+.cliente { transform: translateY(var(--desloc, 0px)); }
 
 .cliente__nome {
   margin: 0 0 clamp(.9rem, 2.2vh, 1.4rem);
@@ -966,6 +1045,11 @@ img.onde__mapa {
 /* a legenda encosta no endereço, e o WhatsApp começa na mesma
    altura: as duas portas dividem a faixa pelo topo, não pela base.
    Preso ao fundo, o "para uma proposta" ficava órfão do endereço. */
+/* o amarelo finalmente existe em repouso, e existe com função:
+   ele nomeia as duas portas. Sobre bordô dá 10,9:1. */
+.contato__ap--email,
+.contato__ap--zap { color: var(--sinal); }
+
 .contato__ap--email { grid-column: 1 / span 5; grid-row: 2; align-self: start; }
 .contato__ap--zap   { grid-column: 9 / span 4; grid-row: 3; }
 
@@ -1204,6 +1288,18 @@ img.onde__mapa {
   .aparato__num,
   .aparato__sec { transition: none; }
   .js--serv .serv__item.is-ativo .serv__rev { animation: none; }
+  .js [data-linhas],
+  .js [data-linhas] .pal {
+    opacity: 1;
+    clip-path: none;
+    transform: none;
+    transition: none;
+  }
+  .js .aparato__escala,
+  .js .aparato.is-ligado .aparato__escala { clip-path: none; animation: none; }
+  .cliente { transform: none; }
+  .serv__nome,
+  .serv__item.is-ativo .serv__nome { transition: color var(--t-micro) linear; }
 }
 
 /* Impressão é outro meio: #fff significa "sem tinta no papel" e

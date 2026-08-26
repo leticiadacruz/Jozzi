@@ -261,6 +261,21 @@ transformar em laço.
 
 ---
 
+## Mexer no movimento
+
+A gramática tem quatro níveis e cada um tem um lugar. Estão descritos no
+`README.md`. Três coisas que quebram em silêncio se alguém mexer:
+
+- **`[data-linhas]`** é o que faz um texto entrar linha a linha. Tirar o
+  atributo devolve a entrada em bloco; pôr em qualquer elemento faz o
+  JavaScript quebrá-lo em palavras, o que só faz sentido em display.
+- **O teto de 12px** da diagonal de Marcas e do aparato está em `TETO`, no
+  `main.js`. Acima disso vira parallax.
+- **O peso do item ativo em Serviços** (`430` → `560`) usa o eixo variável da
+  Switzer. Se a fonte for trocada por uma estática, o estado ativo some.
+
+---
+
 ## O que NÃO fazer
 
 - **Não rodar subsetter na Switzer.** A licença da ITF proíbe. O arquivo em
@@ -284,6 +299,8 @@ transformar em laço.
   último o menor, a composição vira ranking comercial.
 - **Não repetir "Creative Marketing Lab".** Ele aparece uma vez, no rodapé, como
   dado institucional. Não é assinatura e não é slogan.
+- **Não dar fundo próprio a mais seções.** São três: papel, verde e bege, mais
+  o bordô do Contato. Um quarto fundo desmancha o ritmo.
 - **Não preencher espaço vazio.** O vazio é composição. Se uma seção "parece
   precisar de algo", quase sempre precisa é de menos.
 - **Não adicionar seção que repete a estrutura da anterior.**

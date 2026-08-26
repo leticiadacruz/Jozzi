@@ -47,23 +47,34 @@
   var deslocs  = [];
   var pesos    = [];
 
-  function montarPalavras() {
-    if (!alvo) return;
-
-    var texto = (alvo.textContent || '').trim().replace(/\s+/g, ' ');
-    alvo.textContent = '';
+  /* quebra qualquer elemento em palavras. Serve à esteira de peso da
+     abertura e à revelação por linha das afirmações do olhar — o
+     mesmo mecanismo, dois usos. */
+  function partirEmPalavras(el) {
+    var texto = (el.textContent || '').trim().replace(/\s+/g, ' ');
+    var saida = [];
+    el.textContent = '';
 
     texto.split(' ').forEach(function (palavra, i, todas) {
       var span = document.createElement('span');
       span.className = 'pal';
       span.textContent = palavra;
-      alvo.appendChild(span);
-      if (i < todas.length - 1) alvo.appendChild(document.createTextNode(' '));
-      palavras.push(span);
-      pesos.push(PESO_BASE);
+      el.appendChild(span);
+      if (i < todas.length - 1) el.appendChild(document.createTextNode(' '));
+      saida.push(span);
     });
 
-    alvo.classList.add('is-pronto');
+    el.classList.add('is-pronto');
+    return saida;
+  }
+
+  function montarPalavras() {
+    document.querySelectorAll('[data-linhas]').forEach(function (el) {
+      var spans = partirEmPalavras(el);
+      if (el !== alvo) return;
+      palavras = spans;
+      spans.forEach(function () { pesos.push(PESO_BASE); });
+    });
   }
 
   /* mede tudo antes de escrever nada, para não provocar reflow em cascata */
@@ -96,16 +107,18 @@
   /* agrupa por linha para escalonar a entrada: palavras da mesma
      linha revelam juntas, linhas seguintes com 40ms de atraso */
   function marcarLinhas() {
-    var topoAnterior = null;
-    var linha = -1;
+    document.querySelectorAll('[data-linhas]').forEach(function (el) {
+      var topoAnterior = null;
+      var linha = -1;
 
-    palavras.forEach(function (s) {
-      var t = Math.round(s.getBoundingClientRect().top);
-      if (topoAnterior === null || Math.abs(t - topoAnterior) > 4) {
-        linha += 1;
-        topoAnterior = t;
-      }
-      s.setAttribute('data-linha', String(linha));
+      el.querySelectorAll('.pal').forEach(function (s) {
+        var t = Math.round(s.getBoundingClientRect().top);
+        if (topoAnterior === null || Math.abs(t - topoAnterior) > 4) {
+          linha += 1;
+          topoAnterior = t;
+        }
+        s.setAttribute('data-linha', String(linha));
+      });
     });
   }
 
@@ -114,7 +127,16 @@
   var observador = null;
 
   function revelar(el, atraso) {
-    window.setTimeout(function () { el.classList.add('is-dentro'); }, atraso || 0);
+    window.setTimeout(function () {
+      el.classList.add('is-dentro');
+
+      /* um container de linhas não entra inteiro: entram as linhas */
+      var pecas = el.hasAttribute('data-linhas') ? el.querySelectorAll('.pal') : [];
+      pecas.forEach(function (s) {
+        var linha = parseInt(s.getAttribute('data-linha'), 10) || 0;
+        window.setTimeout(function () { s.classList.add('is-dentro'); }, linha * 55);
+      });
+    }, atraso || 0);
   }
 
   function ligarObservador() {
@@ -134,14 +156,18 @@
     document.querySelectorAll('.rv:not([data-atraso])').forEach(function (el) { observador.observe(el); });
   }
 
+  /* A abertura não entra: ela se monta, em quatro tempos.
+     Primeiro o instrumento se desenha, depois a marca, depois a
+     frase linha a linha, e por último o rodapé. A ordem é a da
+     leitura, e o silêncio entre os tempos é o que dá presença — não
+     o tamanho de nenhum deles. */
   function revelarAbertura() {
-    document.querySelectorAll('[data-atraso]').forEach(function (el) {
-      revelar(el, parseInt(el.getAttribute('data-atraso'), 10) || 0);
-    });
+    if (aparato) aparato.classList.add('is-ligado');
 
-    palavras.forEach(function (s) {
-      var linha = parseInt(s.getAttribute('data-linha'), 10) || 0;
-      revelar(s, 120 + linha * 40);
+    if (alvo) revelar(alvo, 460);
+
+    document.querySelectorAll('[data-atraso]').forEach(function (el) {
+      revelar(el, 200 + (parseInt(el.getAttribute('data-atraso'), 10) || 0));
     });
   }
 
@@ -252,6 +278,7 @@
   var apNum      = document.querySelector('[data-aparato-num]');
   var apSec      = document.querySelector('[data-aparato-sec]');
   var apMarca    = document.querySelector('[data-aparato-marca]');
+  var apFeito    = document.querySelector('[data-aparato-feito]');
   var relogio    = document.querySelector('[data-relogio]');
   var secaoAtual = '00';
 
@@ -305,9 +332,30 @@
 
   var quadroMarca = null;
 
+  var clientes = [].slice.call(document.querySelectorAll('.cliente'));
+  var TETO = 12;   /* mesmo limite de deslocamento do resto do sistema */
+
+  /* NÍVEL 3 — os três blocos da diagonal se deslocam em tempos
+     ligeiramente diferentes conforme passam pelo meio da tela. Doze
+     pixels de teto: o bastante para a diagonal respirar, pouco o
+     bastante para ninguém chamar de parallax. */
+  function moverDiagonal() {
+    if (!clientes.length || menosMovimento) return;
+    var meio = window.innerHeight / 2;
+
+    clientes.forEach(function (el, i) {
+      var r = el.getBoundingClientRect();
+      if (r.bottom < -200 || r.top > window.innerHeight + 200) return;
+      var d = (r.top + r.height / 2 - meio) / window.innerHeight;
+      var y = Math.max(-TETO, Math.min(TETO, d * TETO * (1 + i * 0.45)));
+      el.style.setProperty('--desloc', y.toFixed(1) + 'px');
+    });
+  }
+
   function moverMarca() {
     quadroMarca = null;
     pintarAparato();
+    moverDiagonal();
     if (!apMarca) return;
 
     var escala = apMarca.parentNode.getBoundingClientRect().height;
@@ -315,6 +363,7 @@
     var razao  = total > 0 ? Math.min(1, Math.max(0, window.scrollY / total)) : 0;
 
     apMarca.style.transform = 'translateY(' + (razao * (escala - 14)).toFixed(1) + 'px)';
+    if (apFeito) apFeito.style.height = (razao * (escala - 14)).toFixed(1) + 'px';
   }
 
   function ligarMarca() {
@@ -418,7 +467,11 @@
 
       if (alvo !== ultimoAlvo) {
         ultimoAlvo = alvo;
-        if (alvo) cursor.textContent = alvo.getAttribute('data-cursor');
+        if (alvo) {
+          cursor.textContent = alvo.getAttribute('data-cursor');
+          /* o rótulo assume o sinal do fundo em que está */
+          cursor.classList.toggle('is-inv', !!alvo.closest('[data-inv]'));
+        }
         cursor.classList.toggle('is-visivel', !!alvo);
       }
       if (!alvo) return;
@@ -506,7 +559,7 @@
   function redeDeSeguranca() {
     if (!observador) { revelarTudo(); return; }
 
-    document.querySelectorAll('.rv:not(.is-dentro)').forEach(function (el) {
+    document.querySelectorAll('.rv:not(.is-dentro), .pal:not(.is-dentro)').forEach(function (el) {
       if (el.getBoundingClientRect().top < window.innerHeight) {
         el.classList.add('is-dentro');
       }

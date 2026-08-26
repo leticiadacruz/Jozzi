@@ -17,7 +17,7 @@
 
 <link rel="preload" href="assets/fonts/Switzer-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/IBMPlexMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/style.css?v=35">
+<link rel="stylesheet" href="assets/css/style.css?v=38">
 
 <script>
 (function () {
@@ -51,7 +51,7 @@
     <span class="aparato__num" data-aparato-num>00</span>
     <span class="aparato__sec" data-aparato-sec>Abertura</span>
   </p>
-  <div class="aparato__escala"><span class="aparato__marca" data-aparato-marca></span></div>
+  <div class="aparato__escala"><span class="aparato__feito" data-aparato-feito></span><span class="aparato__marca" data-aparato-marca></span></div>
   <p class="aparato__hora">CWB<span data-relogio>--:--:--</span></p>
 </div>
 
@@ -60,7 +60,7 @@
      TOPO
      ============================================================ -->
 <header class="topo wrap">
-  <a class="marca" href="#abertura" aria-label="Jozzi — início">
+  <a class="marca rv" href="#abertura" data-atraso="60" aria-label="Jozzi — início">
     <svg class="marca__svg" viewBox="0 0 1000 312.79" role="img" aria-label="Jozzi">
       <path fill="currentColor" d="M145.36,182.01v23.74c0,61.11-33.63,107.03-132.71,107.03-4.34,0-8.32,0-12.66-.36v-13.02h2.89c67.26,2.89,77.38-54.24,77.38-93.66V0h65.09v63.88s-14.83,19.86-16.18,56.06c-1.35,36.2,16.18,62.07,16.18,62.07Z"/>
       <path fill="currentColor" d="M934.91,26.52h65.09v208.52h-65.09V26.52Z"/>
@@ -81,7 +81,7 @@
 <section class="abertura wrap" id="abertura" data-secao data-num="00" data-nome="Abertura">
 
   <div class="abertura__bloco">
-    <h1 class="abertura__t d" data-peso>Um laboratório de marca em Curitiba.</h1>
+    <h1 class="abertura__t d" data-peso data-linhas>Um laboratório de marca em Curitiba.</h1>
 
     <!-- nota de margem: as cinco frentes como índice, não como
          seção de serviços. Informação em 11px ao lado de 118px. -->
@@ -156,26 +156,26 @@
   <div class="olhar__lista">
 
     <article class="prin prin--e">
-      <h3 class="prin__t rv">Marca não é o que você diz. É o que sobra.</h3>
+      <h3 class="prin__t rv" data-linhas>Marca não é o que você diz. É o que sobra.</h3>
       <p class="prin__p rv">Identidade, tom, ritmo de publicação, tempo de resposta.
       O que resta na cabeça de alguém depois que tudo isso passa é a marca.
       O resto é material.</p>
     </article>
 
     <article class="prin prin--d">
-      <h3 class="prin__t rv">Volume não é presença.</h3>
+      <h3 class="prin__t rv" data-linhas>Volume não é presença.</h3>
       <p class="prin__p rv">Publicar todo dia não constrói nada se cada peça pede a
       mesma coisa. Presença é ser reconhecível antes de ser lido.</p>
     </article>
 
     <article class="prin prin--e">
-      <h3 class="prin__t rv">Bom gosto é decisão, não dom.</h3>
+      <h3 class="prin__t rv" data-linhas>Bom gosto é decisão, não dom.</h3>
       <p class="prin__p rv">Constrói-se vendo muita coisa e recusando quase tudo.
       É trabalho — e é a parte do trabalho que ninguém vê.</p>
     </article>
 
     <article class="prin prin--d">
-      <h3 class="prin__t rv">Design que precisa de explicação já falhou.</h3>
+      <h3 class="prin__t rv" data-linhas>Design que precisa de explicação já falhou.</h3>
       <p class="prin__p rv">Se a peça só funciona com legenda, o problema não é do
       público. É de quem desenhou.</p>
     </article>
@@ -319,7 +319,7 @@
 
      Setor e escopo faltam e não podem ser inventados.
      ============================================================ -->
-<section class="marcas wrap" id="marcas" data-secao
+<section class="marcas campo wrap" id="marcas" data-secao data-campo
          data-num="04" data-nome="Marcas" aria-labelledby="marcas-titulo">
 
   <h2 class="secao__ap ap rv" id="marcas-titulo">Marcas</h2>
@@ -374,7 +374,7 @@
        · linha de expectativa de resposta
        · horário de atendimento, se houver
      ============================================================ -->
-<section class="contato wrap inv" id="contato" data-secao data-inv
+<section class="contato wrap inv inv--bordo" id="contato" data-secao data-inv
          data-num="05" data-nome="Contato" aria-labelledby="contato-titulo">
 
   <h2 class="secao__ap ap rv" id="contato-titulo">Contato</h2>
