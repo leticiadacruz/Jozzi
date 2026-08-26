@@ -16,7 +16,7 @@
 
 <link rel="preload" href="assets/fonts/Switzer-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/IBMPlexMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/style.css?v=23">
+<link rel="stylesheet" href="assets/css/style.css?v=25">
 
 <script>document.documentElement.className += " js";</script>
 </head>
@@ -386,12 +386,62 @@
 
 </section>
 
+
+<!-- ============================================================
+     06 — ONDE FICAMOS
+     Colofão. A ÚNICA seção do site sem tipografia de display: o
+     maior corpo aqui é o lede. Isso é deliberado — 05 é o ponto
+     alto, e uma seção grande depois dele roubaria o clímax em vez
+     de fechá-lo.
+
+     Função: resolver o aparato. A trilha diz "CWB 14:32" em toda
+     tela desde a 00 sem nunca se explicar. Aqui ela se explica.
+     Por isso a hora aparece com o rótulo inteiro — "Hora em
+     Curitiba" — e não repetida como "CWB".
+
+     PENDENTE, e nada aqui pode ser inventado:
+       · coordenadas — removi um par inventado numa rodada anterior
+         e não vou repetir o erro
+       · o mapa autoral, que depende das coordenadas: desenhar
+         geometria de rua sem fonte é inventar conteúdo
+       · horário / se recebe visita e como
+     ============================================================ -->
+<section class="onde wrap" id="onde-ficamos" data-secao
+         data-num="06" data-nome="Onde ficamos" aria-labelledby="onde-titulo">
+
+  <h2 class="secao__ap ap rv" id="onde-titulo">Onde ficamos</h2>
+
+  <div class="onde__campo">
+
+    <address class="onde__endereco lede rv">
+      Av. João Gualberto, 1342<br>
+      Urban Office, sala 1912<br>
+      Curitiba
+    </address>
+
+    <div class="onde__mapa rv">
+      <span class="ap">Mapa autoral &mdash; pendente</span>
+    </div>
+
+    <p class="onde__dados ap rv">
+      <span>Coordenadas &mdash; a confirmar</span>
+      <span>Visitas &mdash; a confirmar</span>
+    </p>
+
+    <p class="onde__acao ap rv">
+      <a href="https://www.google.com/maps/search/?api=1&query=Av.%20Jo%C3%A3o%20Gualberto%2C%201342%2C%20Curitiba" target="_blank" rel="noopener noreferrer"
+         data-cursor="Abrir">Abrir no Google Maps</a>
+    </p>
+
+  </div>
+</section>
+
 </main>
 
 
 <footer class="fim wrap">
   <p class="ap">Jozzi Creative Marketing Lab</p>
-  <p class="ap">Protótipo de direção &mdash; seções 00 a 05</p>
+  <p class="ap">Protótipo de direção &mdash; seções 00 a 06</p>
 </footer>
 
 <span class="cursor ap" id="cursor" aria-hidden="true"></span>

@@ -2,9 +2,8 @@
 
 **Método e Instinto.** Site da JOZZI.
 
-> **Estado:** protótipo de direção. Seções **00** a **05** construídas. A seção
-> **06 Onde ficamos** está especificada neste documento mas **não foi
-> implementada**.
+> **Estado:** protótipo de direção com as **sete seções construídas**, 00 a 06.
+> O que falta é conteúdo real, listado no fim deste documento.
 
 ---
 
@@ -318,16 +317,32 @@ Falta preencher:
 | Linha de expectativa de resposta | ✗ a fornecer, curta e concreta |
 | Horário de atendimento | ✗ se houver |
 
-### 06 — Onde ficamos · mapa autoral
+### 06 — Onde ficamos · construído
 
-Endereço como bloco tipográfico; mapa desenhado em SVG na paleta, ocupando parte
-da composição e não o fundo dela. Link para abrir no Google Maps. **Sem iframe
-permanente na página.**
+Colofão. **A única seção do site sem tipografia de display** — o maior corpo
+aqui é o lede, 21px. É deliberado: 05 é o ponto alto, e uma seção grande depois
+dele roubaria o clímax em vez de fechá-lo. Também é a mais curta, 715px contra
+836 a 1520 das outras.
 
-Endereço: Av. João Gualberto, 1342 · Urban Office · Sala 1912 · Curitiba, PR.
+Função narrativa: **resolver o aparato.** A trilha diz `CWB` em toda tela desde
+a 00 sem nunca se explicar. Aqui a sigla ganha um endereço.
 
-O mapa será construído a partir do endereço real. **Não inventar coordenadas** e
-não usar mapa genérico como placeholder final.
+Endereço à esquerda em lede; campo do mapa encostado na margem direita, em 1:1
+e não 16:9 — proporção larga é a forma dos widgets de mapa. Os dois alinhados
+pela base, com o vão do meio vazio. Os dados do aparato fecham por baixo.
+
+O link do Google Maps é real e monta a busca a partir do endereço confirmado —
+sem coordenadas e **sem iframe**, então nenhuma cookie de terceiro é carregada.
+
+Falta preencher:
+
+| Campo | Estado |
+| --- | --- |
+| Endereço | ✓ Av. João Gualberto, 1342 · Urban Office, sala 1912 · Curitiba |
+| Coordenadas | ✗ a confirmar — **não inventar.** Um par aproximado já foi inserido e removido numa rodada anterior |
+| Mapa autoral | ✗ depende das coordenadas. Desenhar geometria de rua sem fonte é inventar conteúdo |
+| Visitas | ✗ se recebe, e como |
+| Bairro / CEP / estado | ✗ se quiser no endereço |
 
 ---
 

@@ -882,6 +882,100 @@ a { color: inherit; text-decoration: none; }
 }
 
 
+/* 10g. SEÇÃO 06 — ONDE FICAMOS ------------------------------
+   Colofão. Única seção do site SEM tipografia de display: o maior
+   corpo aqui é o lede. É a razão de a seção existir depois do
+   clímax — ela fecha, não compete.
+
+   Também é a mais curta do site. Endereço à esquerda e campo do
+   mapa encostado na margem direita, alinhados pela base; o vão do
+   meio é o vazio. Os dados do aparato fecham por baixo dos dois.
+   ----------------------------------------------------------- */
+.onde {
+  padding-top: clamp(4.5rem, 14vh, 9rem);
+  padding-bottom: clamp(4.5rem, 14vh, 9rem);
+  /* sem fio de topo: vem logo depois da tinta, e a aresta de cor
+     já é a divisa — a mesma regra que vale para .inv */
+}
+
+.onde__campo {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(1.2rem, 3.5vh, 2.2rem) var(--calha);
+  align-items: end;
+}
+
+.onde__endereco {
+  grid-column: 1 / span 4;
+  grid-row: 1;
+  font-style: normal;   /* <address> vem em itálico por padrão */
+  margin: 0;
+}
+
+/* o campo encosta na margem da página: um mapa que flutua no meio
+   da coluna lê como widget colado; encostado na margem, lê como
+   parte da página. 1:1 e não 16:9 — proporção larga é a forma dos
+   widgets de mapa. */
+.onde__mapa {
+  grid-column: 9 / span 4;
+  grid-row: 1;
+  aspect-ratio: 1;
+  background: var(--papel-2);
+  display: grid;
+  place-items: center;
+}
+.onde__mapa .ap { color: var(--fg-3); }
+
+.onde__dados {
+  grid-column: 1 / span 5;
+  grid-row: 2;
+  display: grid;
+  gap: .35rem;
+  margin: 0;
+}
+
+.onde__acao {
+  grid-column: 9 / span 4;
+  grid-row: 2;
+  margin: 0;
+}
+.onde__acao a {
+  color: var(--fg-2);
+  text-decoration: none;
+  border-bottom: 1px solid var(--fio);
+  padding-bottom: .35em;
+  transition: color var(--t-micro) var(--curva),
+              border-color var(--t-micro) var(--curva);
+}
+.onde__acao a:hover,
+.onde__acao a:focus-visible {
+  color: var(--sinal);
+  border-color: var(--sinal);
+}
+
+
+/* ---- ≤900: o vão do meio some ---- */
+@media (max-width: 900px) {
+  .onde__campo {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+  .onde__endereco,
+  .onde__mapa,
+  .onde__dados,
+  .onde__acao { grid-column: 1; grid-row: auto; }
+
+  .onde__mapa  { max-width: 22rem; margin-top: clamp(1.6rem, 5vh, 2.4rem); }
+  .onde__dados { margin-top: clamp(1.2rem, 3.5vh, 1.8rem); }
+
+  /* alvo de toque de 44px no único link da seção */
+  .onde__acao a {
+    display: inline-block;
+    padding: .9rem 0;
+  }
+}
+
+
 /* 11. RODAPÉ DO PROTÓTIPO ----------------------------------- */
 .fim {
   display: flex;

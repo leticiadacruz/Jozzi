@@ -169,6 +169,28 @@ dependência de terceiros, e a seção não precisa de nenhum dos dois.
 
 ---
 
+## Onde ficamos
+
+O endereço está em `<address>` dentro de `#onde-ficamos`. Trocar o texto basta.
+
+O link do Google Maps monta a busca a partir do endereço, sem coordenadas e sem
+iframe. Se o endereço mudar, trocar também o `query=` do `href` — o texto vai
+codificado em URL (espaço vira `%20`, `ã` vira `%C3%A3`).
+
+**O mapa autoral ainda não existe.** Ele depende das coordenadas reais. Não
+desenhar rua "de memória" nem usar mapa genérico: um mapa que não bate com a
+realidade é pior que um campo marcado como pendente. Quando entrar, o SVG vai
+em `assets/svg/` e substitui o `<div class="onde__mapa">`, mantendo a proporção
+**1:1** — proporção larga é a forma dos widgets de mapa, e é justamente o que
+esta seção evita.
+
+**Não acrescentar tipografia de display aqui.** Esta é a única seção do site sem
+display, e é de propósito: o Contato é o ponto alto, e uma seção grande depois
+dele rouba o clímax. Se algo aqui parecer "pequeno demais", provavelmente está
+certo.
+
+---
+
 ## Trocar uma cor
 
 Em `assets/css/style.css`, seção **02. TOKENS**, no topo do arquivo. Todas as
