@@ -616,16 +616,38 @@ Endereço à esquerda em lede; campo do mapa encostado na margem direita, em 1:1
 e não 16:9 — proporção larga é a forma dos widgets de mapa. Os dois alinhados
 pela base, com o vão do meio vazio. Os dados do aparato fecham por baixo.
 
-O link do Google Maps é real e monta a busca a partir do endereço confirmado —
-sem coordenadas e **sem iframe**, então nenhuma cookie de terceiro é carregada.
+O link do Google Maps é real e monta a busca a partir do endereço confirmado,
+sem coordenadas.
+
+**O campo agora é o mapa do Google, por decisão da Jozzi.** A direção anterior
+pedia mapa autoral e proibia iframe; foi revertida. Duas consequências que
+precisam ficar escritas:
+
+1. **Este iframe é a única requisição externa do site.** Até aqui a página não
+   falava com servidor nenhum além do próprio — medido: zero hosts externos até
+   o leitor chegar na seção 07. Depois dela entram `google.com`,
+   `maps.gstatic.com`, `maps.googleapis.com`, `fonts.googleapis.com` e
+   `fonts.gstatic.com`. O Google grava cookie e registra o acesso — relevante
+   para LGPD, e qualquer aviso de cookies precisa considerar isto.
+2. **`loading="lazy"` é obrigatório.** Sem ele o mapa entra na carga inicial e a
+   cortina de carregamento passa a esperar por um servidor de terceiro.
+
+O `<div>` continua sendo o contêiner e o iframe mora dentro dele — mesmo padrão
+de `.serv__plate`/`.serv__plate__foto`. Se o Google falhar ou for bloqueado,
+sobra o campo bege em vez de um buraco branco.
+
+O mapa chega com a paleta do Google — azul de via, verde de parque. Um
+`filter: grayscale(1) sepia(.32) contrast(.92) brightness(1.04)` puxa a
+temperatura para o papel da seção. É correção de cor, não estilização: nenhum
+traço some, o mapa continua legível e a atribuição do Google continua visível.
 
 Falta preencher:
 
 | Campo | Estado |
 | --- | --- |
 | Endereço | ✓ Av. João Gualberto, 1342 · Urban Office, sala 1912 · Curitiba |
+| Mapa | ✓ embed do Google, montado a partir do endereço |
 | Coordenadas | ✗ a confirmar — **não inventar.** Um par aproximado já foi inserido e removido numa rodada anterior |
-| Mapa autoral | ✗ depende das coordenadas. Desenhar geometria de rua sem fonte é inventar conteúdo |
 | Visitas | ✗ se recebe, e como |
 | Bairro / CEP / estado | ✗ se quiser no endereço |
 

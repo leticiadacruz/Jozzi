@@ -201,16 +201,25 @@ dependência de terceiros, e a seção não precisa de nenhum dos dois.
 
 O endereço está em `<address>` dentro de `#onde-ficamos`. Trocar o texto basta.
 
-O link do Google Maps monta a busca a partir do endereço, sem coordenadas e sem
-iframe. Se o endereço mudar, trocar também o `query=` do `href` — o texto vai
-codificado em URL (espaço vira `%20`, `ã` vira `%C3%A3`).
+**Se o endereço mudar, mudar em TRÊS lugares** — os dois últimos são URLs, com
+o texto codificado (espaço vira `%20`, `ã` vira `%C3%A3`):
 
-**O mapa autoral ainda não existe.** Ele depende das coordenadas reais. Não
-desenhar rua "de memória" nem usar mapa genérico: um mapa que não bate com a
-realidade é pior que um campo marcado como pendente. Quando entrar, o SVG vai
-em `assets/svg/` e substitui o `<div class="onde__mapa">`, mantendo a proporção
-**1:1** — proporção larga é a forma dos widgets de mapa, e é justamente o que
-esta seção evita.
+1. o `<address>`;
+2. o `src` do iframe `.onde__mapa__quadro`;
+3. o `query=` do link "Abrir no Google Maps".
+
+O mapa é o embed do Google, montado a partir do endereço — sem chave de API,
+sem coordenadas. **Manter `loading="lazy"`:** sem ele o mapa entra na carga
+inicial e a cortina de carregamento passa a esperar por um servidor de
+terceiro.
+
+O iframe fica DENTRO do `<div class="onde__mapa">`, que continua sendo o
+contêiner e a proporção **1:1**. Se o Google falhar ou for bloqueado, sobra o
+campo bege em vez de um buraco branco. Não trocar o `<div>` pelo iframe.
+
+⚠ **Este iframe é a única requisição externa do site.** O Google grava cookie e
+registra quem chega até esta seção. Se um dia entrar aviso de cookies ou
+política de privacidade, é este o item a declarar.
 
 **Não acrescentar tipografia de display aqui.** Esta é a única seção do site sem
 display, e é de propósito: o Contato é o ponto alto, e uma seção grande depois
@@ -280,6 +289,17 @@ A gramática tem quatro níveis e cada um tem um lugar. Estão descritos no
   JavaScript quebrá-lo em palavras, o que só faz sentido em display.
 - **O teto de 12px** da diagonal de Marcas e do aparato está em `TETO`, no
   `main.js`. Acima disso vira parallax.
+- ⚠ **`main.js` é uma IIFE só: todo `var` do primeiro nível divide o MESMO
+  escopo.** Um `var TETO = 5000` escrito para o carregamento apagou o
+  `var TETO = 12` da diagonal e os projetos foram parar a milhares de pixels
+  da tela, sem erro nenhum no console. Constante nova de um módulo vai
+  prefixada (`CARGA_PISO`, `CARGA_TETO`…). Para conferir antes de commitar:
+
+```bash
+grep -oE '^  (var|function) [A-Za-z_$][A-Za-z0-9_$]*' assets/js/main.js | awk '{print $2}' | sort | uniq -d
+```
+
+  Saída vazia = nenhum nome declarado duas vezes no escopo da IIFE.
 - **O peso do item ativo em Serviços** (`430` → `560`) usa o eixo variável da
   Switzer. Se a fonte for trocada por uma estática, o estado ativo some.
 - **A escala de Marcas** (`--escala`, teto de 5%) sai da mesma função que já

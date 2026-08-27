@@ -585,21 +585,28 @@
      só interpolar entre um marco e o seguinte, para o número não
      ficar parado esperando.
 
-     PISO de 1400ms: o tempo que a cortina fica na tela no mínimo.
+     CARGA_PISO (1400ms): o tempo que a cortina fica na tela no mínimo.
      Começou em 900ms e a Jozzi pediu mais devagar — abaixo de
      ~700ms ninguém lê "we are creating for you" e a cortina vira
      um piscar.
-     CHEIA: o repouso em 100% antes de subir. Sem ele o número
+     CARGA_PAUSA: o repouso em 100% antes de subir. Sem ele o número
      chega a 100 e a tela some no mesmo quadro; o olho não fecha a
      conta.
-     TETO de 5s: se algum marco nunca chegar, sai assim mesmo. A
+     CARGA_TETO (5s): se algum marco nunca chegar, sai assim mesmo. A
      cortina não pode virar uma porta trancada — este é o número que
      não deve crescer muito.
      ----------------------------------------------------------- */
-  var PISO  = 1400;
-  var CHEIA = 420;   /* == --t-cheia no CSS */
-  var PAUSA = 260;
-  var TETO  = 5000;
+  /* Prefixo CARGA_ obrigatório. Estes quatro vivem no escopo da
+     IIFE inteira, junto com os do módulo 04 — e lá já existe um
+     `var TETO` (o teto de 12px da diagonal de Marcas). Como `var`
+     tem escopo de função, havia UM só TETO: o desta seção
+     sobrescrevia o de lá, e a diagonal passava a deslocar milhares
+     de pixels em vez de 12, jogando três dos quatro projetos para
+     fora da tela. Qualquer constante nova daqui vem prefixada. */
+  var CARGA_PISO  = 1400;
+  var CARGA_CHEIA = 420;   /* == --t-cheia no CSS */
+  var CARGA_PAUSA = 260;
+  var CARGA_TETO  = 5000;
 
   function ligarCarregamento(aoTerminar) {
     var cortina = document.getElementById('carregando');
@@ -617,8 +624,8 @@
 
     /* o teto é armado ANTES de qualquer outra coisa: se qualquer
        linha abaixo lançar, a cortina ainda sai sozinha. */
-    window.setTimeout(function () { marco(100); }, TETO);
-    window.setTimeout(function () { sair(); }, TETO + 600);
+    window.setTimeout(function () { marco(100); }, CARGA_TETO);
+    window.setTimeout(function () { sair(); }, CARGA_TETO + 600);
 
     var barra  = cortina.querySelector('[data-carregando-barra]');
     var numero = cortina.querySelector('[data-carregando-pct]');
@@ -666,10 +673,10 @@
       var de = atual;
       var t = Date.now();
       (function passo() {
-        var f = Math.min(1, (Date.now() - t) / CHEIA);
+        var f = Math.min(1, (Date.now() - t) / CARGA_CHEIA);
         escrever(de + (100 - de) * f);
         if (f < 1) { quadro = window.requestAnimationFrame(passo); return; }
-        window.setTimeout(sair, PAUSA);
+        window.setTimeout(sair, CARGA_PAUSA);
       })();
     }
 
@@ -678,7 +685,7 @@
     }
 
     function concluir() {
-      var espera = Math.max(0, PISO - (Date.now() - t0));
+      var espera = Math.max(0, CARGA_PISO - (Date.now() - t0));
       window.setTimeout(function () { marco(100); }, espera);
     }
 

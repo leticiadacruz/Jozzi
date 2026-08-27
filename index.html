@@ -17,7 +17,7 @@
 
 <link rel="preload" href="assets/fonts/Switzer-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/IBMPlexMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/style.css?v=43">
+<link rel="stylesheet" href="assets/css/style.css?v=44">
 
 <script>
 (function () {
@@ -639,8 +639,28 @@
       Curitiba
     </address>
 
+    <!-- O mapa autoral foi substituído pelo do Google a pedido da
+         Jozzi. Duas consequências que valem estar escritas aqui:
+
+         1. Este iframe é a ÚNICA requisição externa do site. Até
+            aqui a página não falava com servidor nenhum além do
+            próprio. O Google grava cookie e registra o acesso de
+            quem chega até esta seção — relevante para LGPD, e o
+            aviso de cookies (se houver) precisa considerar isto.
+         2. `loading="lazy"` é obrigatório: sem ele o mapa entra na
+            carga inicial e a cortina de carregamento passa a
+            esperar por um servidor de terceiro.
+
+         O <div> continua sendo o contêiner e o iframe mora DENTRO
+         dele: se o Google falhar ou for bloqueado, sobra o campo
+         bege em vez de um buraco branco. -->
     <div class="onde__mapa rv">
-      <span class="ap">Mapa autoral &mdash; pendente</span>
+      <iframe class="onde__mapa__quadro"
+              src="https://www.google.com/maps?q=Av.%20Jo%C3%A3o%20Gualberto%2C%201342%2C%20Curitiba%20-%20PR&amp;output=embed&amp;hl=pt-BR&amp;z=16"
+              title="Mapa da Av. João Gualberto, 1342 — Curitiba"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              allowfullscreen></iframe>
     </div>
 
     <p class="onde__dados ap rv">

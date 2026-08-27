@@ -839,6 +839,8 @@ a { color: inherit; text-decoration: none; }
   width: 100%;
   object-fit: cover;
   object-position: center;
+  position: relative;
+  overflow: hidden;
   /* o rótulo destes campos fica sobre bege, não sobre papel: no
      fundo mais escuro o aparato cai para 4,19:1 e não alcança o
      mínimo de texto pequeno. Sobe só aqui — o resto do aparato
@@ -1269,6 +1271,25 @@ img.onde__mapa {
   place-items: center;
 }
 .onde__mapa .ap { color: var(--fg-3); }
+
+/* O mapa do Google chega com a paleta do Google — azul de via,
+   verde de parque, branco de quadra. Dessaturado e puxado para o
+   sépia, ele passa a conversar com o papel e o bege da seção sem
+   deixar de ser um mapa legível. É correção de temperatura, não
+   estilização: nenhum traço some.
+
+   O iframe é posicionado por dentro do contêiner, não substitui o
+   contêiner — mesmo padrão de .serv__plate/.serv__plate__foto. Se
+   o Google falhar, o campo bege continua lá. */
+.onde__mapa__quadro {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  filter: grayscale(1) sepia(.32) contrast(.92) brightness(1.04);
+}
 
 .onde__dados {
   grid-column: 1 / span 5;
