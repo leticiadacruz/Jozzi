@@ -312,13 +312,25 @@ As etiquetas ficam em `.serv__tags`, uma `<li>` por etiqueta, dentro de
 `.serv__txt`. Sem badge, sem contorno — o ponto médio entre elas é só CSS
 (`::before`), não faz parte do texto.
 
-## sobre.html
+## Sobre a Jozzi — a seção 05
 
-Página separada, fora do scroll principal. Mesma paleta e tipografia do
-`style.css`, sem `main.js` — não precisa de coreografia, é conteúdo parado.
-Editar direto no arquivo; não tem placeholder pendente estrutural, só o
-parágrafo sobre a origem do nome "Jozzi", que fui eu quem escreveu (ver
-README) e pode precisar de ajuste de quem sabe a história real.
+Vive no `index.html` como qualquer outra seção, entre Projetos e Contato.
+(Houve um `sobre.html` separado por uma rodada; foi apagado quando a Jozzi
+pediu a seção no scroll. Se algum link antigo apontar para `sobre.html`,
+trocar por `#sobre`.)
+
+Três blocos, cada um com sua grade: `.sobre__decl`, `.sobre__virada`,
+`.sobre__pessoa`. Editar texto direto no HTML.
+
+**Uma armadilha de CSS aqui**, se alguém for mexer: `.sobre__papel` (o cargo
+da Letícia) também é um `<p>` dentro de `.sobre__bio`. Uma regra
+`.sobre__bio p { margin: 0 }` tem especificidade maior que `.sobre__papel` e
+zera a margem dele, colando a bio no cargo. Por isso a regra da bio é
+`.sobre__bio > p:last-of-type`. Não simplificar de volta para `p`.
+
+Único pendente de texto: o parágrafo sobre a origem do nome "Jozzi", que fui
+eu quem escreveu (ver README) e pode precisar de ajuste de quem sabe a
+história real.
 
 ---
 
@@ -346,7 +358,9 @@ README) e pode precisar de ajuste de quem sabe a história real.
 - **Não repetir "Creative Marketing Lab".** Ele aparece uma vez, no rodapé, como
   dado institucional. Não é assinatura e não é slogan.
 - **Não dar fundo próprio a mais seções.** São três: papel, verde e bege, mais
-  o bordô do Contato. Um quarto fundo desmancha o ritmo.
+  o bordô do Contato. Um quarto fundo desmancha o ritmo. E não encostar dois
+  fundos de cor: entre o bege de Projetos e o bordô de Contato existe o papel
+  de Sobre a Jozzi, que é o que faz o bordô bater quando chega.
 - **Não preencher espaço vazio.** O vazio é composição. Se uma seção "parece
   precisar de algo", quase sempre precisa é de menos.
 - **Não adicionar seção que repete a estrutura da anterior.**

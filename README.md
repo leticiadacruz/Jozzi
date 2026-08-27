@@ -2,9 +2,9 @@
 
 **Método e Instinto.** Site da JOZZI.
 
-> **Estado:** copy definitiva aplicada (rodada de 25/08). Sete seções (00 a 06)
-> mais uma página independente, `sobre.html`. Ainda falta apenas imagem e alguns
-> dados de contato — listados no fim deste documento.
+> **Estado:** copy definitiva aplicada (rodada de 25/08). **Oito seções, 00 a 07**,
+> todas no mesmo scroll. Ainda falta apenas imagem e alguns dados de contato —
+> listados no fim deste documento.
 
 ---
 
@@ -126,10 +126,12 @@ A mono nunca aparece acima de 13px e nunca compete com a Switzer.
 
 ### Os três fundos
 
-`papel · papel · VERDE · papel · BEGE · BORDÔ · papel`
+`papel · papel · VERDE · papel · BEGE · papel · BORDÔ · papel`
 
 Antes eram cinco seções idênticas em papel e duas em verde — a paleta existia
 nos tokens e não na tela. **Marcas ganhou o bege** e **Contato ganhou o bordô**.
+Sobre a Jozzi entrou entre os dois em papel, de propósito: **dois fundos de cor
+nunca se encostam** — o papel é a respiração que faz o bordô seguinte bater.
 O bordô não é troca de cor: o manifesto e o clímax não podem dividir o mesmo
 fundo, e a 05 era a seção que a auditoria apontou como a mais genérica do site.
 
@@ -482,7 +484,38 @@ Falta preencher:
 | Linha de expectativa de resposta | ✗ a fornecer, curta e concreta |
 | Horário de atendimento | ✗ se houver |
 
-### 06 — Onde ficamos · construído
+### 05 — Sobre a Jozzi · construído
+
+Três movimentos, três lógicas de grade — a seção não repete a estrutura de
+nenhuma outra.
+
+**1 · A declaração.** O título grande em 1–8, o parágrafo em 7–12 na linha de
+baixo. Não alinham nem à esquerda nem à direita: o parágrafo começa no meio da
+largura que o título ocupou. É degrau, não coluna.
+
+**2 · A virada.** *"Cada marca é singular."* em corpo de display à esquerda, e
+as expertises em 11px à direita, na **mesma faixa horizontal**, alinhadas pela
+base. Esse é o ponto de composição da seção: a frase de display não flutua
+sozinha num campo vazio — tem contrapeso, e é o contraste de escala entre os
+dois blocos, não o tamanho da frase, que segura a página. Foi a resposta direta
+ao "minimalista não é muito espaço vazio + texto grande".
+
+**3 · A pessoa.** A seção contrai. Retrato pequeno de propósito — 3 de 12
+colunas — e o nome em display--2 em 5–9. Depois de dois movimentos de volume,
+o fecho é íntimo, e é ele que prepara a inversão do bordô que vem em seguida.
+
+Abaixo de 1025px os três movimentos empilham e o retrato é limitado a 15rem:
+em fluxo, um 3:4 de largura total comeria uma tela inteira sozinho.
+
+| Campo | Registro | Estado |
+| --- | --- | --- |
+| Título, corpo, "Cada marca é singular." | Display + texto | ✓ copy da Jozzi |
+| Nossas expertises | Texto | ✓ copy da Jozzi |
+| Letícia Cruz + cargo | Display--2 + aparato | ✓ copy da Jozzi |
+| Origem do nome "Jozzi" | Texto | ⚠ escrito por mim — precisa de aprovação |
+| Retrato da fundadora | 3:4 | ✗ a fornecer |
+
+### 07 — Onde ficamos · construído
 
 Colofão. **A única seção do site sem tipografia de display** — o maior corpo
 aqui é o lede, 21px. É deliberado: 05 é o ponto alto, e uma seção grande depois
@@ -518,7 +551,7 @@ Falta preencher:
 2. Aprovação dos quatro textos de sustentação do *Nosso olhar* — as quatro
    afirmações estão aprovadas, o segundo tempo de cada uma ainda não.
 3. Imagem real da seção 01, proporção 3:4.
-4. Os campos marcados como *a fornecer* nos componentes 03 a 06 — em Serviços
+4. Os campos marcados como *a fornecer* nos componentes 03 a 07 — em Serviços
    restam só as cinco imagens.
 6. Qualquer número que possa ir ao ar: clientes por vez, projetos por ano,
    prazo de resposta, tempo de existência.
@@ -575,17 +608,19 @@ do conteúdo anterior. Registro do que mudou de estrutura, não só de palavra:
   `.cliente__dados`/`.cliente__falta` saíram; entrou `.cliente__corpo`
   (parágrafo) e `.marcas__lede` (subtítulo da seção). A diagonal e o teto de
   escala por scroll não mudaram.
-- **`sobre.html`** — página nova, **fora do percurso 00–06** por decisão: o
-  pedido veio como "aba/página", e inserir um capítulo 07 depois de Onde
-  ficamos quebraria o final construído de propósito (05 clímax, 06 coda
-  silenciosa). Mesmo sistema de tokens, sem `main.js` — é conteúdo parado, não
-  precisa de coreografia de entrada. Alcançável pelo link no rodapé da home.
+- **Sobre a Jozzi — seção 05, no scroll principal.** Primeiro entregue como
+  página separada (`sobre.html`); a Jozzi corrigiu o rumo e pediu seção,
+  **depois de Projetos**. A página foi apagada e Contato/Onde ficamos
+  desceram para 06 e 07. O medo de quebrar o final (05 clímax, 06 coda) não
+  se confirmou: entrando ANTES do Contato, a seção não desmancha o fecho —
+  atrasa o clímax, o que na verdade ajuda, porque agora o leitor sabe quem é
+  a Jozzi antes de receber o endereço.
 
 **Um parágrafo foi escrito por mim, não pela Jozzi:** o texto sobre a origem
-do nome "Jozzi" e sua relação com moda, em `sobre.html`, porque a copy fornecida
-pedia esse texto sem entregá-lo pronto ("mini texto explicando o termo").
-Segue a Voz da Jozzi, mas precisa da aprovação de quem realmente sabe a
-origem do nome.
+do nome "Jozzi" e sua relação com moda, em `.sobre__bio`, porque a copy
+fornecida pedia esse texto sem entregá-lo pronto ("mini texto explicando o
+termo"). Segue a Voz da Jozzi, mas precisa da aprovação de quem realmente sabe
+a origem do nome.
 
 ---
 

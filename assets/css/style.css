@@ -1348,43 +1348,118 @@ img.onde__mapa {
 }
 
 
-/* 10i. PÁGINA — SOBRE A JOZZI --------------------------------
-   Fora do percurso 00–06 por decisão: o pedido veio como "aba /
-   página", não como mais um capítulo do scroll. Entrar como 07
-   quebraria o final construído de propósito (05 clímax, 06 coda
-   silenciosa) — então vive em sobre.html, mesmo sistema de tokens,
-   alcançável pelo rodapé.
+/* 10i. SEÇÃO 05 — SOBRE A JOZZI -----------------------------
+   Três movimentos, três lógicas de grade. Nenhum repete a
+   estrutura de outra seção do site.
 
-   Sem JavaScript nesta página: é conteúdo parado, não precisa de
-   coreografia de entrada. Nenhuma dependência de main.js.
+   O ponto de composição desta seção é o movimento 2: a frase de
+   display NÃO fica sozinha num campo vazio. Ela divide a faixa
+   horizontal com um bloco de 11px, e é o contraste de escala
+   entre os dois — não o tamanho da frase — que segura a página.
    ----------------------------------------------------------- */
 .sobre {
-  padding-top: clamp(4rem, 12vh, 8rem);
-  padding-bottom: clamp(5rem, 16vh, 10rem);
+  padding-top: clamp(5rem, 16vh, 11rem);
+  padding-bottom: clamp(5rem, 16vh, 11rem);
+  border-top: 1px solid var(--fio);
 }
-.sobre__eyebrow { margin: 0 0 clamp(1.6rem, 5vh, 3rem); }
-.sobre__t { max-width: 15ch; margin: 0 0 clamp(2.5rem, 8vh, 5rem); }
+
+/* ---- 1 · a declaração ---- */
+.sobre__t {
+  margin: 0;
+  max-width: 18ch;
+}
 .sobre__corpo {
-  max-width: 58ch;
+  margin: 0;
   color: var(--fg-2);
-  margin: 0 0 clamp(2.5rem, 8vh, 5rem);
+}
+
+/* ---- 2 · a virada ---- */
+.sobre__virada {
+  margin-top: clamp(4rem, 13vh, 8rem);
+  padding-top: clamp(2.5rem, 8vh, 4.5rem);
+  border-top: 1px solid var(--fio);
 }
 .sobre__linha {
-  max-width: 12ch;
-  margin: 0 0 clamp(3rem, 10vh, 6rem);
-  padding-top: clamp(2.5rem, 8vh, 5rem);
+  margin: 0;
+  max-width: 11ch;
+}
+.sobre__exp p {
+  margin: 0;
+  color: var(--fg-2);
+}
+.sobre__exp__ap {
+  margin: 0 0 clamp(.9rem, 2.4vh, 1.4rem);
+  color: var(--fg-3);
+}
+
+/* ---- 3 · a pessoa ---- */
+.sobre__pessoa {
+  margin-top: clamp(4rem, 13vh, 8rem);
+  padding-top: clamp(2.5rem, 8vh, 4.5rem);
   border-top: 1px solid var(--fio);
 }
-.sobre__fundadora {
-  padding-top: clamp(2.5rem, 8vh, 5rem);
-  border-top: 1px solid var(--fio);
-  margin-bottom: clamp(2.5rem, 8vh, 5rem);
+.sobre__fig { margin: 0; }
+.sobre__nome { margin: 0 0 .45rem; }
+.sobre__papel {
+  margin: 0 0 clamp(1.2rem, 3.5vh, 2rem);
+  color: var(--fg-3);
 }
-.sobre__fundadora h2 { margin: 0 0 .5rem; }
-.sobre__fundadora .ap { margin: 0 0 clamp(1.6rem, 5vh, 2.6rem); }
-.sobre__expertises {
-  padding-top: clamp(2.5rem, 8vh, 5rem);
-  border-top: 1px solid var(--fio);
+/* :last-of-type e não `p`: .sobre__papel também é um <p> dentro de
+   .sobre__bio, e `.sobre__bio p` (0,1,1) vencia `.sobre__papel`
+   (0,1,0) por especificidade, zerando a margem do cargo e colando
+   a bio nele. */
+.sobre__bio > p:last-of-type {
+  margin: 0;
+  color: var(--fg-2);
+}
+
+/* ---- ≥1025: as três grades ---- */
+@media (min-width: 1025px) {
+
+  /* degrau: o parágrafo começa no meio da largura que o título
+     ocupou. Não alinham à esquerda nem à direita — é isso que
+     impede a leitura "duas colunas". */
+  .sobre__decl {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: clamp(2.5rem, 7vh, 4.5rem) var(--calha);
+  }
+  .sobre__t     { grid-column: 1 / span 8;  grid-row: 1; }
+  .sobre__corpo { grid-column: 7 / span 6;  grid-row: 2; }
+
+  /* a frase grande e o texto de 11px na MESMA faixa, alinhados
+     pela base: a diferença de corpo vira composição em vez de
+     hierarquia. */
+  .sobre__virada {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--calha);
+    align-items: end;
+  }
+  .sobre__linha { grid-column: 1 / span 6; }
+  .sobre__exp   { grid-column: 8 / span 5; }
+
+  /* a seção contrai: o retrato é pequeno de propósito — 3 de 12
+     colunas. Depois de dois movimentos de volume, o fecho é
+     íntimo, e é ele que prepara a inversão do bordô. */
+  .sobre__pessoa {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--calha);
+    align-items: end;
+  }
+  .sobre__fig { grid-column: 1 / span 3; }
+  .sobre__bio { grid-column: 5 / span 5; }
+}
+
+/* ---- <1025: empilha, e o retrato não come a tela ---- */
+@media (max-width: 1024px) {
+  .sobre__corpo  { margin-top: clamp(1.8rem, 5vh, 2.6rem); }
+  .sobre__exp    { margin-top: clamp(1.8rem, 5vh, 2.6rem); }
+  .sobre__bio    { margin-top: clamp(1.8rem, 5vh, 2.6rem); }
+  .sobre__fig    { max-width: 15rem; }
+  .sobre__t      { max-width: 100%; }
+  .sobre__linha  { max-width: 100%; }
 }
 
 
@@ -1397,9 +1472,6 @@ img.onde__mapa {
   padding-bottom: clamp(1.5rem, 4vh, 2.5rem);
   border-top: 1px solid var(--fio);
 }
-.fim__link { border-bottom: 1px solid var(--fio); }
-.fim__link:hover,
-.fim__link:focus-visible { color: var(--sinal); border-color: var(--sinal); }
 
 
 /* 12. RECOMPOSIÇÃO ------------------------------------------

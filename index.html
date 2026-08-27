@@ -17,7 +17,7 @@
 
 <link rel="preload" href="assets/fonts/Switzer-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/IBMPlexMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/style.css?v=40">
+<link rel="stylesheet" href="assets/css/style.css?v=41">
 
 <script>
 (function () {
@@ -418,7 +418,92 @@
 
 
 <!-- ============================================================
-     05 — CONTATO
+     05 — SOBRE A JOZZI
+     Três movimentos, cada um com uma lógica de grade diferente —
+     a seção não repete a estrutura de nenhuma anterior.
+
+     1 · A declaração — o título grande em 1–8, o parágrafo entra
+         em 7–12 na linha de baixo. Não alinham: o parágrafo começa
+         no meio da largura que o título ocupou. É degrau, não
+         coluna.
+
+     2 · A virada — "Cada marca é singular." em corpo de display à
+         esquerda, com as expertises em 11px à direita, na MESMA
+         faixa horizontal. A frase grande não flutua sozinha num
+         campo vazio: tem contrapeso. É a tensão de escala que
+         segura a composição.
+
+     3 · A pessoa — a seção contrai. Retrato pequeno em 1–3, nome
+         em display--2 em 5–9. Depois do volume dos dois primeiros
+         movimentos, o fecho é íntimo — e é ele que prepara a
+         inversão do bordô que vem em seguida.
+
+     Fundo papel, entre o bege de Projetos e o bordô de Contato:
+     duas seções de cor nunca se encostam.
+
+     PENDENTE:
+       · retrato da fundadora — 3:4, a fornecer
+       · o parágrafo sobre a origem do nome "Jozzi" foi escrito
+         por mim, não pela Jozzi (a copy pedia o texto sem
+         entregá-lo). Precisa de aprovação de quem sabe a
+         história real.
+     ============================================================ -->
+<section class="sobre wrap" id="sobre" data-secao
+         data-num="05" data-nome="Sobre a Jozzi" aria-labelledby="sobre-titulo">
+  <span class="marca-agua" aria-hidden="true">05</span>
+
+  <h2 class="secao__ap ap rv" id="sobre-titulo">Sobre a Jozzi</h2>
+
+  <!-- 1 · a declaração -->
+  <div class="sobre__decl">
+    <p class="sobre__t d rv" data-linhas>A primeira agência de marketing com foco em moda de Curitiba.</p>
+
+    <p class="sobre__corpo rv">Desde 2025, nos estabelecemos como uma agência de marketing com um
+    objetivo que vai muito além do significado ao pé da letra. Através da conexão entre estratégias
+    e criatividade, construímos projetos pensando exatamente no que o cliente quer, e não no que nós
+    queremos. Acreditamos que autenticidade só existe quando há fidelidade ao propósito. Ao
+    acumularmos uma gama de experiências com marcas no mercado da moda, nos posicionamos a partir
+    da objetividade em cada etapa.</p>
+  </div>
+
+  <!-- 2 · a virada -->
+  <div class="sobre__virada">
+    <p class="sobre__linha d rv" data-linhas>Cada marca é singular.</p>
+
+    <div class="sobre__exp">
+      <h3 class="sobre__exp__ap ap rv">Nossas expertises</h3>
+      <p class="rv">Como o nosso próprio lema já diz, somos experts em criar para você. Como
+      marketing lab, enxergamos que cada projeto requer profundidade e, por causa disso, somos
+      pequenos, priorizando que a atenção ao detalhe seja personalizada. Com ênfase no mercado da
+      moda, desenvolvemos processos criativos e comunicação do zero a partir de um diagnóstico do
+      seu objetivo. Juntos, buscamos respostas para os resultados que você quer alcançar.</p>
+    </div>
+  </div>
+
+  <!-- 3 · a pessoa -->
+  <div class="sobre__pessoa">
+    <figure class="sobre__fig fig rv">
+      <div class="fig__campo" data-figura>
+        <span class="ap">Retrato 3:4</span>
+      </div>
+      <figcaption class="ap">Letícia Cruz &mdash; imagem a definir</figcaption>
+    </figure>
+
+    <div class="sobre__bio">
+      <h3 class="sobre__nome d d--2 rv">Letícia Cruz</h3>
+      <p class="sobre__papel ap rv">Fundadora e diretora criativa</p>
+      <p class="rv">Jozzi nasceu com sonoridade de marca de moda &mdash; curta, fácil de lembrar,
+      com o mesmo peso dos nomes que a gente reconhece de longe numa vitrine. Não é coincidência:
+      tratamos cada cliente com o mesmo critério que uma boa grife trata uma coleção. Nada entra
+      sem motivo, e o que fica carrega a assinatura de quem fez.</p>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ============================================================
+     06 — CONTATO
      Segunda inversão do site. A troca de fundo É a transição: não
      há animação própria desta seção.
 
@@ -438,8 +523,8 @@
        · horário de atendimento, se houver
      ============================================================ -->
 <section class="contato wrap inv inv--bordo" id="contato" data-secao data-inv
-         data-num="05" data-nome="Contato" aria-labelledby="contato-titulo">
-  <span class="marca-agua" aria-hidden="true">05</span>
+         data-num="06" data-nome="Contato" aria-labelledby="contato-titulo">
+  <span class="marca-agua" aria-hidden="true">06</span>
 
   <h2 class="secao__ap ap rv" id="contato-titulo">Contato</h2>
 
@@ -470,7 +555,7 @@
 
 
 <!-- ============================================================
-     06 — ONDE FICAMOS
+     07 — ONDE FICAMOS
      Colofão. A ÚNICA seção do site sem tipografia de display: o
      maior corpo aqui é o lede. Isso é deliberado — 05 é o ponto
      alto, e uma seção grande depois dele roubaria o clímax em vez
@@ -489,8 +574,8 @@
        · horário / se recebe visita e como
      ============================================================ -->
 <section class="onde wrap" id="onde-ficamos" data-secao
-         data-num="06" data-nome="Onde ficamos" aria-labelledby="onde-titulo">
-  <span class="marca-agua" aria-hidden="true">06</span>
+         data-num="07" data-nome="Onde ficamos" aria-labelledby="onde-titulo">
+  <span class="marca-agua" aria-hidden="true">07</span>
 
   <h2 class="secao__ap ap rv" id="onde-titulo">Onde ficamos</h2>
 
@@ -524,7 +609,7 @@
 
 <footer class="fim wrap">
   <p class="ap">Jozzi Creative Marketing Lab</p>
-  <p class="ap"><a class="fim__link" href="sobre.html">Sobre a Jozzi</a></p>
+  <p class="ap">Protótipo de direção &mdash; seções 00 a 07</p>
 </footer>
 
 <span class="cursor ap" id="cursor" aria-hidden="true"></span>
