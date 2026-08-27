@@ -261,42 +261,102 @@ a { color: inherit; text-decoration: none; }
     justify-items: start;
   }
 
+  /* a troca de seção: a máscara desce, o texto troca fora da tela e
+     a máscara sobe. Opacidade junto do recorte — só o recorte, num
+     texto de 11px de altura, lê como corte seco. */
   .aparato__num,
   .aparato__sec {
     display: inline-block;
-    transition: clip-path var(--t-micro) var(--curva);
+    transition:
+      clip-path var(--t-micro) var(--curva),
+      opacity var(--t-micro) var(--curva);
   }
   .aparato.is-trocando .aparato__num,
-  .aparato.is-trocando .aparato__sec { clip-path: inset(0 0 100% 0); }
+  .aparato.is-trocando .aparato__sec {
+    clip-path: inset(0 0 100% 0);
+    opacity: 0;
+  }
 
+  /* ---- A RÉGUA DAS SEÇÕES ----
+     O trilho deixa de ser um fio único com um ponto correndo por
+     cima: é a régua das oito seções, um segmento por seção, com
+     altura proporcional à altura real dela no documento.
+
+     A cada seção o instrumento se TRANSFORMA: o segmento corrente
+     engorda de 1px para 3px e ganha uma agulha horizontal na borda
+     do preenchimento; os já lidos ficam cheios em tom médio; os que
+     faltam continuam no fio silencioso. É a mesma leitura de antes
+     — onde estou, quanto falta — só que agora dividida em capítulos
+     em vez de num escorregador contínuo.
+
+     Azul em tudo: ardósia é a única cor da paleta legível sobre
+     papel E sobre tinta, e por isso o instrumento nunca troca de
+     cor na travessia. Só os dois blocos de texto trocam. */
   .aparato__escala {
     position: relative;
     flex: 1;
-    width: 1px;
+    /* 3px de caixa para o segmento ativo caber sem empurrar nada */
+    width: 3px;
     margin: 1.1rem 0;
-    /* ardósia é a única cor da paleta legível sobre papel E sobre
-       tinta. Por isso o fio e a marca nunca precisam trocar de cor
-       quando o fundo inverte — só os dois blocos de texto trocam. */
-    background: rgb(var(--azul-rgb) / .38);
-  }
-  .aparato__marca {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 1px;
-    height: 14px;
-    background: rgb(var(--azul-rgb) / .90);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
   }
 
-  /* o trecho já percorrido fica cheio: a trilha deixa de ser um fio
-     com um ponto e passa a ser um instrumento que mede */
-  .aparato__feito {
+  /* sem a régua montada — script fora do ar — sobra o fio contínuo
+     de sempre. O instrumento nunca some. */
+  .aparato__escala::before {
+    content: "";
     position: absolute;
     left: 0;
     top: 0;
+    bottom: 0;
     width: 1px;
+    background: rgb(var(--azul-rgb) / .38);
+  }
+  .js--regua .aparato__escala::before { content: none; }
+
+  .aparato__seg {
+    position: relative;
+    /* o peso é a altura da seção no documento: a régua mede o
+       documento, não conta seções */
+    flex: var(--peso, 1) 1 0;
+    width: 1px;
+    min-height: 5px;
+    background: rgb(var(--azul-rgb) / .28);
+    transition:
+      width var(--t-micro) var(--curva),
+      background-color var(--t-micro) var(--curva);
+  }
+  .aparato__seg.is-feito { background: rgb(var(--azul-rgb) / .52); }
+  .aparato__seg.is-ativo {
+    width: 3px;
+    background: rgb(var(--azul-rgb) / .38);
+  }
+
+  /* o preenchimento anda com a rolagem dentro da própria seção.
+     Sem transição: quem suaviza é a rolagem interpolada, e uma
+     transição por cima dela viraria arrasto. */
+  .aparato__seg-feito {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
     height: 0;
-    background: rgb(var(--azul-rgb) / .75);
+    background: rgb(var(--azul-rgb) / .85);
+  }
+
+  /* a agulha: um fio de 9px na borda do preenchimento, só no
+     segmento corrente. É o que faz a régua ser lida como
+     instrumento e não como barra de progresso. */
+  .aparato__seg.is-ativo .aparato__seg-feito::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 9px;
+    height: 1px;
+    background: rgb(var(--azul-rgb) / .95);
   }
 
   /* na carga, a escala se desenha de cima para baixo */
@@ -529,51 +589,132 @@ a { color: inherit; text-decoration: none; }
 
 .abertura__lede { max-width: 30ch; }
 
-/* Rolar — chevron desenhado em duas linhas de 1px, no idioma
-   visual do sistema (fios, não ícone). Bob discreto, verificado
-   contra reduced-motion; a linha e a seta usam a mesma cor do
-   fio da seção, sem cor nova. */
+/* Rolar — o convite a descer.
+   Antes era um chevron de 13px sem rótulo, parado, escondido no
+   telefone. A Jozzi pediu explícito: agora tem palavra, tem trilho
+   e tem movimento próprio.
+
+   É a ÚNICA animação em laço do site, e existe porque um convite
+   parado não convida. O laço é longo (2,2s), de baixa amplitude e
+   some no primeiro toque de rolagem — o site continua sem nada que
+   se mova sozinho depois da primeira tela. Desenhado em fios de
+   1px, no idioma do sistema: nenhuma forma nova, nenhuma cor nova. */
 .abertura__rolar {
   position: absolute;
   right: var(--margem);
-  bottom: clamp(1.6rem, 4.5vh, 2.6rem);
+  /* a abertura tem min-height 100svh mas começa ABAIXO do cabeçalho:
+     ela ultrapassa a dobra exatamente pela altura do logotipo. Um
+     convite de 85px preso a 1,6rem do fim da seção cai fora da tela.
+     O afastamento cobre a sangria e ainda sobra folga. */
+  bottom: clamp(3.4rem, 8vh, 5rem);
   display: grid;
   justify-items: center;
-  gap: .6rem;
+  gap: .7rem;
   border-bottom: 0;
-  color: var(--fg-3);
+  /* sobe de --fg-3 para --fg-2: o rótulo é convite, não aparato
+     silencioso. 6,2:1 contra os 4,5:1 de antes. */
+  color: var(--fg-2);
+  transition: color var(--t-micro) var(--curva);
 }
+.abertura__rolar-t { display: block; }
+
+/* o trilho e o que desce por ele */
 .abertura__seta {
   display: block;
-  width: 13px;
-  height: 8px;
   position: relative;
+  width: 18px;
+  height: 48px;
 }
-.abertura__seta::before,
+.abertura__seta::before {
+  /* o trilho inteiro, apagado */
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 34px;
+  margin-left: -.5px;
+  background: currentColor;
+  opacity: .26;
+}
 .abertura__seta::after {
+  /* o trecho de 12px que percorre o trilho */
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 12px;
+  margin-left: -.5px;
+  background: currentColor;
+  animation: rolar-trilho 2200ms var(--curva) infinite;
+}
+
+/* a ponta: dois fios de 1px, o mesmo chevron de antes em corpo
+   maior — 18px de vão em vez de 13px */
+.abertura__ponta {
+  position: absolute;
+  left: 0;
+  top: 34px;
+  width: 18px;
+  height: 11px;
+  animation: rolar-ponta 2200ms var(--curva) infinite;
+}
+.abertura__ponta::before,
+.abertura__ponta::after {
   content: "";
   position: absolute;
   top: 0;
-  width: 8px;
+  width: 11px;
   height: 1px;
   background: currentColor;
 }
-.abertura__seta::before { left: 0;  transform: rotate(45deg);  transform-origin: left top; }
-.abertura__seta::after  { right: 0; transform: rotate(-45deg); transform-origin: right top; }
+.abertura__ponta::before { left: 0;  transform: rotate(45deg);  transform-origin: left top; }
+.abertura__ponta::after  { right: 0; transform: rotate(-45deg); transform-origin: right top; }
 
-/* sem animação contínua: o sistema não usa loop infinito em lugar
-   nenhum. O convite a rolar é a própria seta parada — o movimento
-   fica reservado para quando o leitor de fato passa o mouse. */
-.abertura__rolar:hover .abertura__seta,
-.abertura__rolar:focus-visible .abertura__seta { transform: translateY(3px); }
-.abertura__rolar:hover,
-.abertura__rolar:focus-visible { color: var(--sinal); }
-.abertura__seta { transition: transform var(--t-micro) var(--curva); }
-
-@media (max-width: 768px) {
-  .abertura__rolar { display: none; }
+@keyframes rolar-trilho {
+  0%   { transform: translateY(0);    opacity: 0; }
+  15%  { opacity: 1; }
+  65%  { transform: translateY(24px); opacity: 1; }
+  100% { transform: translateY(34px); opacity: 0; }
+}
+@keyframes rolar-ponta {
+  0%, 100% { transform: translateY(0); }
+  60%      { transform: translateY(4px); }
 }
 
+/* assim que o leitor rola, o convite cumpriu a função e sai. Não
+   fica um laço tocando atrás do conteúdo pelo resto da sessão. */
+.abertura__rolar.is-cumprido {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--t-entra) var(--curva);
+}
+.abertura__rolar.is-cumprido .abertura__seta::after,
+.abertura__rolar.is-cumprido .abertura__ponta { animation: none; }
+
+.abertura__rolar:hover,
+.abertura__rolar:focus-visible { color: var(--sinal); }
+
+@media (max-width: 768px) {
+  /* no telefone o convite sai do canto absoluto e entra no fluxo,
+     depois do rodapé da seção: absoluto ali cruzaria o lede. */
+  .abertura__rolar {
+    position: static;
+    justify-self: end;
+    align-self: flex-end;
+    margin-top: clamp(1.4rem, 4vh, 2.2rem);
+  }
+  .abertura__seta { height: 46px; }
+  .abertura__seta::before { height: 32px; }
+  .abertura__ponta { top: 32px; }
+  @keyframes rolar-trilho {
+    0%   { transform: translateY(0);    opacity: 0; }
+    15%  { opacity: 1; }
+    65%  { transform: translateY(22px); opacity: 1; }
+    100% { transform: translateY(32px); opacity: 0; }
+  }
+}
 
 /* 10. SEÇÃO 01 — QUEM SOMOS ---------------------------------
    Assimetria extrema: 12 colunas, texto em 7–12, imagem
@@ -697,19 +838,24 @@ a { color: inherit; text-decoration: none; }
 .prin--d .prin__p { grid-column: 1 / span 4; }
 
 
-/* 10c. SEÇÃO 03 — SERVIÇOS ----------------------------------
-   Duas zonas. À esquerda o índice; à direita a metade da página que
-   vira imagem. Nada de painel: sem moldura, sem preenchimento, sem
-   fundo próprio — o campo sangra até a margem da página.
+/* 10c. SEÇÃO 03 — SERVIÇOS · CARDS --------------------------
+   Mudança de direção pedida pela Jozzi: as cinco frentes deixam de
+   ser um índice de duas zonas e passam a ser cinco cards.
 
-   A descrição não acompanha a imagem: ela mora embaixo do índice.
-   É o que impede a leitura [item] -> [cartão].
+   O README dizia "sem cartão". A regra caiu por decisão da Jozzi, e
+   o que a substitui é uma disciplina de material: o card aqui é um
+   fio de 1px e uma caixa de papel — sem raio, sem sombra, sem
+   gradiente, sem ícone. A moldura é a única coisa que entrou de
+   novo; todo o resto do sistema continua valendo.
 
-   O PADRÃO é o fluxo: nome, imagem e texto empilhados, todos os
-   cinco visíveis. É o que se vê sem JavaScript, e funciona. A
-   composição de duas zonas só entra quando o módulo está de pé
-   (`.js--serv`) — senão os cinco campos ocupariam a mesma célula da
-   grade e se sobreporiam.
+   Registro do nome: display--2, nunca a faixa proibida de 24 a
+   44px. Os nomes longos QUEBRAM em duas linhas em vez de encolher —
+   encolher os jogaria dentro da faixa. Por isso o rótulo tem altura
+   mínima de duas linhas: é o que alinha o texto dos cinco cards.
+
+   Sem JavaScript o card fica inteiro na tela, com as etiquetas
+   abertas sobre a chapa. O `.js--serv` é que as FECHA — nunca o
+   contrário. Nada depende do script para existir.
    ----------------------------------------------------------- */
 .serv {
   padding-top: clamp(5rem, 16vh, 11rem);
@@ -717,107 +863,72 @@ a { color: inherit; text-decoration: none; }
   border-top: 1px solid var(--fio);
 }
 
-.serv__lista { list-style: none; margin: 0; padding: 0; }
-.serv__item + .serv__item { margin-top: clamp(1.1rem, 3vh, 2rem); }
-
-/* o nome é um botão de verdade: ponteiro, toque e teclado entram
-   pelo mesmo caminho, e nada existe só no hover */
-.serv__nome {
-  display: block;
-  width: 100%;
-  margin: 0 0 0 var(--optico, 0);
-  padding: .12em 0;
-  border: 0;
-  background: none;
-  text-align: left;
-  font-family: inherit;
-  /* Registro de display com ajuste óptico. Ancorado em --fs-display
-     e não em --fs-display-2: sobre o display-2, o nome mais longo
-     caía em 38px, dentro da faixa proibida de 24 a 44. */
-  font-size: calc(var(--fs-display) * var(--serv-fit, 1) * var(--fit, 1));
-  font-weight: 500;
-  letter-spacing: -.03em;
-  line-height: 1.06;
-  /* os inativos descem para o tom do aparato: com o ativo em tinta
-     cheia e os inativos em --fg-2 a diferença ficava tênue demais
-     para ler como estado. 4,56:1 continua acima do mínimo de texto
-     grande, que é 3:1. */
-  color: var(--fg-3);
-  /* NÍVEL 4 — o estado ativo responde no eixo variável da Switzer,
-     que é o mesmo recurso da esteira da abertura. O nome não muda de
-     tamanho nem de posição: muda de peso. */
-  font-variation-settings: 'wght' 430;
-  transition:
-    color var(--t-micro) var(--curva),
-    font-variation-settings var(--t-micro) var(--curva);
-}
-
-.serv__num {
-  display: inline-block;
-  width: 2.6rem;
-  vertical-align: middle;
-  color: var(--fg-3);
-  transition: color var(--t-micro) var(--curva);
-}
-
-/* O item ativo vai para a tinta cheia, não para o azul.
-   Medido: o azul da paleta dá 3,28:1 sobre papel e os nomes em
-   repouso dão 6,2:1 — pintar o ativo de azul o deixaria MENOS
-   contrastado que os inativos e o sinal se inverteria. Aqui a
-   interação se marca por contraste, que é como o resto do sistema
-   já marca hierarquia. O azul segue sendo o sinal onde alcança:
-   anel de foco, instrumento do aparato e, sobre tinta, o amarelo. */
-.serv__item.is-ativo .serv__nome,
-.serv__item.is-ativo .serv__num { color: var(--fg); }
-.serv__item.is-ativo .serv__nome { font-variation-settings: 'wght' 560; }
-
-/* ajuste óptico por palavra — a regra é o comprimento, não a
-   disciplina. Design é a terceira da lista e a maior de todas: a
-   ordem dos corpos não acompanha a numeração, e é isso que impede
-   a leitura como ranking comercial. */
-.serv__item:nth-child(1) { --fit: .875; --optico: 0;       }  /* Branding · 8 · B */
-.serv__item:nth-child(2) { --fit: .75;  --optico: -.012em; }  /* Social Media · 12 · S */
-.serv__item:nth-child(3) { --fit: .93;  --optico: -.012em; }  /* Styling · 7 · S — mesma correção óptica da Social Media, mesma letra inicial */
-.serv__item:nth-child(4) { --fit: .75;  --optico: -.022em; }  /* Tráfego Pago · 12 · T */
-.serv__item:nth-child(5) { --fit: .70;  --optico: -.018em; }  /* Web Development · 15 · W */
-
-.serv__rev {
+.serv__lista {
+  list-style: none;
+  margin: clamp(2rem, 6vh, 3.6rem) 0 0;
+  padding: 0;
   display: grid;
-  gap: clamp(1.2rem, 3vh, 1.8rem);
-  margin: clamp(1.2rem, 3vh, 1.8rem) 0 clamp(1.8rem, 4vh, 2.6rem);
-  max-width: 26rem;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--calha);
 }
 
+/* ---- o card ----
+   Três faixas: chapa, nome, texto. A última cresce, para que os
+   cinco cards terminem na mesma linha mesmo com textos de
+   comprimentos diferentes. */
+.serv__card {
+  --i: 0;
+  grid-column: span 12;
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  border: 1px solid var(--fio);
+  background: var(--papel);
+  transition: border-color var(--t-micro) var(--curva);
+}
+.serv__card:nth-child(1) { --i: 0; }
+.serv__card:nth-child(2) { --i: 1; }
+.serv__card:nth-child(3) { --i: 2; }
+.serv__card:nth-child(4) { --i: 3; }
+.serv__card:nth-child(5) { --i: 4; }
+
+/* o estado ativo se marca por contraste, como no resto do site: a
+   moldura sai do fio silencioso e vai para tinta a 45%. O azul não
+   entra aqui — sobre papel ele é MAIS claro que o texto em repouso
+   e o sinal se inverteria. */
+.serv__card.is-ativo { border-color: rgb(var(--marrom-rgb) / .45); }
+
+/* ---- a chapa ----
+   16:9, uma das três proporções do sistema. O numeral continua
+   carimbado por cima, com multiply: sobre o bege de hoje tinge,
+   sobre a foto de amanhã escurece sem apagar. */
 .serv__plate {
   position: relative;
   width: 100%;
-  /* no fluxo, o 3:4 come uma tela inteira entre dois nomes e o
-     índice deixa de ser percorrível. 1:1 é uma das três proporções
-     do sistema e resolve sem inventar recorte novo. */
-  aspect-ratio: 1;
+  aspect-ratio: 16 / 9;
   background: var(--papel-2);
   display: grid;
   place-items: center;
   overflow: hidden;
-  /* o rótulo "Imagem" fica sobre bege, não sobre papel: no fundo
-     mais escuro o aparato cai para 4,19:1 e não alcança o mínimo de
+  /* o numeral é multiply: sem isolar, ele mistura com TUDO o que
+     está atrás, painel incluído, e reaparece por cima das
+     etiquetas. Isolado, o multiply acontece dentro da chapa e o
+     painel cobre o grupo inteiro. */
+  isolation: isolate;
+  /* sobre bege o aparato cai para 4,19:1 e não alcança o mínimo de
      texto pequeno. Sobe só aqui. */
   --fg-3: rgb(var(--marrom-rgb) / .72);
 }
 .serv__plate .ap { color: var(--fg-3); }
 
-/* O número do serviço ativo, impresso sobre o próprio campo de
-   imagem — como um carimbo. mix-blend-mode: multiply é o que faz
-   funcionar tanto sobre o bege de hoje (tinge) quanto sobre a foto
-   de amanhã (escurece por cima, sem apagar a imagem). É o mesmo
-   número que já existe em .serv__num, só que a serviço vira parte
-   estrutural da imagem, não apenas rótulo do índice. */
 .serv__plate-num {
   position: absolute;
-  left: .55rem;
-  bottom: .3rem;
+  left: .5rem;
+  bottom: .1rem;
   z-index: 1;
-  font-size: clamp(4.5rem, 15vw, 10rem);
+  /* menor que na composição anterior: dentro de um card de 16:9 o
+     corpo de pôster não cabia sem virar a própria chapa. */
+  font-size: clamp(3rem, 6.5vw, 5.5rem);
   font-weight: 500;
   line-height: .8;
   letter-spacing: -.045em;
@@ -826,6 +937,176 @@ a { color: inherit; text-decoration: none; }
   pointer-events: none;
   user-select: none;
 }
+
+/* ---- o painel de etiquetas ----
+   Sobe por cima da chapa, com a mesma máscara de baixo para cima
+   que revela o site inteiro. Sobrepõe em vez de empurrar: se
+   empurrasse, abrir um card mudaria a altura da linha e os outros
+   quatro saltariam. Aqui nada se move fora do próprio card.
+
+   Contraste: off-white a 82% sobre tinta a 92% dá 10,4:1. */
+.serv__painel {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 2;
+  padding: .7rem clamp(.8rem, 1.6vw, 1.1rem);
+  /* opaco, não 92%: com transparência o carimbo por baixo continua
+     legível e briga com as etiquetas. Off-white a 82% sobre marrom
+     cheio dá 10,9:1. */
+  background: var(--texto);
+  color: rgb(var(--off-white-rgb) / .82);
+}
+/* `.serv__plate .ap` pinta o rótulo da chapa de tinta a 72% — e o
+   painel é filho da chapa. Sem esta regra as etiquetas saem marrom
+   sobre marrom, invisíveis. Mesma especificidade, declarada depois. */
+.serv__painel .ap,
+.serv__painel .serv__tags { color: rgb(var(--off-white-rgb) / .82); }
+
+.js--serv .serv__painel {
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path var(--t-entra) var(--curva);
+}
+.js--serv .serv__card.is-ativo .serv__painel { clip-path: inset(0 0 0 0); }
+/* main.js não subiu: as etiquetas ficam abertas, como sem script */
+.js--sem-motor .serv__painel { clip-path: none; }
+
+/* pronta para a foto: quando ela chegar, é ela que assenta ao
+   ativar o card — o texto nunca escala. */
+.serv__plate__foto {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  background: var(--papel-2);
+  transition: transform var(--t-entra) var(--curva);
+}
+.serv__card.is-ativo .serv__plate__foto { transform: scale(1.04); }
+
+/* ---- o nome ----
+   Continua sendo <button>: ponteiro, toque e teclado entram pelo
+   mesmo caminho. */
+.serv__nome {
+  display: grid;
+  gap: .5rem;
+  justify-items: start;
+  width: 100%;
+  margin: 0;
+  padding: clamp(1rem, 2.4vh, 1.4rem) clamp(1rem, 2vw, 1.5rem) 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  font-family: inherit;
+  /* Escala própria, e não `--fs-display-2` cru.
+     Medido: `--fs-display-2` vale 41px em 1025 e 44px em 1100 —
+     dentro da faixa proibida de 24 a 44, que é justamente onde a
+     regra em pixels vale (acima de 1025). Esta clamp começa em
+     46,5px em 1025 e termina em 57,6px: nunca entra na faixa.
+     Abaixo de 1025 vale a regra geral, a razão: o menor corpo aqui
+     é 35px contra 16px de texto — 2,2 vezes, acima do mínimo de
+     1,8. Medido em 390, 769, 900, 1025, 1280 e 1440. */
+  font-size: clamp(2.2rem, 3.6vw + .6rem, 3.6rem);
+  font-weight: 500;
+  letter-spacing: -.035em;
+  line-height: 1.06;
+  color: var(--fg-3);
+  /* NÍVEL 4 — o estado ativo responde no eixo variável da Switzer.
+     O nome não muda de tamanho nem de posição: muda de peso. */
+  font-variation-settings: 'wght' 430;
+  transition:
+    color var(--t-micro) var(--curva),
+    font-variation-settings var(--t-micro) var(--curva);
+}
+.serv__num {
+  display: block;
+  color: var(--fg-3);
+  transition: color var(--t-micro) var(--curva);
+}
+.serv__rotulo { display: block; margin-left: var(--optico, 0); }
+
+.serv__card.is-ativo .serv__nome,
+.serv__card.is-ativo .serv__num { color: var(--fg); }
+.serv__card.is-ativo .serv__nome { font-variation-settings: 'wght' 560; }
+
+/* Corpo ÚNICO para os cinco, ao contrário do índice que existia
+   aqui antes. Lá a variação de corpo por comprimento de palavra era
+   composição; entre cards de mesma largura ela seria lida como
+   ranking comercial. Os nomes longos QUEBRAM em duas linhas em
+   corpo cheio — encolher para caber numa linha os jogaria dentro da
+   faixa proibida.
+
+   O que sobrevive por card é só a correção óptica de primeira
+   letra: alinha o glifo, não a caixa. */
+.serv__card:nth-child(1) { --optico: 0;       }  /* Branding · B */
+.serv__card:nth-child(2) { --optico: -.012em; }  /* Social Media · S */
+.serv__card:nth-child(3) { --optico: -.012em; }  /* Styling · S */
+.serv__card:nth-child(4) { --optico: -.022em; }  /* Tráfego Pago · T */
+.serv__card:nth-child(5) { --optico: -.018em; }  /* Web Development · W */
+
+/* ---- o texto ---- */
+.serv__txt {
+  margin: 0;
+  padding: .9rem clamp(1rem, 2vw, 1.5rem) clamp(1.2rem, 3vh, 1.7rem);
+  color: var(--fg-2);
+}
+
+/* etiquetas: lista em aparato, sem badge, sem contorno, sem
+   preenchimento — separadas por um ponto médio, como um rodapé de
+   créditos. É dado, não decoração. */
+.serv__tags {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .3em .9em;
+  color: inherit;
+}
+.serv__tags li {
+  position: relative;
+  padding-left: 1em;
+}
+.serv__tags li::before {
+  content: "·";
+  position: absolute;
+  left: 0;
+}
+.serv__tags li:first-child { padding-left: 0; }
+.serv__tags li:first-child::before { content: none; }
+
+/* ---- entrada escalonada ----
+   Os cards de uma mesma linha entram juntos pelo observador. O
+   atraso por índice é o que devolve a sequência de leitura — mesma
+   máscara, mesma curva, mesma duração. 70ms entre um e outro:
+   pouco mais que os 55ms da revelação por linha. */
+.js .serv__card.rv.is-dentro { animation-delay: calc(var(--i) * 70ms); }
+
+@media (min-width: 769px) {
+  .serv__card { grid-column: span 6; }
+  /* duas linhas de rótulo reservadas: é o que alinha o texto dos
+     cinco cards mesmo com nomes de uma e de duas linhas */
+  .serv__rotulo { min-height: 2.12em; }
+}
+
+/* Três por fila só a partir de 1280. Entre 1025 e 1279 o aparato já
+   come 8,5rem da largura e um terço do que sobra não comporta
+   "Development" no corpo de display: a fila de dois é o que impede
+   o nome de ter que encolher para a faixa proibida. */
+@media (min-width: 1025px) {
+  .serv__card { grid-column: span 6; }
+}
+
+@media (min-width: 1280px) {
+  .serv__card { grid-column: span 4; }
+  /* a segunda fila não começa na margem: dois cards centrados sob
+     três é composição, não sobra. Nenhuma seção repete a grade da
+     anterior — e esta não repete nem a própria primeira fila. */
+  .serv__card:nth-child(4) { grid-column: 3 / span 4; }
+  .serv__card:nth-child(5) { grid-column: 7 / span 4; }
+}
+
 
 
 /* ---- CAMPOS DE IMAGEM: seção 01 e Onde ficamos ----
@@ -855,154 +1136,6 @@ img.onde__mapa {
      ignorado. A proporção é de `aspect-ratio`; o recorte é de
      `object-fit`. */
   height: auto;
-  background: var(--papel-2);
-}
-
-/* ---- CAMPO DE IMAGEM: Serviços ----
-   .serv__plate é sempre o CONTÊINER — nunca é substituído pelo
-   <img>. Precisa continuar existindo porque o numeral do serviço
-   (.serv__plate-num) mora dentro dele, junto da foto. A foto entra
-   como filho, preenchendo por posição absoluta:
-
-     <div class="serv__plate">
-       <span class="serv__plate-num" aria-hidden="true">01</span>
-       <img class="serv__plate__foto" src="..." alt="..."
-            width="1200" height="1600" loading="lazy" decoding="async">
-     </div>
-
-   O placeholder <span class="ap">Imagem</span> sai quando a foto
-   entra — os dois nunca convivem. */
-.serv__plate__foto {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  display: block;
-  background: var(--papel-2);
-}
-
-/* O par de textos do serviço, no registro de texto. Antes eram dois
-   campos de aparato marcando o que faltava; com o conteúdo real, a
-   cor de "pendente" (--fg-3) sairia como texto apagado, e sem regra
-   nenhuma os dois parágrafos se encostariam — `p` tem margin 0 na
-   base. Espaçamento e cor, nada além disso. */
-.serv__txt p { margin: 0; color: var(--fg-2); }
-.serv__txt p + p { margin-top: .8rem; }
-
-/* Etiquetas do serviço: lista em aparato, sem badge, sem contorno,
-   sem preenchimento — separadas por um ponto médio, como um rodapé
-   de créditos. É dado, não decoração. */
-.serv__tags {
-  list-style: none;
-  margin: 1.1rem 0 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: .3em .9em;
-}
-.serv__tags li {
-  position: relative;
-  padding-left: 1em;
-}
-.serv__tags li::before {
-  content: "·";
-  position: absolute;
-  left: 0;
-}
-.serv__tags li:first-child { padding-left: 0; }
-.serv__tags li:first-child::before { content: none; }
-
-
-/* ---- com o módulo de pé: só o item ativo revela ---- */
-.js--serv .serv__rev { display: none; }
-.js--serv .serv__item.is-ativo .serv__rev {
-  display: grid;
-  animation: revelar var(--t-entra) var(--curva) both;
-}
-
-@media (max-width: 480px) {
-  .serv__rev { max-width: none; }
-}
-
-
-/* ---- com o módulo de pé, ≥1025: as duas zonas ---- */
-@media (min-width: 1025px) {
-  .js--serv .serv {
-    --serv-fit: .84;   /* o nome mais longo tem que caber na zona */
-    display: grid;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    /* os cinco nomes em min-content: o campo é mais alto que o
-       índice, e sem travar as linhas ele espalharia os nomes até
-       preencher a altura — o índice viraria menu. A sobra vai toda
-       para a última linha, onde mora o texto. */
-    grid-template-rows: repeat(5, min-content) auto;
-    gap: clamp(.4rem, 1.4vh, 1rem) var(--calha);
-    align-items: start;
-  }
-
-  /* botões e campos viram itens diretos da grade da seção, para
-     poderem ocupar zonas diferentes sem sair do <li> */
-  /* o `.is-ativo .serv__rev` do bloco de fluxo tem especificidade
-     maior e venceria pela cascata, mesmo vindo antes. Precisa ser
-     anulado nominalmente, senão o campo ativo vira uma caixa dentro
-     do <li> e não chega à grade da seção. */
-  .js--serv .serv__lista,
-  .js--serv .serv__item,
-  .js--serv .serv__rev,
-  .js--serv .serv__item.is-ativo .serv__rev {
-    display: contents;
-    animation: none;
-  }
-
-  .js--serv .serv__nome { grid-column: 1 / span 7; }
-  .js--serv .serv__item:nth-child(1) .serv__nome { grid-row: 1; }
-  .js--serv .serv__item:nth-child(2) .serv__nome { grid-row: 2; }
-  .js--serv .serv__item:nth-child(3) .serv__nome { grid-row: 3; }
-  .js--serv .serv__item:nth-child(4) .serv__nome { grid-row: 4; }
-  .js--serv .serv__item:nth-child(5) .serv__nome { grid-row: 5; }
-
-  /* todos os campos na MESMA área: empilhados, nada se move */
-  /* a chapa atravessa a margem e sangra até a borda da tela. Contra
-     margens reais de cartaz, o sangramento é o que cria tensão — a
-     imagem deixa de estar "dentro da página" e passa a cortá-la. */
-  .js--serv .serv__plate {
-    aspect-ratio: 3 / 4;
-    grid-column: 9 / span 4;
-    grid-row: 1 / span 6;
-    align-self: start;
-    width: calc(100% + var(--margem));
-    margin-right: calc(-1 * var(--margem));
-  }
-  .js--serv .serv__txt {
-    grid-column: 1 / span 5;
-    grid-row: 6;
-    align-self: start;
-    padding-top: clamp(2rem, 6vh, 4rem);
-  }
-
-  .js--serv .serv__plate,
-  .js--serv .serv__txt {
-    clip-path: inset(0 0 100% 0);
-    animation: none;
-    /* o campo que sai só colapsa DEPOIS que o que entra já cobriu:
-       vira uma passagem de imagem, não um piscar */
-    transition:
-      clip-path var(--t-micro) var(--curva) var(--t-micro),
-      transform var(--t-entra) var(--curva);
-  }
-  /* só a imagem ganha o assentamento de escala — no texto ficaria
-     estranho, e o gesto precisa continuar sendo de uma coisa só */
-  .js--serv .serv__plate { transform: scale(1.04); }
-  .js--serv .serv__item.is-ativo .serv__plate,
-  .js--serv .serv__item.is-ativo .serv__txt {
-    clip-path: inset(0 0 0 0);
-    transition-delay: 0s;
-    z-index: 1;
-  }
-  .js--serv .serv__item.is-ativo .serv__plate { transform: scale(1); }
-
 }
 
 
@@ -1715,9 +1848,11 @@ html.js--sem-motor .carregando { display: none; }
     transition: none;
     animation: none;
   }
+  /* a entrada escalonada dos cards é atraso, não animação: sem ela
+     os cinco apareceriam de qualquer jeito, mas com atraso residual */
+  .js .serv__card.rv.is-dentro { animation-delay: 0s; }
   .aparato__num,
   .aparato__sec { transition: none; }
-  .js--serv .serv__item.is-ativo .serv__rev { animation: none; }
   .js [data-linhas],
   .js [data-linhas] .pal {
     opacity: 1;
@@ -1727,9 +1862,21 @@ html.js--sem-motor .carregando { display: none; }
   }
   .js .aparato__escala,
   .js .aparato.is-ligado .aparato__escala { clip-path: none; animation: none; }
+  /* a régua continua medindo — o que sai é o deslizar da largura e
+     da cor entre um segmento e o seguinte */
+  .aparato__seg { transition: none; }
   .cliente { transform: none; }
   .serv__nome,
-  .serv__item.is-ativo .serv__nome { transition: color var(--t-micro) linear; }
+  .serv__card.is-ativo .serv__nome { transition: color var(--t-micro) linear; }
+  .js--serv .serv__painel { transition: none; }
+  .serv__plate__foto,
+  .serv__card.is-ativo .serv__plate__foto { transition: none; transform: none; }
+  /* o convite a rolar perde o laço e fica parado, explícito do
+     mesmo jeito: o rótulo e o chevron maior não dependem de tempo */
+  .abertura__seta::after,
+  .abertura__ponta { animation: none; }
+  .abertura__seta::after { opacity: 0; }
+  .abertura__rolar.is-cumprido { transition: none; }
 }
 
 /* Impressão é outro meio: #fff significa "sem tinta no papel" e

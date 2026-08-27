@@ -122,7 +122,10 @@
     <span class="aparato__num" data-aparato-num>00</span>
     <span class="aparato__sec" data-aparato-sec>Abertura</span>
   </p>
-  <div class="aparato__escala"><span class="aparato__feito" data-aparato-feito></span><span class="aparato__marca" data-aparato-marca></span></div>
+  <!-- a régua é montada pelo main.js: um segmento por seção, com
+       altura proporcional à altura real dela no documento. Sem
+       script sobra o fio contínuo, desenhado no ::before. -->
+  <div class="aparato__escala" data-aparato-escala></div>
   <p class="aparato__hora">CWB<span data-relogio>--:--:--</span></p>
 </div>
 
@@ -166,7 +169,8 @@
   </div>
 
   <a class="abertura__rolar ap rv" href="#quem-somos" data-atraso="760" data-cursor="Rolar" aria-label="Rolar para o conteúdo">
-    <span class="abertura__seta" aria-hidden="true"></span>
+    <span class="abertura__rolar-t" aria-hidden="true">Rolar</span>
+    <span class="abertura__seta" aria-hidden="true"><i class="abertura__ponta"></i></span>
   </a>
 
 </section>
@@ -254,143 +258,165 @@
 
 
 <!-- ============================================================
-     03 — SERVIÇOS
-     Índice tipográfico + revelação, em duas zonas.
+     03 — SERVIÇOS · CARDS
+     Cinco cards, todos na tela ao mesmo tempo. Substitui o índice
+     de duas zonas, por decisão da Jozzi.
 
-     A zona direita NÃO é um painel: é a metade direita da página,
-     sangrando até a margem, sem moldura e sem preenchimento. E a
-     descrição mora embaixo do ÍNDICE, não junto da imagem — é o que
-     quebra o mapeamento [item] -> [cartão].
+     Cada card é uma chapa 16:9 com o numeral carimbado, o nome em
+     display--2 e a descrição por baixo. As etiquetas são o único
+     conteúdo que espera pelo leitor: sobem por cima da própria
+     chapa ao passar o ponteiro, ao receber foco ou ao toque —
+     sobrepondo, nunca empurrando, para que abrir um card não mexa
+     na altura da fila.
 
-     Escala dos nomes: função do comprimento da palavra, meio caminho
-     entre corpo único e larguras iguais. A regra é sobre a palavra,
-     não sobre a disciplina, para a variação não ser lida como
-     importância comercial.
+     Nomes longos QUEBRAM em duas linhas em corpo cheio em vez de
+     encolher: encolher os jogaria dentro da faixa proibida de 24 a
+     44px. O rótulo tem duas linhas reservadas, e é isso que alinha
+     o texto dos cinco cards.
+
+     Sem JavaScript o card está inteiro na tela, com as etiquetas
+     abertas. É o `.js--serv` que as fecha, nunca o contrário.
 
      Conteúdo: copy definitiva fornecida pela Jozzi (rodada de
      25/08). Ordem: Branding, Social Media, Styling, Tráfego Pago,
-     Web Development — "Design" foi substituído por "Styling" nesta
-     rodada. Cada item tem um parágrafo + uma lista de etiquetas
-     (.serv__tags); a estrutura anterior de dois parágrafos
-     (afirmação + posição) foi simplificada para acompanhar o
-     formato da copy recebida.
+     Web Development.
      ============================================================ -->
 <section class="serv wrap" id="servicos" data-secao
          data-num="03" data-nome="Serviços" aria-labelledby="serv-titulo">
   <h2 class="secao__ap ap rv" id="serv-titulo">Serviços</h2>
 
-  <ul class="serv__lista" role="list" data-cursor="Ver">
+  <ul class="serv__lista" role="list">
 
-    <li class="serv__item" role="listitem">
-      <button class="serv__nome rv" type="button"
+    <li class="serv__card rv" role="listitem" data-cursor="Ver">
+      <div class="serv__plate">
+        <span class="serv__plate-num" aria-hidden="true">01</span>
+        <span class="ap">Imagem 16:9</span>
+
+        <!-- as etiquetas sobem por cima da chapa. Sobrepõem em vez
+             de empurrar: se empurrassem, abrir um card mudaria a
+             altura da fila e os outros quatro saltariam. -->
+        <div class="serv__painel" id="serv-rev-branding" aria-labelledby="serv-bt-branding" aria-hidden="true">
+          <ul class="serv__tags ap" aria-label="Etiquetas">
+          <li>identidade</li>
+          </ul>
+        </div>
+      </div>
+
+      <button class="serv__nome" type="button"
               id="serv-bt-branding" aria-controls="serv-rev-branding" aria-expanded="false">
-        <span class="serv__num ap" aria-hidden="true">01</span>Branding
+        <span class="serv__num ap" aria-hidden="true">01</span>
+        <span class="serv__rotulo">Branding</span>
       </button>
 
-      <div class="serv__rev" id="serv-rev-branding" aria-labelledby="serv-bt-branding" aria-hidden="true">
-        <div class="serv__plate">
-          <span class="serv__plate-num" aria-hidden="true">01</span>
-          <span class="ap">Imagem</span>
-        </div>
-        <div class="serv__txt">
-          <p>O nosso objetivo é que sua marca realmente seja marcante. Mapeamos, junto com você, a real mensagem que acompanhará cada criação.</p>
+      <p class="serv__txt">O nosso objetivo é que sua marca realmente seja marcante. Mapeamos, junto com você, a real mensagem que acompanhará cada criação.</p>
+    </li>
+
+    <li class="serv__card rv" role="listitem" data-cursor="Ver">
+      <div class="serv__plate">
+        <span class="serv__plate-num" aria-hidden="true">02</span>
+        <span class="ap">Imagem 16:9</span>
+
+        <!-- as etiquetas sobem por cima da chapa. Sobrepõem em vez
+             de empurrar: se empurrassem, abrir um card mudaria a
+             altura da fila e os outros quatro saltariam. -->
+        <div class="serv__painel" id="serv-rev-social-media" aria-labelledby="serv-bt-social-media" aria-hidden="true">
           <ul class="serv__tags ap" aria-label="Etiquetas">
-            <li>identidade</li>
+          <li>design</li>
+          <li>edição</li>
+          <li>roteirização</li>
+          <li>gravação</li>
+          <li>planejamento de conteúdos</li>
+          <li>copywriting</li>
           </ul>
         </div>
       </div>
-    </li>
 
-    <li class="serv__item" role="listitem">
-      <button class="serv__nome rv" type="button"
+      <button class="serv__nome" type="button"
               id="serv-bt-social-media" aria-controls="serv-rev-social-media" aria-expanded="false">
-        <span class="serv__num ap" aria-hidden="true">02</span>Social Media
+        <span class="serv__num ap" aria-hidden="true">02</span>
+        <span class="serv__rotulo">Social Media</span>
       </button>
 
-      <div class="serv__rev" id="serv-rev-social-media" aria-labelledby="serv-bt-social-media" aria-hidden="true">
-        <div class="serv__plate">
-          <span class="serv__plate-num" aria-hidden="true">02</span>
-          <span class="ap">Imagem</span>
-        </div>
-        <div class="serv__txt">
-          <p>Mais do que conteúdos bonitos esteticamente, priorizamos gerar posicionamento nas redes sociais a partir de uma avaliação de estratégias que funcionam para cada caso.</p>
+      <p class="serv__txt">Mais do que conteúdos bonitos esteticamente, priorizamos gerar posicionamento nas redes sociais a partir de uma avaliação de estratégias que funcionam para cada caso.</p>
+    </li>
+
+    <li class="serv__card rv" role="listitem" data-cursor="Ver">
+      <div class="serv__plate">
+        <span class="serv__plate-num" aria-hidden="true">03</span>
+        <span class="ap">Imagem 16:9</span>
+
+        <!-- as etiquetas sobem por cima da chapa. Sobrepõem em vez
+             de empurrar: se empurrassem, abrir um card mudaria a
+             altura da fila e os outros quatro saltariam. -->
+        <div class="serv__painel" id="serv-rev-styling" aria-labelledby="serv-bt-styling" aria-hidden="true">
           <ul class="serv__tags ap" aria-label="Etiquetas">
-            <li>design</li>
-            <li>edição</li>
-            <li>roteirização</li>
-            <li>gravação</li>
-            <li>planejamento de conteúdos</li>
-            <li>copywriting</li>
+          <li>produção de moda</li>
           </ul>
         </div>
       </div>
-    </li>
 
-    <li class="serv__item" role="listitem">
-      <button class="serv__nome rv" type="button"
+      <button class="serv__nome" type="button"
               id="serv-bt-styling" aria-controls="serv-rev-styling" aria-expanded="false">
-        <span class="serv__num ap" aria-hidden="true">03</span>Styling
+        <span class="serv__num ap" aria-hidden="true">03</span>
+        <span class="serv__rotulo">Styling</span>
       </button>
 
-      <div class="serv__rev" id="serv-rev-styling" aria-labelledby="serv-bt-styling" aria-hidden="true">
-        <div class="serv__plate">
-          <span class="serv__plate-num" aria-hidden="true">03</span>
-          <span class="ap">Imagem</span>
-        </div>
-        <div class="serv__txt">
-          <p>Construímos narrativas que vão para além da moda, comunicando a harmonia perfeita entre identidade visual, propósito e público-alvo.</p>
+      <p class="serv__txt">Construímos narrativas que vão para além da moda, comunicando a harmonia perfeita entre identidade visual, propósito e público-alvo.</p>
+    </li>
+
+    <li class="serv__card rv" role="listitem" data-cursor="Ver">
+      <div class="serv__plate">
+        <span class="serv__plate-num" aria-hidden="true">04</span>
+        <span class="ap">Imagem 16:9</span>
+
+        <!-- as etiquetas sobem por cima da chapa. Sobrepõem em vez
+             de empurrar: se empurrassem, abrir um card mudaria a
+             altura da fila e os outros quatro saltariam. -->
+        <div class="serv__painel" id="serv-rev-trafego-pago" aria-labelledby="serv-bt-trafego-pago" aria-hidden="true">
           <ul class="serv__tags ap" aria-label="Etiquetas">
-            <li>produção de moda</li>
+          <li>Meta Ads</li>
+          <li>Google Ads</li>
+          <li>relatórios atualizados</li>
+          <li>métricas</li>
           </ul>
         </div>
       </div>
-    </li>
 
-    <li class="serv__item" role="listitem">
-      <button class="serv__nome rv" type="button"
+      <button class="serv__nome" type="button"
               id="serv-bt-trafego-pago" aria-controls="serv-rev-trafego-pago" aria-expanded="false">
-        <span class="serv__num ap" aria-hidden="true">04</span>Tráfego Pago
+        <span class="serv__num ap" aria-hidden="true">04</span>
+        <span class="serv__rotulo">Tráfego Pago</span>
       </button>
 
-      <div class="serv__rev" id="serv-rev-trafego-pago" aria-labelledby="serv-bt-trafego-pago" aria-hidden="true">
-        <div class="serv__plate">
-          <span class="serv__plate-num" aria-hidden="true">04</span>
-          <span class="ap">Imagem</span>
-        </div>
-        <div class="serv__txt">
-          <p>Conectamos performance e estratégias com campanhas que respondem aos objetivos de alcance.</p>
-          <ul class="serv__tags ap" aria-label="Etiquetas">
-            <li>Meta Ads</li>
-            <li>Google Ads</li>
-            <li>relatórios atualizados</li>
-            <li>métricas</li>
-          </ul>
-        </div>
-      </div>
+      <p class="serv__txt">Conectamos performance e estratégias com campanhas que respondem aos objetivos de alcance.</p>
     </li>
 
-    <li class="serv__item" role="listitem">
-      <button class="serv__nome rv" type="button"
-              id="serv-bt-web-development" aria-controls="serv-rev-web-development" aria-expanded="false">
-        <span class="serv__num ap" aria-hidden="true">05</span>Web Development
-      </button>
+    <li class="serv__card rv" role="listitem" data-cursor="Ver">
+      <div class="serv__plate">
+        <span class="serv__plate-num" aria-hidden="true">05</span>
+        <span class="ap">Imagem 16:9</span>
 
-      <div class="serv__rev" id="serv-rev-web-development" aria-labelledby="serv-bt-web-development" aria-hidden="true">
-        <div class="serv__plate">
-          <span class="serv__plate-num" aria-hidden="true">05</span>
-          <span class="ap">Imagem</span>
-        </div>
-        <div class="serv__txt">
-          <p>Essa é a ponte de início que liga o seu posicionamento com a conversão. Criamos e gerenciamos sites do zero para a sua marca, gerando também experiência.</p>
+        <!-- as etiquetas sobem por cima da chapa. Sobrepõem em vez
+             de empurrar: se empurrassem, abrir um card mudaria a
+             altura da fila e os outros quatro saltariam. -->
+        <div class="serv__painel" id="serv-rev-web-development" aria-labelledby="serv-bt-web-development" aria-hidden="true">
           <ul class="serv__tags ap" aria-label="Etiquetas">
-            <li>site</li>
-            <li>landing pages</li>
-            <li>SEO</li>
-            <li>velocidade</li>
-            <li>blogs</li>
+          <li>site</li>
+          <li>landing pages</li>
+          <li>SEO</li>
+          <li>velocidade</li>
+          <li>blogs</li>
           </ul>
         </div>
       </div>
+
+      <button class="serv__nome" type="button"
+              id="serv-bt-web-development" aria-controls="serv-rev-web-development" aria-expanded="false">
+        <span class="serv__num ap" aria-hidden="true">05</span>
+        <span class="serv__rotulo">Web Development</span>
+      </button>
+
+      <p class="serv__txt">Essa é a ponte de início que liga o seu posicionamento com a conversão. Criamos e gerenciamos sites do zero para a sua marca, gerando também experiência.</p>
     </li>
 
   </ul>

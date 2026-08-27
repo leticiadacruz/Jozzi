@@ -5,6 +5,15 @@
 > **Estado:** copy definitiva aplicada (rodada de 25/08). **Oito seções, 00 a 07**,
 > todas no mesmo scroll. Ainda falta apenas imagem e alguns dados de contato —
 > listados no fim deste documento.
+>
+> **Rodada de movimento (27/08).** Quatro pedidos da Jozzi, todos no ar:
+> Serviços virou cinco cards; o aparato virou régua de segmentos que se
+> transforma a cada seção; o convite a rolar da abertura ganhou rótulo e
+> animação própria; e o cálculo do movimento saiu de dentro do quadro de
+> animação, que era a causa do arrasto. Três regras do sistema mudaram por
+> decisão da Jozzi e estão marcadas com ⚠ ao longo deste documento:
+> **"sem cartão"**, **"nenhuma animação infinita"** e a proporção da imagem de
+> Serviços.
 
 ---
 
@@ -179,8 +188,9 @@ Mesmo mecanismo que alimenta a esteira de peso: as palavras já estavam
 quebradas.
 
 **3 · Interpolação por scroll.** Dois usos, ambos com teto de 12px de
-deslocamento. O aparato preenche o trecho já percorrido — a trilha deixa de ser
-um fio com um ponto e passa a medir. E os três blocos da diagonal de Marcas se
+deslocamento. A régua do aparato preenche o segmento da seção corrente — a
+trilha deixa de ser um fio com um ponto e passa a medir, capítulo a capítulo. E
+os três blocos da diagonal de Marcas se
 deslocam em tempos ligeiramente diferentes ao cruzar o meio da tela — mais um
 teto de 5% de escala no bloco mais próximo do centro, a única transformação de
 escala do sistema fora de Serviços. O bastante para a diagonal respirar, pouco
@@ -198,8 +208,25 @@ não o tamanho de nenhum deles.
 O cursor assume o sinal do fundo em que está: azul sobre papel, amarelo sobre
 tinta. Mesma gramática de três rótulos, nada de novo.
 
-**Não existe animação infinita, parallax de fundo, nem nada que se mova sem uma
-ação do leitor ou sem a rolagem.**
+**Não existe parallax de fundo nem nada que se mova sem uma ação do leitor ou
+sem a rolagem** — com **uma exceção, nomeada**: o convite a rolar da abertura.
+
+⚠ **A exceção do laço.** A Jozzi pediu a seta da abertura mais explícita e com
+animação. Ela ganhou rótulo (*Rolar*), trilho de 34px e um traço de 12px que
+desce esse trilho em laço de 2,2s, com a ponta do chevron acompanhando em 4px.
+
+Três coisas mantêm a exceção sob controle, e as três precisam continuar
+valendo:
+
+1. **Ela é a única.** Nenhuma outra animação em laço entra no site.
+2. **Ela se apaga.** Passando de 40px de rolagem, o convite recebe
+   `is-cumprido`, some em 600ms e o laço para. Depois da primeira tela não há
+   nada em movimento próprio no documento inteiro.
+3. **Ela é de fio, não de forma.** 1px, na cor do texto, na curva do sistema.
+   Nenhuma forma nova, nenhuma cor nova.
+
+Com `prefers-reduced-motion` o laço não existe: fica o rótulo e o chevron
+parados, que já são a parte explícita do pedido.
 
 ### Carregamento — o aparato deitado
 
@@ -262,6 +289,42 @@ maior superfície que se move no site inteiro, e no tempo padrão a tela toda
 saltando lê como corte, não como gesto. É a única coisa que anda mais devagar
 que o padrão.
 
+### Como o movimento é calculado — um quadro, e nenhuma leitura de layout
+
+Isto não é otimização prematura: era a causa real do arrasto.
+
+A versão anterior lia `getBoundingClientRect()` de cada bloco da diagonal, dos
+dois blocos do aparato e da escala **dentro do quadro de animação**, alternando
+leitura e escrita elemento a elemento. Cada par leitura-escrita obriga o
+navegador a recalcular o layout antes de responder. Com três clientes, dois
+blocos e uma escala, era meia dúzia de recálculos de layout por quadro, em cima
+da rolagem interpolada — o que aparecia como diagonal arrastando e marca de
+posição pulando.
+
+Agora vale uma regra, e ela precisa continuar valendo:
+
+> **Dentro do quadro não se lê layout. Só se escreve.**
+
+As medidas — topo e altura de cada seção, meio de cada bloco de cliente, posição
+dos dois blocos fixos do aparato — são tiradas **uma vez** em `medir()`, e de
+novo no `resize`. O quadro só escreve. Enquanto a rolagem não muda, o quadro
+custa uma comparação de número.
+
+O aparato é `position: fixed`: a posição dele **na tela** não muda com a
+rolagem, então medi-la uma vez basta. É o que permite decidir o claro/escuro de
+cada bloco sem tocar no layout.
+
+**A troca de seção tem token.** Atravessar três seções em rolagem rápida
+deixava três `setTimeout` de 200ms na fila, e o rótulo podia terminar exibindo a
+seção do meio. Cada troca agora carrega um número de série e só escreve se ainda
+for a última.
+
+**A régua também é a fonte da troca de seção.** Antes havia um
+`IntersectionObserver` separado só para trocar o rótulo, com faixa de -45%: dois
+mecanismos decidindo "que seção é esta" podiam discordar na travessia. Hoje quem
+decide é a linha do meio da tela contra as medidas, e ela decide **uma vez** —
+para o rótulo, para o segmento e para o preenchimento.
+
 ### Durações e curva
 
 Um gesto, uma curva, três durações.
@@ -289,7 +352,7 @@ Um gesto, uma curva, três durações.
 - **Cursor** — sobre elementos com `data-cursor`, o ponteiro nativo dá lugar a
   um rótulo curto em mono, lido do próprio elemento. Um rótulo, não um círculo,
   e sem atraso nem mola: o rastro elástico é o clichê a evitar. Só existe com
-  ponteiro fino e sem movimento reduzido. Hoje: *Ver* no índice de Serviços,
+  ponteiro fino e sem movimento reduzido. Hoje: *Ver* nos cards de Serviços,
   *Copiar* / *Copiado* no endereço de e-mail.
 
 - **Estados de clique** — `:active` nos dois links do Contato e no link do
@@ -317,11 +380,37 @@ não o funcionamento.
 Um elemento ainda não revelado continua focável, então `.rv:focus-within`
 força a aparição — invisível e focável é a pior combinação possível.
 
-### Aparato
+### Aparato — a régua das seções
 
-Trilha fixa à esquerda, acima de 1025px: número e nome da seção, fio de posição,
-hora em Curitiba. 11px, 40% de tinta. **Instrumentação silenciosa** — se começar
-a chamar atenção, está errado.
+Trilha fixa à esquerda, acima de 1025px: número e nome da seção, a régua, hora
+em Curitiba. 11px, 40% de tinta. **Instrumentação silenciosa** — se começar a
+chamar atenção, está errado.
+
+**A régua tem um segmento por seção, e a altura de cada segmento é a altura real
+daquela seção no documento.** A régua mede o documento; ela não conta seções em
+partes iguais. Os segmentos são montados pelo `main.js` a partir dos
+`[data-secao]` — nenhum número está escrito à mão, e acrescentar uma seção nova
+acrescenta um segmento sozinho.
+
+A cada seção o instrumento **se transforma**:
+
+| Estado | O que acontece |
+| --- | --- |
+| Seção corrente | o segmento engorda de 1px para 3px e ganha uma agulha horizontal de 9px na borda do preenchimento |
+| Já lida | fica cheia, em ardósia a 52% |
+| Ainda por ler | continua no fio de 28% |
+
+O preenchimento do segmento corrente anda com a rolagem **dentro daquela
+seção**, não com a rolagem do documento — é isso que responde "quanto falta
+deste capítulo", que o escorregador contínuo anterior não respondia.
+
+Sem transição no preenchimento, de propósito: quem suaviza é a rolagem
+interpolada, e uma transição por cima dela vira arrasto. A transição existe só
+na largura e na cor, que trocam uma vez por seção.
+
+**Se o script não subir, a régua não se monta e sobra o fio contínuo de sempre**
+— desenhado no `::before` da escala, apagado pela classe `js--regua`. O
+instrumento nunca some.
 
 O fio e a marca de posição são em Ardósia e nunca trocam de cor. Os dois blocos
 de texto trocam **cada um pelo que está atrás dele**, não pela seção corrente:
@@ -343,8 +432,15 @@ decorativo. Ritmo: 00 papel · 01 papel · **02 tinta** · 03 papel · 04 papel 
 Nenhuma seção repete a estrutura da anterior. Se duas seguidas usam a mesma
 grade, uma das duas é redesenhada.
 
-Sem cartão. Sem ícone. Sem elemento adicionado porque "a seção precisava de
-algo". **O espaço vazio é parte da composição** — não é sobra a ser preenchida.
+Sem ícone. Sem elemento adicionado porque "a seção precisava de algo". **O
+espaço vazio é parte da composição** — não é sobra a ser preenchida.
+
+⚠ **"Sem cartão" caiu, por decisão da Jozzi.** Serviços passou a ser cinco
+cards. A regra que a substitui é de material, e vale para qualquer card que
+venha depois: **um fio de 1px e uma caixa de papel.** Sem raio, sem sombra, sem
+gradiente, sem preenchimento colorido, sem elevação. O que muda no estado ativo
+é a cor do fio — de 20% para 45% de tinta — e nada mais. Um card que precise de
+sombra para se destacar do fundo está resolvendo o problema errado.
 
 Margens reais de cartaz, sem caixa central de 1200px. Todo elemento se ancora em
 coluna nomeada; nada está centrado "porque sim".
@@ -352,13 +448,15 @@ coluna nomeada; nada está centrado "porque sim".
 **Sem número grande decorativo.** Houve por algumas rodadas um "numeral
 d'água" — o número de cada seção em escala de pôster, a 6%, sangrando pelo
 canto. A Jozzi pediu a remoção e ele saiu inteiro. O que ficou daquela rodada
-é o `overflow: clip` em `[data-secao]`, que **mudou de dono**: hoje é ele que
-contém a sangria da chapa de Serviços. Sem essa regra volta a rolagem
-horizontal em 1440 e 1280 — não remover junto.
+é o `overflow: clip` em `[data-secao]`. Ele chegou a mudar de dono — passou a
+conter a sangria da chapa de Serviços — e ficou sem dono de novo quando a seção
+virou cards. Medido em 27/08, com a regra desligada, em 1280 e 1440: nada
+transborda. Ficou por ser barato e porque o `position: relative` do mesmo bloco
+continua ancorando conteúdo.
 
-O único número em corpo grande que sobrou é o carimbo sobre a imagem de
-Serviços (`.serv__plate-num`), que não é marca d'água: é sólido, fica sobre a
-foto e repete o número do item ativo.
+O único número em corpo grande que sobrou é o carimbo sobre a chapa de cada
+card de Serviços (`.serv__plate-num`), que não é marca d'água: é sólido, fica
+sobre a foto e repete o número do próprio card.
 
 ### Imagem
 
@@ -419,77 +517,96 @@ genérica de agência** — nem provisoriamente.
 Especificados, **não construídos**. Cada um lista o que precisa de conteúdo
 antes de existir.
 
-### 03 — Serviços · construído
+### 03 — Serviços · construído · **cards**
 
-Duas zonas. À esquerda o índice; à direita a metade da página que vira imagem —
-sem moldura, sem preenchimento, sangrando até a margem. **A descrição não
-acompanha a imagem:** ela mora embaixo do índice. É isso que impede a leitura
-`[item] → [cartão]`, que é o que faz um índice virar componente de UI.
+Cinco cards, os cinco na tela ao mesmo tempo. Substitui o índice tipográfico de
+duas zonas, por decisão da Jozzi. Registro do que a troca custou e do que ela
+resolveu, porque as duas coisas importam para a próxima decisão:
 
-Os cinco campos ocupam a **mesma área da grade**, empilhados. A troca não move
-nada: só muda qual deles está desmascarado, e o que sai só colapsa depois que o
-que entra já cobriu. Verificado: a caixa da imagem e a posição dos cinco nomes
-são idênticas em qualquer estado.
+**O que se perdeu.** O índice era a única composição do site em que o corpo do
+nome variava por comprimento de palavra, e era a seção mais densa — a que dava
+peso ao meio do documento. Cinco cards de mesma largura são, por definição, uma
+grade regular.
 
-**O corpo de cada nome é função do comprimento da palavra**, meio caminho entre
-corpo único e larguras iguais (`--fit` no CSS). Design é a terceira da lista e a
-maior de todas: a ordem dos corpos não acompanha a numeração, e é isso que
-impede a leitura como ranking comercial. Cada nome leva ainda uma correção
-óptica de primeira letra (`--optico`) — alinha o glifo, não a caixa.
+**O que se ganhou.** As cinco frentes ficam legíveis de uma vez, sem depender de
+descobrir o ponteiro. A descrição de cada uma fica junto do nome dela. E a
+segunda fila entra deslocada, o que impede a grade de ler como tabela.
 
-Sem JavaScript a seção fica em fluxo, com os cinco campos visíveis. A composição
-de duas zonas só entra quando o módulo está de pé. Abaixo de 1025px, o item
-ativo abre no próprio fluxo e a imagem passa de 3:4 para 1:1 — no fluxo, o 3:4
-come uma tela inteira entre dois nomes.
+Cada card tem quatro peças, nesta ordem:
 
-**O número do serviço é carimbado sobre a própria imagem.** `.serv__plate-num`
-repete o número que já está no índice (`01`–`05`), grande, com
-`mix-blend-mode: multiply`: sobre o bege de hoje ele tinge; sobre a foto de
-amanhã ele escurece por cima sem apagar a imagem, como tinta impressa por
-cima. É o que faz o campo de imagem parar de ser "um retângulo vazio à espera
-de conteúdo" — mesmo antes da foto chegar, a seção já tem uma composição.
+| Peça | O que é |
+| --- | --- |
+| Chapa | campo de imagem 16:9 com o numeral carimbado em `multiply` |
+| Painel | as etiquetas, que sobem por cima da chapa |
+| Nome | número em aparato + nome em display |
+| Texto | a descrição da frente |
 
-**`.serv__plate` é sempre o contêiner, nunca é substituído pelo `<img>`.** O
-numeral mora dentro dele; a foto entra como um segundo filho,
-`.serv__plate__foto`, absolutamente posicionada para preencher a caixa. Isso é
-diferente do padrão usado em `.fig__campo`/`.onde__mapa`, onde o próprio `<img>`
-é o elemento sizado. Ver `MANUTENCAO.md` para o trecho exato.
+**O painel sobrepõe, nunca empurra.** Se as etiquetas abrissem no fluxo, abrir
+um card mudaria a altura da fila inteira e os outros quatro saltariam. Sobrepondo,
+nada se move fora do próprio card. O gesto é a mesma máscara de baixo para cima
+que revela o site inteiro.
 
-A imagem ativa também ganha um assentamento sutil de escala na entrada — 1,04
-para 1,00 — a única transformação de escala real do sistema, e só na imagem;
-o texto nunca escala.
+**A chapa é isolada (`isolation: isolate`).** O numeral é `mix-blend-mode:
+multiply` e, sem isolar, ele mistura com tudo o que está atrás — painel incluído
+— e reaparece por cima das etiquetas. Isolado, o multiply acontece dentro da
+chapa e o painel cobre o grupo inteiro. O painel também é **opaco**: a 92% a
+tinta do carimbo ainda subia. Os dois foram testados quebrados antes de
+funcionar.
 
-**Textos aprovados e no ar.** As cinco frentes são cinco formas de recusa, e o
-verbo muda em cada uma: Branding recusa caminhos, Social Media recusa datas,
-Design recusa alternativas, Web Development recusa dependência, Tráfego Pago
-recusa a própria verba. A tese vem da sustentação do terceiro princípio do
-Nosso Olhar — *"recusando quase tudo"*.
+**As etiquetas precisam de cor própria.** `.serv__plate .ap` pinta o rótulo da
+chapa em tinta a 72%, e o painel é filho da chapa — sem a regra
+`.serv__painel .ap`, as etiquetas saem marrom sobre marrom, invisíveis.
 
-Os quatro primeiros "Como trabalhamos" afirmam fatos sobre a operação e foram
-**confirmados um a um** antes de entrar. Não são redação: se um deixar de ser
-verdade, sai.
+**Corpo único para os cinco nomes**, ao contrário do índice. Entre cards de
+mesma largura, corpo diferente é lido como ranking comercial, não como
+composição. Os nomes longos **quebram em duas linhas em corpo cheio** em vez de
+encolher, e o rótulo tem duas linhas reservadas — é o que alinha o texto dos
+cinco cards. A correção óptica de primeira letra (`--optico`) sobreviveu; o
+`--fit` não.
 
-| Campo | Registro | Extensão | Estado |
-| --- | --- | --- | --- |
-| Descrição curta | Texto | 120 a 160 caracteres | ✓ os cinco, 133 a 157 |
-| Posição da Jozzi | Texto | uma frase, 60 a 90 caracteres | ✓ as cinco, 61 a 76 |
-| Imagem | 3:4 no desktop, 1:1 no fluxo | — | ✗ a fornecer |
+**A escala do nome é própria, e não `--fs-display-2` cru.** Medido: o display--2
+vale 41px em 1025 e 44px em 1100, ou seja, dentro da faixa proibida de 24 a 44 —
+que é justamente a faixa onde a regra em pixels vale. A clamp usada
+(`3.6vw + .6rem`, de 2,2rem a 3,6rem) começa em **46,5px em 1025** e nunca entra
+na faixa. Medido em 390, 769, 900, 1025, 1100, 1279, 1280, 1440 e 1920: nenhuma
+largura cai na faixa, nenhuma transborda o card, e o menor corpo abaixo de 1025
+é 35px contra 16px de texto — 2,2 vezes, acima do mínimo de 1,8.
 
-O texto responde **"como a Jozzi trabalha nessa frente"**, não "o que a Jozzi
-entrega".
+**A grade muda de três em três larguras**, e o motivo é o mesmo:
 
-**Web Development não afirma característica técnica universal.** "Sem framework"
-e "guia de manutenção junto" saíram: a Widepine Cafés é Shopify, e só um dos
-dois sites feitos à mão tem guia. O que ficou — controle do código e
-documentação — vale sempre; a autonomia do cliente está condicionada por
-*"onde faz sentido"*.
+| Largura | Cards por fila | Por quê |
+| --- | --- | --- |
+| até 768 | 1 | fluxo |
+| 769 a 1024 | 2 | — |
+| 1025 a 1279 | 2 | o aparato come 8,5rem; um terço do que sobra não comporta "Development" em corpo de display sem encolher para a faixa proibida |
+| 1280 em diante | 3 + 2 | a segunda fila começa na coluna 3, não na margem |
+
+**Entrada escalonada.** Os cards de uma mesma fila entram juntos pelo
+observador; 70ms de atraso por índice devolvem a sequência de leitura. Mesma
+máscara, mesma curva, mesma duração — só o atraso é novo.
+
+**Sem JavaScript o card está inteiro na tela, com as etiquetas abertas.** É o
+`.js--serv` que as FECHA, nunca o contrário. Se fosse ao contrário, um script
+que não sobe esconderia conteúdo — e nada neste site pode depender de
+JavaScript para existir.
+
+**Textos aprovados e no ar.** As cinco frentes são cinco formas de recusa. A
+ordem — Branding, Social Media, Styling, Tráfego Pago, Web Development — é a da
+copy de 25/08.
+
+| Campo | Registro | Estado |
+| --- | --- | --- |
+| Descrição | Texto | ✓ as cinco |
+| Etiquetas | Aparato | ✓ as cinco |
+| Imagem | **16:9** | ✗ a fornecer — cinco arquivos |
+
+⚠ **A proporção da imagem de Serviços mudou de 3:4 para 16:9.** Continua dentro
+das três permitidas. A chapa antiga era a metade direita da página, sangrando
+até a margem; dentro de um card, 3:4 faria cada card ter duas telas de altura.
 
 **Nenhum número no site.** A régua da voz diz que número é a arma mais forte
 ("quatro marcas por vez" derrota "poucas marcas por vez"), e nenhum foi
 confirmado. É o maior ganho disponível quando os dados existirem.
-
-**Reservado:** o princípio *"Anúncio não conserta marca."* sai do Nosso Olhar e
-pertence a **Tráfego Pago**, como posição específica sobre mídia paga.
 
 ### 04 — Marcas · construído
 
@@ -557,7 +674,7 @@ telefone. A confirmação troca no lugar, sem toast e sem modal, e um
 `<span role="status">` entrega a mesma informação à tecnologia assistiva.
 
 O corpo do endereço é `--fs-display × .82` — mesma técnica de ajuste óptico do
-índice de Serviços, não um corpo novo na escala.
+índice de Serviços que existia ali antes, não um corpo novo na escala.
 
 **Azul:** zero em repouso. Só em hover, foco e confirmação de cópia. Fica bem
 abaixo do teto de 3% — e abaixo do que a direção permitiria para esta seção.

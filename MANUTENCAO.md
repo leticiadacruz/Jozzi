@@ -64,13 +64,12 @@ verbal delas sem aprovação.
 carrega. O CSS já cuida do resto — `object-fit: cover` recorta em vez de
 esticar, e `height: auto` deixa a proporção da classe mandar.
 
-**Nunca escrever `height` ou `width` no CSS desses campos.** `height: 100%`
-estica a imagem dentro da grade de Serviços; tirar o `height: auto` faz o
-atributo `height="1600"` do arquivo virar altura real. Os dois já foram testados
-e quebram.
+**Nunca escrever `height` ou `width` no CSS desses campos.** Tirar o
+`height: auto` faz o atributo `height="1600"` do arquivo virar altura real e a
+proporção da classe é ignorada. Já foi testado e quebra.
 
-**Área segura:** no mobile o campo de Serviços vira 1:1 e corta um oitavo em
-cima e um oitavo embaixo. O assunto tem que viver no miolo vertical do arquivo.
+A imagem de Serviços não usa este padrão — ela é **16:9** e mora dentro do card,
+com regra própria. Ver *Preencher um serviço*.
 
 **As três proporções permitidas no site inteiro são 3:4, 16:9 e 1:1.** Recorte
 fora dessas três não entra — é o que mantém a página parecendo composta.
@@ -83,53 +82,77 @@ emprestada.
 
 ## Preencher um serviço
 
-Os dez textos já estão no ar. Ficam em `index.html`, dentro do `<li>` do
-serviço, como dois parágrafos sem classe:
+Os cinco textos já estão no ar. Cada serviço é um **card** em `index.html`, e o
+card tem quatro peças nesta ordem:
 
 ```html
-<div class="serv__txt">
-  <p>Como trabalhamos — 120 a 160 caracteres.</p>
-  <p>A posição — 60 a 90 caracteres.</p>
-</div>
+<li class="serv__card rv" role="listitem" data-cursor="Ver">
+  <div class="serv__plate">          <!-- a chapa 16:9 -->
+    <span class="serv__plate-num" aria-hidden="true">01</span>
+    <span class="ap">Imagem 16:9</span>
+    <div class="serv__painel" id="serv-rev-branding" ...>
+      <ul class="serv__tags ap">     <!-- as etiquetas -->
+        <li>identidade</li>
+      </ul>
+    </div>
+  </div>
+
+  <button class="serv__nome" ...>    <!-- número + nome -->
+    <span class="serv__num ap" aria-hidden="true">01</span>
+    <span class="serv__rotulo">Branding</span>
+  </button>
+
+  <p class="serv__txt">A descrição.</p>
+</li>
 ```
 
-O primeiro parágrafo é sempre o "como trabalhamos", o segundo é sempre a
-posição. Os dois ficam no registro de texto; quem os separa é a ordem e o
-espaço, não estilo diferente.
+Para trocar o texto, editar o `<p class="serv__txt">`. Para trocar as
+etiquetas, acrescentar ou remover `<li>` dentro do `.serv__tags` — o ponto médio
+entre elas é do CSS, não se digita.
 
-**Os quatro primeiros "como trabalhamos" afirmam fatos sobre a operação** —
-começar pela recusa, não ter cota fixa de posts, mostrar uma direção só, poder
-recusar campanha. Foram confirmados um a um. Se algum deixar de ser verdade,
-ele sai; não é questão de redação.
+**Extensão da descrição:** 90 a 170 caracteres. Acima disso o card fica mais
+alto que os vizinhos e a fila desalinha.
 
-Falta ainda o campo da imagem. **`.serv__plate` nunca é substituído** — o
-numeral de cada serviço mora dentro dele, carimbado sobre a foto. Trocar só o
-que está por dentro:
+**As etiquetas ficam escondidas até o ponteiro, o foco ou o toque.** Isso é
+proposital, e é por isso que **nenhuma informação essencial pode morar só ali** —
+etiqueta é dado complementar, não a descrição do serviço.
+
+### Colocar a imagem do serviço
+
+A proporção é **16:9** — mudou de 3:4 quando a seção virou cards.
+
+`.serv__plate` é sempre o contêiner e **nunca é substituído**: o numeral mora
+dentro dele. A foto entra como irmã do numeral, no lugar do
+`<span class="ap">Imagem 16:9</span>`:
 
 ```html
 <div class="serv__plate">
   <span class="serv__plate-num" aria-hidden="true">01</span>
   <img class="serv__plate__foto" src="assets/img/servico-branding.avif"
-       alt="Descrição curta" width="1200" height="1600"
+       alt="Descrição curta" width="1600" height="900"
        loading="lazy" decoding="async">
+  <div class="serv__painel" ...>…</div>
 </div>
 ```
 
-O `<span class="ap">Imagem</span>` sai; o `<img>` entra no lugar dele, como
-irmão do numeral — nunca substituindo o `<div>` que os contém.
+O `<div class="serv__painel">` continua onde está. Ele precisa vir **depois** da
+imagem no HTML.
 
-O texto responde **"como trabalhamos"**, não "o que entregamos". Essa é a
-diferença entre a seção parecer método e parecer catálogo.
+### O que nunca mexer no card
 
-A posição de **Tráfego Pago** veio do Nosso Olhar e ganhou o segundo tempo:
-*"Anúncio não conserta marca. Amplifica o que já existe, inclusive a confusão."*
-A primeira sentença é intocável — é frase de marca.
-
-**Acrescentar um sexto serviço** exige três coisas: o `<li>` novo, uma linha em
-`.serv__item:nth-child(6)` com `--fit` e `--optico`, e uma linha
-`.serv__item:nth-child(6) .serv__nome { grid-row: 6 }` — além de mudar o campo e
-o texto para `grid-row: 1 / span 7` e `grid-row: 7`. O `--fit` sai do
-comprimento da palavra: `(1 + 6 ÷ nº de caracteres) ÷ 2`.
+- **Não tirar o `isolation: isolate` de `.serv__plate`.** O numeral é
+  `mix-blend-mode: multiply`; sem o isolamento ele atravessa o painel e
+  reaparece por cima das etiquetas. Já quebrou uma vez.
+- **Não deixar o fundo do `.serv__painel` translúcido.** A 92% o carimbo por
+  baixo continuava legível e brigava com as etiquetas. Ele é opaco.
+- **Não apagar a regra `.serv__painel .ap`.** Sem ela as etiquetas herdam a cor
+  do rótulo da chapa e saem marrom sobre marrom, invisíveis.
+- **Não encolher o nome para caber numa linha.** Os nomes longos quebram em duas
+  linhas de propósito: encolher os joga dentro da faixa proibida de 24 a 44px.
+- **Não pôr o painel para abrir empurrando** em vez de sobrepor. Empurrando,
+  abrir um card muda a altura da fila e os outros quatro saltam.
+- **Não dar sombra, raio de canto nem cor de fundo ao card.** O card é um fio de
+  1px e uma caixa de papel. O estado ativo muda só a cor do fio.
 
 ---
 
@@ -287,8 +310,14 @@ A gramática tem quatro níveis e cada um tem um lugar. Estão descritos no
 - **`[data-linhas]`** é o que faz um texto entrar linha a linha. Tirar o
   atributo devolve a entrada em bloco; pôr em qualquer elemento faz o
   JavaScript quebrá-lo em palavras, o que só faz sentido em display.
-- **O teto de 12px** da diagonal de Marcas e do aparato está em `TETO`, no
-  `main.js`. Acima disso vira parallax.
+- **O teto de 12px** da diagonal de Marcas está em `TETO`, no `main.js`. Acima
+  disso vira parallax.
+- **A régua do aparato é montada sozinha** a partir dos `[data-secao]`, em
+  `montarRegua()`. Seção nova ganha segmento sem que ninguém escreva nada — e
+  seção removida perde o dela. Nenhum número está escrito à mão.
+- **A troca do rótulo de seção vem da régua**, não de um observador separado.
+  Havia dois mecanismos decidindo "que seção é esta" e eles discordavam na
+  travessia. Não reintroduzir o segundo.
 - ⚠ **`main.js` é uma IIFE só: todo `var` do primeiro nível divide o MESMO
   escopo.** Um `var TETO = 5000` escrito para o carregamento apagou o
   `var TETO = 12` da diagonal e os projetos foram parar a milhares de pixels
@@ -310,10 +339,17 @@ grep -oE '^  (var|function) [A-Za-z_$][A-Za-z0-9_$]*' assets/js/main.js | awk '{
 ## `overflow: clip` nas seções — não remover
 
 `[data-secao] { position: relative; overflow: clip; }` foi escrito para conter
-um "numeral d'água" que já não existe (removido a pedido da Jozzi). **A regra
-ficou porque mudou de dono:** é ela que contém a sangria da chapa de Serviços,
-que avança de propósito para fora da margem direita. Tirando a regra, volta a
-rolagem horizontal em 1440 e 1280.
+um "numeral d'água" que já não existe, e depois passou a conter a sangria da
+chapa de Serviços — que também já não existe, porque a seção virou cards.
+
+**Medido em 27/08, em 1280 e 1440, com a regra desligada: nada transborda.** A
+regra ficou porque é barata e porque `position: relative` continua sendo usada
+para ancoragem dentro das seções. Se alguém a remover, medir antes:
+
+```bash
+# no console do navegador
+document.documentElement.scrollWidth - innerWidth   // tem que dar 0
+```
 
 ---
 
@@ -389,19 +425,36 @@ O sprite usa `position:absolute; width:0; height:0` e **não** `display:none` �
 - **Não adicionar biblioteca de animação.** Os gestos do sistema são CSS. Uma
   biblioteca traria dezenas de curvas novas e o movimento deixaria de parecer
   da Jozzi.
+- **Não criar uma segunda animação em laço.** Existe uma, e é nomeada: o convite
+  a rolar da abertura, que para sozinho depois de 40px de rolagem. Ela é a
+  exceção; uma segunda faz a primeira deixar de ser exceção e vira ruído de
+  fundo.
+- **Não ler layout dentro do quadro de animação.** `getBoundingClientRect()`,
+  `offsetTop` e `offsetHeight` dentro do rAF forçam o navegador a recalcular o
+  layout a cada elemento. As medidas são tiradas em `medir()`, uma vez, e de
+  novo no `resize`. **Dentro do quadro só se escreve.** Foi exatamente isso que
+  causou o arrasto da diagonal e o pulo do aparato.
 - **Não criar corpo de letra entre 24 e 44px** no desktop. É a faixa
   deliberadamente vazia da escala — onde vive o subtítulo de todo template.
   Em telas estreitas a regra vira razão: o menor display nunca fica abaixo de
   1,8 vez o corpo do texto.
-- **Não criar cartão** — retângulo com preenchimento, canto arredondado e sombra.
-  Agrupamento se faz com fio de 1px e espaço.
+- **Não dar sombra, raio de canto ou preenchimento colorido a um card.** A regra
+  antiga era "não criar cartão"; caiu por decisão da Jozzi, e Serviços virou
+  cinco cards. O que ficou no lugar dela é de material: **card é um fio de 1px
+  e uma caixa de papel.** O estado ativo muda a cor do fio, e nada mais. Um card
+  que precise de sombra para se destacar do fundo está resolvendo o problema
+  errado.
 - **Não criar ícone de serviço.**
-- **Não criar número grande decorativo.** A única exceção é o carimbo sobre a imagem de Serviços, que repete o número do item ativo (`.serv__num`). O numeral d'água das seções foi removido a pedido da Jozzi; não trazer de volta sem pedido.
+- **Não criar número grande decorativo.** A única exceção é o carimbo sobre a
+  chapa de cada card de Serviços (`.serv__plate-num`), que repete o número do
+  próprio card. O numeral d'água das seções foi removido a pedido da Jozzi; não
+  trazer de volta sem pedido.
 - **Não inventar dado de contato.** Um e-mail plausível mas errado, publicado em
   100px, é pior que um campo marcado como pendente.
-- **Não fazer o corpo dos nomes de serviço seguir a ordem da lista.** O corpo é
-  função do comprimento da palavra. Se o primeiro serviço virar o maior e o
-  último o menor, a composição vira ranking comercial.
+- **Não dar corpos diferentes aos nomes dos serviços.** Entre cards de mesma
+  largura, corpo diferente é lido como ranking comercial. Os cinco usam o mesmo
+  corpo, e os nomes longos quebram em duas linhas — encolher para caber numa
+  linha os joga dentro da faixa proibida de 24 a 44px.
 - **Não repetir "Creative Marketing Lab".** Ele aparece uma vez, no rodapé, como
   dado institucional. Não é assinatura e não é slogan.
 - **Não dar fundo próprio a mais seções.** São três: papel, verde e bege, mais

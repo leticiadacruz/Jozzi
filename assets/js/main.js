@@ -5,8 +5,8 @@
    01. PALAVRAS DO ELEMENTO VIVO
    02. ENTRADA POR MÁSCARA
    03. ESTEIRA DE PESO (o elemento vivo da abertura)
-   04. APARATO — seção, inversão, marca de posição, relógio
-   05. SERVIÇOS — índice e revelação
+   04. APARATO — a régua das seções, inversão, relógio
+   05. SERVIÇOS — os cinco cards
    06. CURSOR
    06b. COPIAR O ENDEREÇO
    07. ROLAGEM INTERPOLADA
@@ -273,114 +273,197 @@
   }
 
 
-  /* 04. APARATO --------------------------------------------- */
-  var aparato    = document.getElementById('aparato');
-  var apNum      = document.querySelector('[data-aparato-num]');
-  var apSec      = document.querySelector('[data-aparato-sec]');
-  var apMarca    = document.querySelector('[data-aparato-marca]');
-  var apFeito    = document.querySelector('[data-aparato-feito]');
-  var relogio    = document.querySelector('[data-relogio]');
+  /* 04. APARATO — A RÉGUA DAS SEÇÕES -------------------------
+     Um quadro só, e nenhuma leitura de layout dentro dele.
+
+     A versão anterior lia getBoundingClientRect() de cada cliente,
+     de cada bloco do aparato e da escala DENTRO do rAF, alternando
+     leitura e escrita elemento a elemento — o navegador recalculava
+     o layout a cada par. Era a causa real do arrasto na diagonal de
+     Projetos e do pulo da marca de posição.
+
+     Agora as medidas são tiradas UMA vez (e de novo no resize) e o
+     quadro só escreve. Enquanto a rolagem não muda, o quadro custa
+     uma comparação de número.
+     -------------------------------------------------------- */
+  var aparato   = document.getElementById('aparato');
+  var apNum     = document.querySelector('[data-aparato-num]');
+  var apSec     = document.querySelector('[data-aparato-sec]');
+  var apEscala  = document.querySelector('[data-aparato-escala]');
+  var apId      = document.querySelector('.aparato__id');
+  var apHora    = document.querySelector('.aparato__hora');
+  var relogio   = document.querySelector('[data-relogio]');
+  var rolar     = document.querySelector('.abertura__rolar');
+
+  var secoes   = [].slice.call(document.querySelectorAll('[data-secao]'));
+  var invSecs  = [].slice.call(document.querySelectorAll('[data-inv]'));
+  var clientes = [].slice.call(document.querySelectorAll('.cliente'));
+
+  var TETO = 12;   /* teto de deslocamento, o mesmo do resto do sistema */
+
+  var med = { vh: 0, secs: [], inv: [], cli: [], idMeio: 0, horaMeio: 0, regua: false };
+  var segs = [];
+
+  function topoDoc(el) {
+    return el.getBoundingClientRect().top + (window.scrollY || window.pageYOffset);
+  }
+
+  /* ---- a régua ----
+     Um segmento por seção, com peso igual à altura real dela no
+     documento: a régua mede o documento, não conta seções. */
+  function montarRegua() {
+    if (!apEscala || !secoes.length) return;
+    apEscala.textContent = '';
+    segs = secoes.map(function () {
+      var seg  = document.createElement('span');
+      var fill = document.createElement('i');
+      seg.className  = 'aparato__seg';
+      fill.className = 'aparato__seg-feito';
+      seg.appendChild(fill);
+      apEscala.appendChild(seg);
+      return { el: seg, fill: fill, ativo: false, feito: false, altura: -1 };
+    });
+    document.documentElement.classList.add('js--regua');
+  }
+
+  function medir() {
+    med.vh = window.innerHeight;
+
+    med.secs = secoes.map(function (el) {
+      return {
+        topo: topoDoc(el),
+        alt:  Math.max(1, el.offsetHeight),
+        num:  el.getAttribute('data-num'),
+        nome: el.getAttribute('data-nome')
+      };
+    });
+
+    med.inv = invSecs.map(function (el) {
+      var t = topoDoc(el);
+      return { topo: t, base: t + el.offsetHeight };
+    });
+
+    med.cli = clientes.map(function (el) {
+      return { el: el, meio: topoDoc(el) + el.offsetHeight / 2 };
+    });
+
+    /* o aparato é fixo: a posição dos dois blocos na TELA não muda
+       com a rolagem, então basta medi-la uma vez */
+    if (apId)   { var a = apId.getBoundingClientRect();   med.idMeio   = a.top + a.height / 2; }
+    if (apHora) { var b = apHora.getBoundingClientRect(); med.horaMeio = b.top + b.height / 2; }
+
+    /* abaixo de 1025 o aparato é display:none — não há o que pintar */
+    med.regua = !!(apEscala && apEscala.offsetParent !== null);
+
+    med.secs.forEach(function (s, i) {
+      if (segs[i]) segs[i].el.style.setProperty('--peso', s.alt.toFixed(0));
+    });
+
+    ultimoY = -1;   /* força o próximo quadro a redesenhar */
+  }
+
+  /* ---- a troca de seção ----
+     Um token por troca. Sem ele, atravessar três seções em rolagem
+     rápida deixava três setTimeout de 200ms na fila e o rótulo podia
+     terminar exibindo a seção do meio. */
   var secaoAtual = '00';
+  var trocaAtual = 0;
 
   function trocarSecao(num, nome) {
     if (!aparato || num === secaoAtual) return;
     secaoAtual = num;
 
+    var meu = ++trocaAtual;
     aparato.classList.add('is-trocando');
     window.setTimeout(function () {
+      if (meu !== trocaAtual) return;   /* já houve outra troca */
       apNum.textContent = num;
       apSec.textContent = nome;
       aparato.classList.remove('is-trocando');
     }, menosMovimento ? 0 : 200);
   }
 
-  function ligarSecoes() {
-    if (!('IntersectionObserver' in window)) return;
+  /* ---- o quadro: só escreve ---- */
+  function pintar(y) {
+    var meio = y + med.vh * 0.5;
 
-    var obs = new IntersectionObserver(function (entradas) {
-      entradas.forEach(function (e) {
-        if (!e.isIntersecting) return;
-        trocarSecao(e.target.getAttribute('data-num'), e.target.getAttribute('data-nome'));
-      });
-    }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+    if (med.regua) {
+      /* qual seção está sob a linha do meio da tela. Exatamente uma,
+         sempre: no rodapé o índice trava na última. */
+      var corrente = 0;
+      for (var k = 0; k < med.secs.length; k++) {
+        if (med.secs[k].topo <= meio) corrente = k;
+      }
 
-    document.querySelectorAll('[data-secao]').forEach(function (s) { obs.observe(s); });
+      for (var i = 0; i < segs.length; i++) {
+        var s = med.secs[i], seg = segs[i];
+        var p = (meio - s.topo) / s.alt;
+        p = p < 0 ? 0 : (p > 1 ? 1 : p);
+
+        var h = Math.round(p * 1000) / 10;
+        if (h !== seg.altura) { seg.altura = h; seg.fill.style.height = h + '%'; }
+
+        var ativo = (i === corrente);
+        if (ativo !== seg.ativo) {
+          seg.ativo = ativo;
+          seg.el.classList.toggle('is-ativo', ativo);
+          if (ativo) trocarSecao(s.num, s.nome);
+        }
+        var feito = (i < corrente);
+        if (feito !== seg.feito) {
+          seg.feito = feito;
+          seg.el.classList.toggle('is-feito', feito);
+        }
+      }
+
+      /* cada bloco do aparato decide a própria cor pelo que está
+         atrás DELE, não pela seção corrente: o instrumento atravessa
+         a tela inteira e, na travessia, topo e rodapé estão sobre
+         fundos diferentes. */
+      pintarBloco(apId,   y + med.idMeio);
+      pintarBloco(apHora, y + med.horaMeio);
+    }
+
+    /* NÍVEL 3 — a diagonal de Projetos. Doze pixels de teto: o
+       bastante para respirar, pouco o bastante para não virar
+       parallax. */
+    if (!menosMovimento) {
+      for (var c = 0; c < med.cli.length; c++) {
+        var alvoC = med.cli[c];
+        var dist  = alvoC.meio - meio;
+        if (dist < -med.vh - 200 || dist > med.vh + 200) continue;
+        var d = dist / med.vh;
+        var desloc = Math.max(-TETO, Math.min(TETO, d * TETO * (1 + c * 0.45)));
+        var prox   = Math.max(0, 1 - Math.min(1, Math.abs(d) * 2.2));
+        alvoC.el.style.setProperty('--desloc', desloc.toFixed(1) + 'px');
+        alvoC.el.style.setProperty('--escala', (1 + prox * 0.05).toFixed(3));
+      }
+    }
+
+    /* o convite a rolar cumpriu a função no primeiro gesto */
+    if (rolar) rolar.classList.toggle('is-cumprido', y > 40);
   }
 
-  var apId    = document.querySelector('.aparato__id');
-  var apHora  = document.querySelector('.aparato__hora');
-  var invSecs = [].slice.call(document.querySelectorAll('[data-inv]'));
-
-  /* O aparato atravessa a tela inteira. Na passagem de papel para
-     tinta, o topo e o rodapé dele estão sobre fundos diferentes — por
-     isso cada bloco decide a própria cor pelo que está atrás DELE, e
-     não pela seção corrente. Sem isso o relógio some por meia tela. */
-  function pintarAparato() {
-    if (!invSecs.length) return;
-
-    [apId, apHora].forEach(function (el) {
-      if (!el) return;
-      var r = el.getBoundingClientRect();
-      var meio = r.top + r.height / 2;
-      var claro = invSecs.some(function (sec) {
-        var q = sec.getBoundingClientRect();
-        return meio >= q.top && meio <= q.bottom;
-      });
-      el.classList.toggle('is-claro', claro);
-    });
+  function pintarBloco(el, meioDoc) {
+    if (!el) return;
+    var claro = false;
+    for (var i = 0; i < med.inv.length; i++) {
+      if (meioDoc >= med.inv[i].topo && meioDoc <= med.inv[i].base) { claro = true; break; }
+    }
+    el.classList.toggle('is-claro', claro);
   }
 
-  var quadroMarca = null;
-
-  var clientes = [].slice.call(document.querySelectorAll('.cliente'));
-  var TETO = 12;   /* mesmo limite de deslocamento do resto do sistema */
-
-  /* NÍVEL 3 — os três blocos da diagonal se deslocam em tempos
-     ligeiramente diferentes conforme passam pelo meio da tela. Doze
-     pixels de teto: o bastante para a diagonal respirar, pouco o
-     bastante para ninguém chamar de parallax. */
-  function moverDiagonal() {
-    if (!clientes.length || menosMovimento) return;
-    var meio = window.innerHeight / 2;
-
-    clientes.forEach(function (el, i) {
-      var r = el.getBoundingClientRect();
-      if (r.bottom < -200 || r.top > window.innerHeight + 200) return;
-      var d = (r.top + r.height / 2 - meio) / window.innerHeight;
-      var y = Math.max(-TETO, Math.min(TETO, d * TETO * (1 + i * 0.45)));
-      el.style.setProperty('--desloc', y.toFixed(1) + 'px');
-
-      /* a marca mais perto do meio da tela cresce um pouco — a
-         mesma regra que já dizia que nenhuma marca tem corpo maior
-         que outra continua valendo em repouso; a variação aqui é
-         momentânea, do scroll, e some assim que o bloco passa do
-         centro. Não é hierarquia, é o leitor cruzando o campo. */
-      var prox = Math.max(0, 1 - Math.min(1, Math.abs(d) * 2.2));
-      var escala = 1 + prox * .05;
-      el.style.setProperty('--escala', escala.toFixed(3));
-    });
-  }
-
-  function moverMarca() {
-    quadroMarca = null;
-    pintarAparato();
-    moverDiagonal();
-    if (!apMarca) return;
-
-    var escala = apMarca.parentNode.getBoundingClientRect().height;
-    var total  = document.documentElement.scrollHeight - window.innerHeight;
-    var razao  = total > 0 ? Math.min(1, Math.max(0, window.scrollY / total)) : 0;
-
-    apMarca.style.transform = 'translateY(' + (razao * (escala - 14)).toFixed(1) + 'px)';
-    if (apFeito) apFeito.style.height = (razao * (escala - 14)).toFixed(1) + 'px';
-  }
+  var ultimoY = -1;
 
   function ligarMarca() {
-    if (!apMarca) return;
-    window.addEventListener('scroll', function () {
-      if (!quadroMarca) quadroMarca = window.requestAnimationFrame(moverMarca);
-    }, { passive: true });
-    moverMarca();
+    montarRegua();
+    medir();
+
+    (function quadro() {
+      var y = window.scrollY || window.pageYOffset;
+      if (y !== ultimoY) { ultimoY = y; pintar(y); }
+      window.requestAnimationFrame(quadro);
+    })();
   }
 
   function ligarRelogio() {
@@ -399,53 +482,69 @@
   }
 
 
-  /* 05. SERVIÇOS — ÍNDICE E REVELAÇÃO -----------------------
-     Um só DOM para as duas composições. Acima de 1025 os campos
-     ficam empilhados na mesma área da grade e só troca qual está
-     desmascarado; abaixo, o campo ativo abre no próprio fluxo.
+  /* 05. SERVIÇOS — CARDS ------------------------------------
+     Os cinco cards estão inteiros na tela desde a entrada. O que o
+     módulo faz é uma coisa só: FECHAR o painel de etiquetas, que no
+     HTML nasce aberto, e abri-lo de novo no card sob o ponteiro, sob
+     o foco ou sob o toque.
 
-     O nome é <button>: ponteiro, toque e teclado entram pelo mesmo
-     caminho, e o foco também ativa — nada existe só no hover.
+     Essa é a ordem certa. Se o painel nascesse fechado e o script
+     fosse quem abre, um script que não sobe esconderia conteúdo — e
+     nada neste site pode depender de JavaScript para existir.
+
+     O nome continua sendo <button>: ponteiro, toque e teclado
+     entram pelo mesmo caminho.
      -------------------------------------------------------- */
-  var itens = [].slice.call(document.querySelectorAll('.serv__item'));
-  var ativo = -1;
+  var cards = [].slice.call(document.querySelectorAll('.serv__card'));
+  var servAtivo = -1;
+  var temHover  = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
   function ativarServico(i) {
-    if (i === ativo || !itens[i]) return;
-    ativo = i;
+    if (i === servAtivo) return;
+    servAtivo = i;
 
-    itens.forEach(function (li, n) {
-      var ligado = n === i;
+    cards.forEach(function (li, n) {
+      var ligado = (n === i);
       li.classList.toggle('is-ativo', ligado);
       li.querySelector('.serv__nome').setAttribute('aria-expanded', String(ligado));
-      li.querySelector('.serv__rev').setAttribute('aria-hidden', String(!ligado));
+      li.querySelector('.serv__painel').setAttribute('aria-hidden', String(!ligado));
     });
   }
 
   function ligarServicos() {
-    if (!itens.length) return;
+    if (!cards.length) return;
 
-    /* só agora a seção adota a composição de duas zonas. Sem esta
-       classe — script ausente ou quebrado — ela fica em fluxo, com
-       os cinco campos visíveis. Nada some por falta de JavaScript. */
+    /* só agora os painéis fecham. Sem esta classe — script ausente
+       ou quebrado — os cinco cards ficam abertos e completos. */
     document.documentElement.classList.add('js--serv');
 
-    itens.forEach(function (li, i) {
+    cards.forEach(function (li, i) {
       var bt = li.querySelector('.serv__nome');
 
-      bt.addEventListener('pointerenter', function (e) {
-        /* toque dispara pointerenter junto com o clique; deixa o
-           clique resolver, senão o primeiro toque ativa duas vezes */
+      li.addEventListener('pointerenter', function (e) {
+        /* o toque dispara pointerenter junto do clique; deixa o
+           clique resolver, senão o primeiro toque abre e fecha */
         if (e.pointerType === 'touch') return;
         ativarServico(i);
       });
-      bt.addEventListener('focus', function () { ativarServico(i); });
-      bt.addEventListener('click', function () { ativarServico(i); });
-    });
 
-    /* o primeiro já entra revelado: sem isso a seção é cinco
-       palavras num campo vazio até alguém descobrir o ponteiro */
-    ativarServico(0);
+      li.addEventListener('pointerleave', function (e) {
+        if (e.pointerType === 'touch') return;
+        /* o ponteiro sair não pode fechar um card que está com o
+           foco do teclado dentro dele */
+        if (li.contains(document.activeElement)) return;
+        ativarServico(-1);
+      });
+
+      bt.addEventListener('focus', function () { ativarServico(i); });
+      bt.addEventListener('blur',  function () { ativarServico(-1); });
+
+      bt.addEventListener('click', function () {
+        /* no telefone não há hover: o clique é o único gesto, e
+           precisa fechar também */
+        ativarServico(temHover ? i : (servAtivo === i ? -1 : i));
+      });
+    });
   }
 
 
@@ -732,7 +831,6 @@
       if (menosMovimento) revelarTudo();
       else { revelarAbertura(); ligarObservador(); ligarEsteira(); }
 
-      ligarSecoes();
       ligarMarca();
       ligarRelogio();
       ligarServicos();
@@ -749,7 +847,9 @@
       recompor = window.setTimeout(function () {
         travarLarguras();
         marcarLinhas();
-        moverMarca();
+        /* as medidas do aparato e da diagonal dependem da altura
+           real das seções: reflow muda todas elas de uma vez */
+        medir();
       }, 180);
     });
   }
