@@ -287,30 +287,15 @@ A gramática tem quatro níveis e cada um tem um lugar. Estão descritos no
 
 ---
 
-## O numeral d'água
+## `overflow: clip` nas seções — não remover
 
-Cada seção tem um número gigante e quase apagado (6% de opacidade) cortado
-pela borda — `<span class="marca-agua" aria-hidden="true">`. Não é sobra no
-HTML: é a resposta a "sem texto, a página ainda tem identidade?" e reaproveita
-o número que o `data-num` da própria seção já carrega.
-
-Para trocar a intensidade: `.marca-agua { color: ... / .06 }`, em
-`style.css`. Mais que ~10% já compete com o texto de verdade. Para trocar o
-canto onde sangra: `bottom/right` + `transform: translate()`, na mesma regra.
-
-Em Serviços existe um segundo numeral, diferente: `.serv__plate-num` carimba o
-número do serviço ativo sobre a própria imagem, com
-`mix-blend-mode: multiply`. Esse não é opcional — quando a foto entrar, ele é
-o que faz a seção parecer composta e não um retângulo esperando conteúdo. Ver
-"Preencher um serviço" acima para o HTML exato.
+`[data-secao] { position: relative; overflow: clip; }` foi escrito para conter
+um "numeral d'água" que já não existe (removido a pedido da Jozzi). **A regra
+ficou porque mudou de dono:** é ela que contém a sangria da chapa de Serviços,
+que avança de propósito para fora da margem direita. Tirando a regra, volta a
+rolagem horizontal em 1440 e 1280.
 
 ---
-
-## Preencher uma etiqueta de serviço
-
-As etiquetas ficam em `.serv__tags`, uma `<li>` por etiqueta, dentro de
-`.serv__txt`. Sem badge, sem contorno — o ponto médio entre elas é só CSS
-(`::before`), não faz parte do texto.
 
 ## Sobre a Jozzi — a seção 05
 
@@ -347,12 +332,19 @@ todo texto de 11px aqui é caixa alta. Se a Jozzi quiser a frase em minúsculas
 como no original, é uma linha: `.carregando__linha { text-transform: none; }`
 — mas aí ela deixa de combinar com os outros textos de 11px da página.
 
-Os dois tempos ficam no topo do módulo 09 do `main.js`:
+Os tempos ficam no topo do módulo 09 do `main.js`:
 
-- `PISO` (900ms) — o mínimo que a cortina fica na tela. Abaixo de ~700ms
+- `PISO` (1400ms) — o mínimo que a cortina fica na tela. Abaixo de ~700ms
   ninguém lê a frase.
-- `TETO` (4000ms) — o máximo. **Não aumentar muito:** é o que impede a cortina
+- `CHEIA` (420ms) — o último trecho da barra, animado pelo CSS. **Se mudar
+  aqui, mudar `--t-cheia` no CSS junto** — os dois têm de bater, senão o
+  número e a barra terminam em momentos diferentes.
+- `PAUSA` (260ms) — o repouso em 100% antes de a cortina subir.
+- `TETO` (5000ms) — o máximo. **Não aumentar muito:** é o que impede a cortina
   de virar uma porta trancada se algum recurso nunca chegar.
+
+A espessura da barra é `.carregando__trilha { height }`, no CSS. A subida da
+cortina é `--t-cortina` (900ms).
 
 ## Trocar o logotipo
 
@@ -384,7 +376,7 @@ O sprite usa `position:absolute; width:0; height:0` e **não** `display:none` �
 - **Não criar cartão** — retângulo com preenchimento, canto arredondado e sombra.
   Agrupamento se faz com fio de 1px e espaço.
 - **Não criar ícone de serviço.**
-- **Não criar número grande NOVO.** As duas exceções existentes — o numeral d'água e o carimbo de Serviços — usam dado que já existe em outro lugar (`data-num`, `.serv__num`). Um terceiro número grande, inventado do zero, não tem essa licença.
+- **Não criar número grande decorativo.** A única exceção é o carimbo sobre a imagem de Serviços, que repete o número do item ativo (`.serv__num`). O numeral d'água das seções foi removido a pedido da Jozzi; não trazer de volta sem pedido.
 - **Não inventar dado de contato.** Um e-mail plausível mas errado, publicado em
   100px, é pior que um campo marcado como pendente.
 - **Não fazer o corpo dos nomes de serviço seguir a ordem da lista.** O corpo é

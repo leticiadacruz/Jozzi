@@ -113,6 +113,9 @@
   --curva: cubic-bezier(.16, 1, .3, 1);
   --t-micro: 200ms;
   --t-entra: 600ms;
+  /* só o carregamento usa estes dois — ver 10j */
+  --t-cheia: 420ms;
+  --t-cortina: 900ms;
 
   /* eixo de peso do elemento vivo */
   --peso-base: 450;
@@ -1320,45 +1323,18 @@ img.onde__mapa {
 }
 
 
-/* 10h. NUMERAL D'ÁGUA ----------------------------------------
-   A resposta ao teste "sem texto, ainda tem identidade?": cada
-   seção carrega o próprio número em escala de pôster, cortado pela
-   borda da tela. Não é decoração solta — é o mesmo dado que o
-   aparato já mostra em 11px, só que a seção o veste por dentro.
+/* 10h. RECORTE DAS SEÇÕES ------------------------------------
+   Aqui morava o numeral d'água — o número gigante e quase apagado
+   no canto de cada seção. Removido a pedido da Jozzi.
 
-   Cor: --fg da própria seção, a 6%. Sempre a MESMA cor do texto que
-   está por cima — nunca uma cor nova — então o numeral nunca briga
-   com a paleta local; ele é a paleta, esticada e quase apagada.
+   O `overflow: clip` FICA, e agora tem outro dono: é ele que
+   contém a sangria da chapa de Serviços, que avança de propósito
+   para fora da margem direita. Sem esta regra volta a rolagem
+   horizontal em 1440 e 1280. Não remover junto.
    ----------------------------------------------------------- */
 [data-secao] {
   position: relative;
-  z-index: 0;
   overflow: clip;
-}
-
-.marca-agua {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  z-index: -1;
-  margin: 0;
-  font-size: clamp(9rem, 34vw, 26rem);
-  font-weight: 500;
-  line-height: .78;
-  letter-spacing: -.04em;
-  color: rgb(var(--marca-agua-rgb, var(--marrom-rgb)) / .06);
-  transform: translate(14%, 16%);
-  pointer-events: none;
-  user-select: none;
-}
-
-/* cada fundo empresta o próprio canal — o numeral nunca é uma cor
-   importada de fora da seção em que vive */
-.olhar .marca-agua,
-.contato .marca-agua { --marca-agua-rgb: var(--off-white-rgb); }
-
-@media (max-width: 768px) {
-  .marca-agua { font-size: clamp(7rem, 44vw, 14rem); transform: translate(10%, 10%); }
 }
 
 
@@ -1514,24 +1490,35 @@ img.onde__mapa {
   color: var(--papel);
 }
 
-/* trilha e feito: os mesmos valores de ardósia do aparato. 2px e
-   não 1px é a única espessura de fio fora do padrão no projeto —
-   um fio de 1px é uma divisão, este é um instrumento, e precisa
-   ser lido como barra atravessando a tela inteira. */
+/* A barra é desenhada no MESMO material do logotipo que está logo
+   acima dela: off-white cheio sobre a tinta. Começou em 2px e em
+   ardósia, citando o fio do aparato — ficou discreta demais para
+   uma barra de carregamento, que precisa ser lida a metros de
+   distância. Agora tem corpo: 10px, e o contraste do papel sobre o
+   verde (11,4:1) em vez do da ardósia (2,96:1). */
 .carregando__trilha {
   position: relative;
   width: 100%;
-  height: 2px;
-  background: rgb(var(--azul-rgb) / .38);
+  height: 10px;
+  background: rgb(var(--off-white-rgb) / .16);
+  overflow: hidden;
 }
 .carregando__feito {
   position: absolute;
   inset: 0 auto 0 0;
   width: 100%;
-  background: rgb(var(--azul-rgb) / .75);
+  background: var(--papel);
   transform: scaleX(var(--p, 0));
   transform-origin: left center;
   will-change: transform;
+}
+
+/* No último passo o JS entrega o valor de uma vez e deixa o CSS
+   fechar os últimos por cento — é o que faz o encerramento parecer
+   um gesto só, em vez de a barra travar em 99 e a cortina saltar. */
+.carregando.is-cheia .carregando__feito {
+  transform: scaleX(1);
+  transition: transform var(--t-cheia) var(--curva);
 }
 
 .carregando__linha {
@@ -1544,9 +1531,13 @@ img.onde__mapa {
 
 /* a cortina sobe — a mesma máscara que revela todo o resto do
    site, na direção inversa */
+/* a cortina é a maior superfície que se move no site inteiro, e
+   por isso é a única coisa que anda mais devagar que os 600ms do
+   sistema: no tempo padrão a tela toda saltando lê como corte, não
+   como gesto. */
 .carregando.is-fora {
   clip-path: inset(0 0 100% 0);
-  transition: clip-path var(--t-entra) var(--curva);
+  transition: clip-path var(--t-cortina) var(--curva);
   pointer-events: none;
 }
 

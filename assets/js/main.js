@@ -585,13 +585,21 @@
      só interpolar entre um marco e o seguinte, para o número não
      ficar parado esperando.
 
-     PISO de 900ms: mais rápido que isso ninguém lê "we are
-     creating for you" e a cortina vira um piscar.
-     TETO de 4s: se algum marco nunca chegar, sai assim mesmo. A
-     cortina não pode virar uma porta trancada.
+     PISO de 1400ms: o tempo que a cortina fica na tela no mínimo.
+     Começou em 900ms e a Jozzi pediu mais devagar — abaixo de
+     ~700ms ninguém lê "we are creating for you" e a cortina vira
+     um piscar.
+     CHEIA: o repouso em 100% antes de subir. Sem ele o número
+     chega a 100 e a tela some no mesmo quadro; o olho não fecha a
+     conta.
+     TETO de 5s: se algum marco nunca chegar, sai assim mesmo. A
+     cortina não pode virar uma porta trancada — este é o número que
+     não deve crescer muito.
      ----------------------------------------------------------- */
-  var PISO = 900;
-  var TETO = 4000;
+  var PISO  = 1400;
+  var CHEIA = 420;   /* == --t-cheia no CSS */
+  var PAUSA = 260;
+  var TETO  = 5000;
 
   function ligarCarregamento(aoTerminar) {
     var cortina = document.getElementById('carregando');
@@ -618,23 +626,51 @@
     var t0      = Date.now();
     var alvo    = 8;      /* para onde a barra está indo */
     var atual   = 0;      /* onde ela está agora */
+    var cheia   = false;  /* o CSS assumiu o último trecho */
     var fechado = false;
     var quadro  = null;
 
     function pintar() {
       /* aproxima do alvo por fração: chega rápido no começo e
-         desacelera, sem precisar de curva declarada */
-      atual += (alvo - atual) * 0.08;
-      if (alvo === 100 && alvo - atual < 0.4) atual = 100;
+         desacelera, sem precisar de curva declarada. 0.045 e não
+         0.08 — a Jozzi pediu mais devagar, e a fração é o que
+         controla a sensação, não só a duração total. */
+      atual += (alvo - atual) * 0.045;
 
-      if (barra)  barra.style.setProperty('--p', (atual / 100).toFixed(4));
-      if (numero) {
-        var n = Math.floor(atual);
-        numero.textContent = (n < 10 ? '0' : '') + n + '%';
+      /* Chegando perto do fim o JS solta o volante: marca a
+         cortina como cheia, o CSS leva a barra até a borda em
+         --t-cheia e o número termina de contar junto. Um só
+         movimento até o 100, sem o degrau de um valor por quadro. */
+      if (alvo === 100 && atual > 96 && !cheia) {
+        cheia = true;
+        cortina.classList.add('is-cheia');
+        contarAteCem();
+        return;
       }
 
-      if (atual >= 100) { sair(); return; }
+      escrever(atual);
       quadro = window.requestAnimationFrame(pintar);
+    }
+
+    function escrever(v) {
+      if (barra && !cheia) barra.style.setProperty('--p', (v / 100).toFixed(4));
+      if (numero) {
+        var n = Math.min(100, Math.floor(v));
+        numero.textContent = (n < 10 ? '0' : '') + n + '%';
+      }
+    }
+
+    /* o número acompanha a barra que o CSS está animando, na mesma
+       duração, e só então a cortina descansa cheia e sobe */
+    function contarAteCem() {
+      var de = atual;
+      var t = Date.now();
+      (function passo() {
+        var f = Math.min(1, (Date.now() - t) / CHEIA);
+        escrever(de + (100 - de) * f);
+        if (f < 1) { quadro = window.requestAnimationFrame(passo); return; }
+        window.setTimeout(sair, PAUSA);
+      })();
     }
 
     function marco(valor) {
@@ -661,7 +697,7 @@
 
       window.setTimeout(function () {
         if (cortina.parentNode) cortina.parentNode.removeChild(cortina);
-      }, 900);
+      }, 1200);   /* > --t-cortina, senão some no meio da subida */
     }
 
     /* marcos reais */

@@ -208,11 +208,14 @@ esquerda e, sob ele, a medida: barra à esquerda para a direita, mensagem
 `we are creating for you…` num canto e a porcentagem no outro.
 
 A referência pedida foi o preloader da Twist. O que veio de lá é o **dispositivo**
-— cortina, mensagem de um lado, contador do outro. O material é todo daqui: o
-par trilha/preenchimento usa exatamente os mesmos valores de ardósia
-(`.38` e `.75`) do fio do aparato. **O carregamento é o aparato deitado:** o
-instrumento que mede a rolagem é um fio vertical que se preenche; este é o mesmo
-fio, na horizontal, medindo a carga. Nenhuma cor nova entrou.
+— cortina, mensagem de um lado, contador do outro. O material é daqui: a barra é
+desenhada no **mesmo off-white do logotipo** que está logo acima dela, e a
+trilha é esse off-white a 16%. Nenhuma cor nova entrou.
+
+A primeira versão citava o fio do aparato — 2px, em ardósia. Ficou discreta
+demais para uma barra de carregamento, que precisa ser lida a metros de
+distância, e a Jozzi pediu mais corpo. Hoje tem 10px e 9,7:1 de contraste
+contra o verde, no lugar dos 2,96:1 da ardósia.
 
 A composição rima com a abertura de propósito — marca embaixo à esquerda, medida
 sob ela. Quando a cortina sobe, o olho já está na altura em que
@@ -221,8 +224,21 @@ sob ela. Quando a cortina sobe, o olho já está na altura em que
 **A barra não é um cronômetro falso.** Ela anda com `document.fonts.ready` (os
 63KB de tipografia são o peso real desta página) e `window.load`; o quadro a
 quadro só interpola entre um marco e o outro, para o número não ficar parado.
-Piso de 900ms — mais rápido que isso a cortina vira um piscar e ninguém lê a
-frase. Teto de 4s.
+
+Os tempos, todos no topo do módulo 09 do `main.js`:
+
+| | | |
+| --- | --- | --- |
+| `PISO` | 1400ms | mínimo na tela. Abaixo de ~700ms ninguém lê a frase |
+| `CHEIA` | 420ms | o último trecho, entregue ao CSS |
+| `PAUSA` | 260ms | repouso em 100% antes de subir |
+| `TETO` | 5000ms | o que impede a cortina de virar porta trancada |
+
+**O fecho é um gesto só.** Passando de 96%, o JS solta o volante: marca a
+cortina como `is-cheia`, o CSS leva a barra até a borda em `--t-cheia` e o
+número termina de contar junto, na mesma duração. Sem isso a barra trava em 99,
+o número salta e a cortina sai por cima — três eventos onde deveria haver um.
+Depois vem a `PAUSA`, para o olho fechar a conta, e só então a subida.
 
 **Quatro modos de falha, todos testados:**
 
@@ -241,9 +257,10 @@ A subida é a mesma máscara que revela todo o resto do site, na direção inver
 E o conteúdo só se monta *depois* que ela começa a subir: a abertura tem quatro
 tempos medidos e não pode ser gasta atrás de um painel opaco.
 
-**A única espessura de fio fora do padrão no projeto** é a barra, com 2px. Um
-fio de 1px é uma divisão; este é um instrumento, e precisa ser lido como barra
-atravessando a tela inteira.
+A subida usa `--t-cortina` (900ms) e não os 600ms do sistema: a cortina é a
+maior superfície que se move no site inteiro, e no tempo padrão a tela toda
+saltando lê como corte, não como gesto. É a única coisa que anda mais devagar
+que o padrão.
 
 ### Durações e curva
 
@@ -332,16 +349,16 @@ algo". **O espaço vazio é parte da composição** — não é sobra a ser pree
 Margens reais de cartaz, sem caixa central de 1200px. Todo elemento se ancora em
 coluna nomeada; nada está centrado "porque sim".
 
-**Uma exceção deliberada à regra de "sem número grande":** o numeral d'água.
-Cada seção carrega o próprio número (`data-num`) em escala de pôster, cortado
-pela borda da tela, 6% da cor de texto da própria seção. Não é decoração
-solta — é o mesmo dado que o aparato já mostra em 11px, só que a seção o veste
-por dentro. É a resposta a uma pergunta concreta: *se alguém remover todo o
-texto, a página ainda tem identidade reconhecível?* Antes, não. Implementado
-como `<span class="marca-agua" aria-hidden="true">` logo na abertura de cada
-`[data-secao]`, que ganhou `position: relative; overflow: clip;` para conter o
-sangramento. Sempre `aria-hidden` — decoração pura, fora da árvore de
-acessibilidade, e por isso fora também da régua de contraste de texto.
+**Sem número grande decorativo.** Houve por algumas rodadas um "numeral
+d'água" — o número de cada seção em escala de pôster, a 6%, sangrando pelo
+canto. A Jozzi pediu a remoção e ele saiu inteiro. O que ficou daquela rodada
+é o `overflow: clip` em `[data-secao]`, que **mudou de dono**: hoje é ele que
+contém a sangria da chapa de Serviços. Sem essa regra volta a rolagem
+horizontal em 1440 e 1280 — não remover junto.
+
+O único número em corpo grande que sobrou é o carimbo sobre a imagem de
+Serviços (`.serv__plate-num`), que não é marca d'água: é sólido, fica sobre a
+foto e repete o número do item ativo.
 
 ### Imagem
 
