@@ -2,8 +2,9 @@
 
 **Método e Instinto.** Site da JOZZI.
 
-> **Estado:** protótipo de direção com as **sete seções construídas**, 00 a 06.
-> O que falta é conteúdo real, listado no fim deste documento.
+> **Estado:** copy definitiva aplicada (rodada de 25/08). Sete seções (00 a 06)
+> mais uma página independente, `sobre.html`. Ainda falta apenas imagem e alguns
+> dados de contato — listados no fim deste documento.
 
 ---
 
@@ -546,6 +547,49 @@ Já resolvido: `<title>`, `description`, `og:type`, `og:title`,
 hierarquia de títulos, landmarks e zero recurso externo.
 
 ---
+
+## Copy definitiva (25/08) — o que mudou
+
+Rodada de aplicação de texto fornecido pela Jozzi, substituindo grande parte
+do conteúdo anterior. Registro do que mudou de estrutura, não só de palavra:
+
+- **Abertura** — `<h1>` virou "We create for you.", em inglês (copy literal,
+  não decisão de voz). Lista de frentes reordenada: Branding, Social Media,
+  Styling, Tráfego Pago, Web Development. Novo elemento: `.abertura__rolar`,
+  uma seta desenhada em duas linhas de 1px (não é ícone de fonte), com
+  microinteração só no hover — sem loop, sem `infinite`.
+- **Quem somos** — novo título e corpo, ainda no mesmo slot estrutural.
+- **Nosso olhar → Nossa visão** — id, `data-nome` e h2 renomeados. Os quatro
+  princípios têm texto novo; a estrutura de dois tempos (afirmação + linha de
+  sustentação) não mudou.
+- **Serviços** — **"Design" saiu, "Styling" entrou**, na terceira posição.
+  Ordem final: Branding, Social Media, Styling, Tráfego Pago, Web Development
+  (as duas últimas trocaram de lugar). `--fit`/`--optico` recalculados para a
+  nova ordem. A estrutura de dois parágrafos (como trabalhamos + posição) virou
+  **um parágrafo + uma lista de etiquetas** (`.serv__tags`), acompanhando o
+  formato da copy recebida — a frase reservada "Anúncio não conserta marca."
+  saiu do ar.
+- **Marcas → Projetos que já fizemos** — de blocos curtos (setor + escopo) para
+  quatro estudos de caso completos: Collab, Claudia Choma, **Descomplica
+  Perícias** (cliente novo, confirmado pela própria Jozzi) e Widepine Cafés.
+  `.cliente__dados`/`.cliente__falta` saíram; entrou `.cliente__corpo`
+  (parágrafo) e `.marcas__lede` (subtítulo da seção). A diagonal e o teto de
+  escala por scroll não mudaram.
+- **`sobre.html`** — página nova, **fora do percurso 00–06** por decisão: o
+  pedido veio como "aba/página", e inserir um capítulo 07 depois de Onde
+  ficamos quebraria o final construído de propósito (05 clímax, 06 coda
+  silenciosa). Mesmo sistema de tokens, sem `main.js` — é conteúdo parado, não
+  precisa de coreografia de entrada. Alcançável pelo link no rodapé da home.
+
+**Um parágrafo foi escrito por mim, não pela Jozzi:** o texto sobre a origem
+do nome "Jozzi" e sua relação com moda, em `sobre.html`, porque a copy fornecida
+pedia esse texto sem entregá-lo pronto ("mini texto explicando o termo").
+Segue a Voz da Jozzi, mas precisa da aprovação de quem realmente sabe a
+origem do nome.
+
+---
+
+## Licenças de tipografia
 
 ## Licenças de tipografia
 

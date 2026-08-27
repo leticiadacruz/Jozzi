@@ -512,6 +512,50 @@ a { color: inherit; text-decoration: none; }
 
 .abertura__lede { max-width: 30ch; }
 
+/* Rolar — chevron desenhado em duas linhas de 1px, no idioma
+   visual do sistema (fios, não ícone). Bob discreto, verificado
+   contra reduced-motion; a linha e a seta usam a mesma cor do
+   fio da seção, sem cor nova. */
+.abertura__rolar {
+  position: absolute;
+  right: var(--margem);
+  bottom: clamp(1.6rem, 4.5vh, 2.6rem);
+  display: grid;
+  justify-items: center;
+  gap: .6rem;
+  border-bottom: 0;
+  color: var(--fg-3);
+}
+.abertura__seta {
+  display: block;
+  width: 13px;
+  height: 8px;
+  position: relative;
+}
+.abertura__seta::before,
+.abertura__seta::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 8px;
+  height: 1px;
+  background: currentColor;
+}
+.abertura__seta::before { left: 0;  transform: rotate(45deg);  transform-origin: left top; }
+.abertura__seta::after  { right: 0; transform: rotate(-45deg); transform-origin: right top; }
+
+/* sem animação contínua: o sistema não usa loop infinito em lugar
+   nenhum. O convite a rolar é a própria seta parada — o movimento
+   fica reservado para quando o leitor de fato passa o mouse. */
+.abertura__rolar:hover .abertura__seta,
+.abertura__rolar:focus-visible .abertura__seta { transform: translateY(3px); }
+.abertura__rolar:hover,
+.abertura__rolar:focus-visible { color: var(--sinal); }
+.abertura__seta { transition: transform var(--t-micro) var(--curva); }
+
+@media (max-width: 768px) {
+  .abertura__rolar { display: none; }
+}
 
 
 /* 10. SEÇÃO 01 — QUEM SOMOS ---------------------------------
@@ -716,9 +760,9 @@ a { color: inherit; text-decoration: none; }
    a leitura como ranking comercial. */
 .serv__item:nth-child(1) { --fit: .875; --optico: 0;       }  /* Branding · 8 · B */
 .serv__item:nth-child(2) { --fit: .75;  --optico: -.012em; }  /* Social Media · 12 · S */
-.serv__item:nth-child(3) { --fit: 1;    --optico: 0;       }  /* Design · 6 · D */
-.serv__item:nth-child(4) { --fit: .70;  --optico: -.018em; }  /* Web Development · 15 · W */
-.serv__item:nth-child(5) { --fit: .75;  --optico: -.022em; }  /* Tráfego Pago · 12 · T */
+.serv__item:nth-child(3) { --fit: .93;  --optico: -.012em; }  /* Styling · 7 · S — mesma correção óptica da Social Media, mesma letra inicial */
+.serv__item:nth-child(4) { --fit: .75;  --optico: -.022em; }  /* Tráfego Pago · 12 · T */
+.serv__item:nth-child(5) { --fit: .70;  --optico: -.018em; }  /* Web Development · 15 · W */
 
 .serv__rev {
   display: grid;
@@ -827,6 +871,29 @@ img.onde__mapa {
    base. Espaçamento e cor, nada além disso. */
 .serv__txt p { margin: 0; color: var(--fg-2); }
 .serv__txt p + p { margin-top: .8rem; }
+
+/* Etiquetas do serviço: lista em aparato, sem badge, sem contorno,
+   sem preenchimento — separadas por um ponto médio, como um rodapé
+   de créditos. É dado, não decoração. */
+.serv__tags {
+  list-style: none;
+  margin: 1.1rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .3em .9em;
+}
+.serv__tags li {
+  position: relative;
+  padding-left: 1em;
+}
+.serv__tags li::before {
+  content: "·";
+  position: absolute;
+  left: 0;
+}
+.serv__tags li:first-child { padding-left: 0; }
+.serv__tags li:first-child::before { content: none; }
 
 
 /* ---- com o módulo de pé: só o item ativo revela ---- */
@@ -991,24 +1058,21 @@ img.onde__mapa {
   font-weight: 500;
 }
 
-/* sem fio nenhum: rótulo mais valor entre dois fios é uma tabela,
-   e três tabelas pequenas espalhadas pela página são o índice de
-   créditos em miniatura — a direção que foi descartada. Alinhamento
-   sim, régua não. */
-.cliente__dados > div {
-  display: grid;
-  grid-template-columns: 4.5rem 1fr;
-  gap: .8rem;
-  padding: .18rem 0;
-}
-.cliente__dados dt { color: var(--fg-3); }
-.cliente__dados dd {
+/* Estudo de caso curto, no registro de texto — a mesma cor e o
+   mesmo corpo de qualquer parágrafo do site. A medida vem da
+   própria coluna da diagonal (5 de 12), não de um max-width novo:
+   é a mesma lógica de .quem__corpo. */
+.cliente__corpo {
   margin: 0;
   color: var(--fg-2);
-  text-transform: none;
-  letter-spacing: .02em;
 }
-.cliente__falta { color: var(--fg-3); }
+
+/* subtítulo da seção, único lede fora da abertura — a mesma
+   função: uma frase de transição antes do conteúdo denso */
+.marcas__lede {
+  margin: -.6rem 0 clamp(2.5rem, 8vh, 4.5rem);
+  max-width: 32ch;
+}
 
 
 /* ---- ≥1025: a diagonal ---- */
@@ -1038,7 +1102,7 @@ img.onde__mapa {
 /* ---- ≤1024: a diagonal não sobrevive a campo estreito ---- */
 @media (max-width: 1024px) {
   .marcas__lista { gap: clamp(3rem, 9vh, 5rem); }
-  .cliente__dados { max-width: 26rem; }
+  .cliente__corpo { max-width: 32rem; }
 }
 
 
@@ -1284,6 +1348,46 @@ img.onde__mapa {
 }
 
 
+/* 10i. PÁGINA — SOBRE A JOZZI --------------------------------
+   Fora do percurso 00–06 por decisão: o pedido veio como "aba /
+   página", não como mais um capítulo do scroll. Entrar como 07
+   quebraria o final construído de propósito (05 clímax, 06 coda
+   silenciosa) — então vive em sobre.html, mesmo sistema de tokens,
+   alcançável pelo rodapé.
+
+   Sem JavaScript nesta página: é conteúdo parado, não precisa de
+   coreografia de entrada. Nenhuma dependência de main.js.
+   ----------------------------------------------------------- */
+.sobre {
+  padding-top: clamp(4rem, 12vh, 8rem);
+  padding-bottom: clamp(5rem, 16vh, 10rem);
+}
+.sobre__eyebrow { margin: 0 0 clamp(1.6rem, 5vh, 3rem); }
+.sobre__t { max-width: 15ch; margin: 0 0 clamp(2.5rem, 8vh, 5rem); }
+.sobre__corpo {
+  max-width: 58ch;
+  color: var(--fg-2);
+  margin: 0 0 clamp(2.5rem, 8vh, 5rem);
+}
+.sobre__linha {
+  max-width: 12ch;
+  margin: 0 0 clamp(3rem, 10vh, 6rem);
+  padding-top: clamp(2.5rem, 8vh, 5rem);
+  border-top: 1px solid var(--fio);
+}
+.sobre__fundadora {
+  padding-top: clamp(2.5rem, 8vh, 5rem);
+  border-top: 1px solid var(--fio);
+  margin-bottom: clamp(2.5rem, 8vh, 5rem);
+}
+.sobre__fundadora h2 { margin: 0 0 .5rem; }
+.sobre__fundadora .ap { margin: 0 0 clamp(1.6rem, 5vh, 2.6rem); }
+.sobre__expertises {
+  padding-top: clamp(2.5rem, 8vh, 5rem);
+  border-top: 1px solid var(--fio);
+}
+
+
 /* 11. RODAPÉ DO PROTÓTIPO ----------------------------------- */
 .fim {
   display: flex;
@@ -1293,6 +1397,9 @@ img.onde__mapa {
   padding-bottom: clamp(1.5rem, 4vh, 2.5rem);
   border-top: 1px solid var(--fio);
 }
+.fim__link { border-bottom: 1px solid var(--fio); }
+.fim__link:hover,
+.fim__link:focus-visible { color: var(--sinal); border-color: var(--sinal); }
 
 
 /* 12. RECOMPOSIÇÃO ------------------------------------------

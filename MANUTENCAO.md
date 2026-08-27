@@ -306,6 +306,22 @@ o que faz a seção parecer composta e não um retângulo esperando conteúdo. V
 
 ---
 
+## Preencher uma etiqueta de serviço
+
+As etiquetas ficam em `.serv__tags`, uma `<li>` por etiqueta, dentro de
+`.serv__txt`. Sem badge, sem contorno — o ponto médio entre elas é só CSS
+(`::before`), não faz parte do texto.
+
+## sobre.html
+
+Página separada, fora do scroll principal. Mesma paleta e tipografia do
+`style.css`, sem `main.js` — não precisa de coreografia, é conteúdo parado.
+Editar direto no arquivo; não tem placeholder pendente estrutural, só o
+parágrafo sobre a origem do nome "Jozzi", que fui eu quem escreveu (ver
+README) e pode precisar de ajuste de quem sabe a história real.
+
+---
+
 ## O que NÃO fazer
 
 - **Não rodar subsetter na Switzer.** A licença da ITF proíbe. O arquivo em
