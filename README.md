@@ -55,9 +55,35 @@ que o problema está em outro lugar.
 
 ### Marca
 
-**JOZZI** é o nome. "Creative Marketing Lab" é descriptor institucional: aparece
-uma vez, no rodapé, como dado. Nunca ao lado do logotipo, nunca como assinatura,
-nunca como slogan.
+O logotipo oficial é o lockup **JOZZI CREATIVE LAB** — traço arredondado, com
+irregularidade de mão, proporção 15,6:1. Não é a Switzer: é arte fechada, e por
+isso entra como SVG, nunca como texto.
+
+**Uma geometria, três escalas.** Os 16 paths moram uma vez só, num `<symbol>`
+no topo do `<body>`, e são instanciados por `<use>`:
+
+| Onde | Largura | Altura resultante |
+| --- | --- | --- |
+| Cabeçalho | `clamp(11rem, 17vw, 15rem)` | 11 a 15px |
+| Carregamento | 100% da margem | ~64px |
+| Rodapé | 100% da margem | ~79px |
+
+É a proporção extrema que faz isso funcionar: em largura cheia o lockup deixa de
+ser "logotipo grande" e vira **faixa** — o documento abre e fecha com a mesma
+arte, em escalas opostas.
+
+**Nenhum path tem `fill` próprio: a cor vem de `currentColor`.** O pacote
+entregue trazia nove arquivos, um por cor da paleta (branco, off-white, bege,
+amarelo, ardósia, verde, marrom, bordô, e um sem cor). Nenhum dos nove coloridos
+entrou no projeto — o sem-cor serve a todos os fundos, e o dia em que o logotipo
+precisar aparecer sobre o verde ou o bordô já está resolvido sem arquivo novo.
+Mestre versionado em `assets/img/jozzi-creative-lab.svg`.
+
+⚠ **Conflito de nome, pendente de decisão da Jozzi.** O logotipo diz
+JOZZI CREATIVE **LAB**; o texto do rodapé dizia Jozzi Creative **Marketing**
+Lab. Dois nomes diferentes empilhados a 40px de distância leem como erro, então
+a linha de texto saiu do rodapé — o logotipo agora carrega o nome sozinho. Qual
+dos dois é o oficial é decisão da Jozzi, não minha.
 
 ### Paleta
 
@@ -174,6 +200,50 @@ tinta. Mesma gramática de três rótulos, nada de novo.
 
 **Não existe animação infinita, parallax de fundo, nem nada que se mova sem uma
 ação do leitor ou sem a rolagem.**
+
+### Carregamento — o aparato deitado
+
+Cortina de tela cheia em verde, com o logotipo em largura total embaixo à
+esquerda e, sob ele, a medida: barra à esquerda para a direita, mensagem
+`we are creating for you…` num canto e a porcentagem no outro.
+
+A referência pedida foi o preloader da Twist. O que veio de lá é o **dispositivo**
+— cortina, mensagem de um lado, contador do outro. O material é todo daqui: o
+par trilha/preenchimento usa exatamente os mesmos valores de ardósia
+(`.38` e `.75`) do fio do aparato. **O carregamento é o aparato deitado:** o
+instrumento que mede a rolagem é um fio vertical que se preenche; este é o mesmo
+fio, na horizontal, medindo a carga. Nenhuma cor nova entrou.
+
+A composição rima com a abertura de propósito — marca embaixo à esquerda, medida
+sob ela. Quando a cortina sobe, o olho já está na altura em que
+*"We create for you."* aparece.
+
+**A barra não é um cronômetro falso.** Ela anda com `document.fonts.ready` (os
+63KB de tipografia são o peso real desta página) e `window.load`; o quadro a
+quadro só interpola entre um marco e o outro, para o número não ficar parado.
+Piso de 900ms — mais rápido que isso a cortina vira um piscar e ninguém lê a
+frase. Teto de 4s.
+
+**Quatro modos de falha, todos testados:**
+
+| Situação | O que acontece |
+| --- | --- |
+| Sem JavaScript | O CSS só mostra a cortina sob `.js` — ela nunca aparece |
+| `prefers-reduced-motion` | O módulo nem liga; a cortina é removida do DOM |
+| `main.js` não sobe | A rede do `<head>` a remove aos 2,6s e solta a rolagem |
+| Fontes nunca chegam | O teto age; medido saindo em 2,4s |
+
+Sem a rede do `<head>`, o pior caso do site deixaria de ser "sem animação" e
+passaria a ser **tela verde para sempre** — o CSS mostra a cortina quando há
+`.js`, e quem a remove é o `main.js`.
+
+A subida é a mesma máscara que revela todo o resto do site, na direção inversa.
+E o conteúdo só se monta *depois* que ela começa a subir: a abertura tem quatro
+tempos medidos e não pode ser gasta atrás de um painel opaco.
+
+**A única espessura de fio fora do padrão no projeto** é a barra, com 2px. Um
+fio de 1px é uma divisão; este é um instrumento, e precisa ser lido como barra
+atravessando a tela inteira.
 
 ### Durações e curva
 

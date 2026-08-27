@@ -334,6 +334,41 @@ história real.
 
 ---
 
+## Trocar a mensagem ou o ritmo do carregamento
+
+A frase está no `index.html`, dentro de `.carregando__linha`:
+
+```
+<span>we are creating for you&hellip;</span>
+```
+
+Ela sai em CAIXA ALTA porque a classe `.ap` é o registro de aparato do site e
+todo texto de 11px aqui é caixa alta. Se a Jozzi quiser a frase em minúsculas
+como no original, é uma linha: `.carregando__linha { text-transform: none; }`
+— mas aí ela deixa de combinar com os outros textos de 11px da página.
+
+Os dois tempos ficam no topo do módulo 09 do `main.js`:
+
+- `PISO` (900ms) — o mínimo que a cortina fica na tela. Abaixo de ~700ms
+  ninguém lê a frase.
+- `TETO` (4000ms) — o máximo. **Não aumentar muito:** é o que impede a cortina
+  de virar uma porta trancada se algum recurso nunca chegar.
+
+## Trocar o logotipo
+
+Os 16 paths moram uma vez só, no `<symbol id="marca-jozzi">` logo depois do
+`<body>`, e são usados três vezes por `<use href="#marca-jozzi">`. Para trocar a
+arte, trocar os paths do símbolo — os três lugares acompanham sozinhos.
+
+**Nenhum path pode ter `fill` próprio.** A cor vem de `currentColor`, e é isso
+que faz o mesmo arquivo servir papel, verde e bordô. Se um path vier com
+`fill="#..."` de dentro do Illustrator, tirar antes de colar.
+
+O sprite usa `position:absolute; width:0; height:0` e **não** `display:none` —
+`display:none` quebra a referência do `<use>` em alguns navegadores.
+
+---
+
 ## O que NÃO fazer
 
 - **Não rodar subsetter na Switzer.** A licença da ITF proíbe. O arquivo em
@@ -370,11 +405,10 @@ história real.
 ## Estrutura
 
 ```
-index.html                  as três seções, em português
+index.html                  as oito seções (00–07) + sprite da marca
 assets/css/style.css        folha única, com sumário numerado no topo
-assets/js/main.js           IIFE, seis seções numeradas
+assets/js/main.js           IIFE, nove módulos numerados
 assets/js/lenis.min.js      rolagem interpolada (não editar)
 assets/fonts/               Switzer + IBM Plex Mono + licença
-assets/svg/                 logotipo Jozzi
-assets/img/                 imagens do site
+assets/img/                 imagens do site + jozzi-creative-lab.svg (mestre)
 ```

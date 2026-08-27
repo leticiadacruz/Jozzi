@@ -578,6 +578,105 @@
   window.setTimeout(redeDeSeguranca, 3500);
 
 
+  /* 09. CARREGAMENTO ----------------------------------------
+     A barra anda com a carga REAL desta página, não com um
+     cronômetro: document.fonts.ready (os 63KB de tipografia são o
+     peso de verdade aqui) e window.load. O que o cronômetro faz é
+     só interpolar entre um marco e o seguinte, para o número não
+     ficar parado esperando.
+
+     PISO de 900ms: mais rápido que isso ninguém lê "we are
+     creating for you" e a cortina vira um piscar.
+     TETO de 4s: se algum marco nunca chegar, sai assim mesmo. A
+     cortina não pode virar uma porta trancada.
+     ----------------------------------------------------------- */
+  var PISO = 900;
+  var TETO = 4000;
+
+  function ligarCarregamento(aoTerminar) {
+    var cortina = document.getElementById('carregando');
+
+    /* sem cortina no HTML, ou leitor que pediu menos movimento:
+       o site começa direto. */
+    if (!cortina || menosMovimento) {
+      if (cortina && cortina.parentNode) cortina.parentNode.removeChild(cortina);
+      aoTerminar();
+      return;
+    }
+
+    var raiz = document.documentElement;
+    raiz.className += ' esta-carregando';
+
+    /* o teto é armado ANTES de qualquer outra coisa: se qualquer
+       linha abaixo lançar, a cortina ainda sai sozinha. */
+    window.setTimeout(function () { marco(100); }, TETO);
+    window.setTimeout(function () { sair(); }, TETO + 600);
+
+    var barra  = cortina.querySelector('[data-carregando-barra]');
+    var numero = cortina.querySelector('[data-carregando-pct]');
+
+    var t0      = Date.now();
+    var alvo    = 8;      /* para onde a barra está indo */
+    var atual   = 0;      /* onde ela está agora */
+    var fechado = false;
+    var quadro  = null;
+
+    function pintar() {
+      /* aproxima do alvo por fração: chega rápido no começo e
+         desacelera, sem precisar de curva declarada */
+      atual += (alvo - atual) * 0.08;
+      if (alvo === 100 && alvo - atual < 0.4) atual = 100;
+
+      if (barra)  barra.style.setProperty('--p', (atual / 100).toFixed(4));
+      if (numero) {
+        var n = Math.floor(atual);
+        numero.textContent = (n < 10 ? '0' : '') + n + '%';
+      }
+
+      if (atual >= 100) { sair(); return; }
+      quadro = window.requestAnimationFrame(pintar);
+    }
+
+    function marco(valor) {
+      if (valor > alvo) alvo = valor;
+    }
+
+    function concluir() {
+      var espera = Math.max(0, PISO - (Date.now() - t0));
+      window.setTimeout(function () { marco(100); }, espera);
+    }
+
+    function sair() {
+      if (fechado) return;
+      fechado = true;
+      if (quadro) window.cancelAnimationFrame(quadro);
+
+      cortina.classList.add('is-fora');
+      raiz.className = raiz.className.replace(' esta-carregando', '');
+
+      /* o conteúdo só se monta depois que a cortina começou a
+         subir: a abertura tem quatro tempos medidos e não pode
+         ser gasta atrás de um painel opaco. */
+      aoTerminar();
+
+      window.setTimeout(function () {
+        if (cortina.parentNode) cortina.parentNode.removeChild(cortina);
+      }, 900);
+    }
+
+    /* marcos reais */
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () { marco(72); concluir(); });
+    } else {
+      marco(72);
+    }
+    if (document.readyState === 'complete') { marco(94); concluir(); }
+    else window.addEventListener('load', function () { marco(94); concluir(); });
+
+    quadro = window.requestAnimationFrame(pintar);
+  }
+
+
   /* PARTIDA ------------------------------------------------- */
   function iniciar() {
     document.documentElement.className += ' js--pronto';
@@ -599,8 +698,7 @@
       ligarLenis();
     };
 
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(seguir);
-    else window.addEventListener('load', seguir);
+    ligarCarregamento(seguir);
 
     var recompor = null;
     window.addEventListener('resize', function () {
