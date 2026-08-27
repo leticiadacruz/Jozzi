@@ -259,7 +259,7 @@
 
 <!-- ============================================================
      03 — SERVIÇOS · CARDS
-     Cinco cards, todos na tela ao mesmo tempo. Substitui o índice
+     Seis cards, todos na tela ao mesmo tempo. Substitui o índice
      de duas zonas, por decisão da Jozzi.
 
      Cada card é uma chapa 16:9 com o numeral carimbado, o nome em
@@ -272,14 +272,16 @@
      Nomes longos QUEBRAM em duas linhas em corpo cheio em vez de
      encolher: encolher os jogaria dentro da faixa proibida de 24 a
      44px. O rótulo tem duas linhas reservadas, e é isso que alinha
-     o texto dos cinco cards.
+     o texto dos cards da mesma fila.
 
      Sem JavaScript o card está inteiro na tela, com as etiquetas
      abertas. É o `.js--serv` que as fecha, nunca o contrário.
 
      Conteúdo: copy definitiva fornecida pela Jozzi (rodada de
      25/08). Ordem: Branding, Social Media, Styling, Tráfego Pago,
-     Web Development.
+     Web Development. Captação de Conteúdo entrou depois, em 27/08,
+     e é o único card com descrição e etiquetas PENDENTES — os dois
+     campos ficam marcados, não preenchidos com copy genérica.
      ============================================================ -->
 <section class="serv wrap" id="servicos" data-secao
          data-num="03" data-nome="Serviços" aria-labelledby="serv-titulo">
@@ -417,6 +419,32 @@
       </button>
 
       <p class="serv__txt">Essa é a ponte de início que liga o seu posicionamento com a conversão. Criamos e gerenciamos sites do zero para a sua marca, gerando também experiência.</p>
+    </li>
+
+    <!-- 06 · CAPTAÇÃO DE CONTEÚDO — copy pendente.
+         A Jozzi ainda não forneceu a descrição nem as etiquetas. Os
+         dois campos ficam MARCADOS, como o campo de imagem já fica:
+         nada de copy genérica de agência, nem provisoriamente.
+         Descrição: 90 a 170 caracteres quando chegar. -->
+    <li class="serv__card rv" role="listitem" data-cursor="Ver">
+      <div class="serv__plate">
+        <span class="serv__plate-num" aria-hidden="true">06</span>
+        <span class="ap">Imagem 16:9</span>
+
+        <div class="serv__painel" id="serv-rev-captacao-de-conteudo" aria-labelledby="serv-bt-captacao-de-conteudo" aria-hidden="true">
+          <ul class="serv__tags ap" aria-label="Etiquetas">
+            <li>etiquetas a definir</li>
+          </ul>
+        </div>
+      </div>
+
+      <button class="serv__nome" type="button"
+              id="serv-bt-captacao-de-conteudo" aria-controls="serv-rev-captacao-de-conteudo" aria-expanded="false">
+        <span class="serv__num ap" aria-hidden="true">06</span>
+        <span class="serv__rotulo">Captação de Conteúdo</span>
+      </button>
+
+      <p class="serv__txt serv__txt--falta">…</p>
     </li>
 
   </ul>

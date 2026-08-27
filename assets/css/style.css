@@ -839,8 +839,8 @@ a { color: inherit; text-decoration: none; }
 
 
 /* 10c. SEÇÃO 03 — SERVIÇOS · CARDS --------------------------
-   Mudança de direção pedida pela Jozzi: as cinco frentes deixam de
-   ser um índice de duas zonas e passam a ser cinco cards.
+   Mudança de direção pedida pela Jozzi: as frentes deixam de ser um
+   índice de duas zonas e passam a ser cards. Seis, hoje.
 
    O README dizia "sem cartão". A regra caiu por decisão da Jozzi, e
    o que a substitui é uma disciplina de material: o card aqui é um
@@ -891,6 +891,7 @@ a { color: inherit; text-decoration: none; }
 .serv__card:nth-child(3) { --i: 2; }
 .serv__card:nth-child(4) { --i: 3; }
 .serv__card:nth-child(5) { --i: 4; }
+.serv__card:nth-child(6) { --i: 5; }
 
 /* o estado ativo se marca por contraste, como no resto do site: a
    moldura sai do fio silencioso e vai para tinta a 45%. O azul não
@@ -1044,12 +1045,22 @@ a { color: inherit; text-decoration: none; }
 .serv__card:nth-child(3) { --optico: -.012em; }  /* Styling · S */
 .serv__card:nth-child(4) { --optico: -.022em; }  /* Tráfego Pago · T */
 .serv__card:nth-child(5) { --optico: -.018em; }  /* Web Development · W */
+.serv__card:nth-child(6) { --optico: -.014em; }  /* Captação de Conteúdo · C */
 
 /* ---- o texto ---- */
 .serv__txt {
   margin: 0;
   padding: .9rem clamp(1rem, 2vw, 1.5rem) clamp(1.2rem, 3vh, 1.7rem);
   color: var(--fg-2);
+}
+
+/* Campo de texto ainda não fornecido. Mesma marca de pendência que
+   o campo de imagem usa: o conteúdo não é inventado, e o lugar dele
+   fica visível. Cor de aparato, não de texto — quem lê entende que
+   ali falta alguma coisa, não que a Jozzi escreveu reticências. */
+.serv__txt--falta {
+  color: var(--fg-3);
+  user-select: none;
 }
 
 /* etiquetas: lista em aparato, sem badge, sem contorno, sem
@@ -1100,11 +1111,11 @@ a { color: inherit; text-decoration: none; }
 
 @media (min-width: 1280px) {
   .serv__card { grid-column: span 4; }
-  /* a segunda fila não começa na margem: dois cards centrados sob
-     três é composição, não sobra. Nenhuma seção repete a grade da
-     anterior — e esta não repete nem a própria primeira fila. */
-  .serv__card:nth-child(4) { grid-column: 3 / span 4; }
-  .serv__card:nth-child(5) { grid-column: 7 / span 4; }
+  /* Com seis cards as duas filas são cheias e a grade é regular.
+     O deslocamento da segunda fila — dois cards centrados sob três —
+     existia enquanto eram cinco, para a sobra não ler como buraco.
+     Se a lista voltar a ter um número ímpar de cards, a regra volta
+     junto: a última fila incompleta nunca começa na margem. */
 }
 
 

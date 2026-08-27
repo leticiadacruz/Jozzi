@@ -82,8 +82,11 @@ emprestada.
 
 ## Preencher um serviço
 
-Os cinco textos já estão no ar. Cada serviço é um **card** em `index.html`, e o
-card tem quatro peças nesta ordem:
+São seis serviços. **Cinco estão com a copy no ar; Captação de Conteúdo, não** —
+a descrição e as etiquetas dele estão marcadas como pendentes.
+
+Cada serviço é um **card** em `index.html`, e o card tem quatro peças nesta
+ordem:
 
 ```html
 <li class="serv__card rv" role="listitem" data-cursor="Ver">
@@ -117,6 +120,36 @@ alto que os vizinhos e a fila desalinha.
 proposital, e é por isso que **nenhuma informação essencial pode morar só ali** —
 etiqueta é dado complementar, não a descrição do serviço.
 
+### Preencher Captação de Conteúdo
+
+É o único card com campos pendentes. Quando a copy chegar:
+
+1. Trocar `<p class="serv__txt serv__txt--falta">…</p>` pelo texto, **e tirar a
+   classe `serv__txt--falta`** — ela existe só para pintar a pendência na cor do
+   aparato. Deixá-la faz o texto real sair apagado.
+2. Trocar `<li>etiquetas a definir</li>` pelas etiquetas de verdade.
+
+**Decisão pendente da Jozzi:** a nota de margem da abertura lista cinco frentes
+e não inclui Captação de Conteúdo. As duas listas discordarem é um defeito, mas
+mexer na abertura muda a composição da primeira tela — é decisão de quem
+escreveu a copy.
+
+### Acrescentar um serviço
+
+O card novo é uma cópia de qualquer um dos existentes, com quatro trocas: o
+número (nos DOIS lugares — `.serv__plate-num` e `.serv__num`), o nome, o `id` do
+painel e do botão (que precisam continuar batendo entre `id` e
+`aria-controls`/`aria-labelledby`), e o texto.
+
+No CSS há duas linhas por card, as duas em `nth-child`: a do `--i`, que é o
+atraso de entrada, e a do `--optico`, que é a correção óptica da primeira letra.
+Sem a linha do `--i` o card entra junto com o primeiro em vez de na sua vez.
+
+⚠ **Se o total voltar a ser ímpar, a última fila fica incompleta em 1280+** —
+e aí ela não pode começar na margem. Com cinco cards existia uma regra
+deslocando a segunda fila para as colunas 3 e 7; ela saiu quando o sexto entrou,
+e o comentário no CSS diz exatamente onde ela morava.
+
 ### Colocar a imagem do serviço
 
 A proporção é **16:9** — mudou de 3:4 quando a seção virou cards.
@@ -149,6 +182,11 @@ imagem no HTML.
   do rótulo da chapa e saem marrom sobre marrom, invisíveis.
 - **Não encolher o nome para caber numa linha.** Os nomes longos quebram em duas
   linhas de propósito: encolher os joga dentro da faixa proibida de 24 a 44px.
+  Hoje quebram quatro: Social Media, Tráfego Pago, Web Development e Captação de
+  Conteúdo.
+- **Não tirar a classe `serv__txt--falta` sem pôr o texto real no lugar** — e
+  não deixá-la quando o texto chegar. Ela pinta o campo na cor do aparato, que é
+  a marca de pendência; num texto de verdade ela sai como texto apagado.
 - **Não pôr o painel para abrir empurrando** em vez de sobrepor. Empurrando,
   abrir um card muda a altura da fila e os outros quatro saltam.
 - **Não dar sombra, raio de canto nem cor de fundo ao card.** O card é um fio de

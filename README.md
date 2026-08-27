@@ -519,7 +519,7 @@ antes de existir.
 
 ### 03 — Serviços · construído · **cards**
 
-Cinco cards, os cinco na tela ao mesmo tempo. Substitui o índice tipográfico de
+Seis cards, os seis na tela ao mesmo tempo. Substitui o índice tipográfico de
 duas zonas, por decisão da Jozzi. Registro do que a troca custou e do que ela
 resolveu, porque as duas coisas importam para a próxima decisão:
 
@@ -528,9 +528,10 @@ nome variava por comprimento de palavra, e era a seção mais densa — a que da
 peso ao meio do documento. Cinco cards de mesma largura são, por definição, uma
 grade regular.
 
-**O que se ganhou.** As cinco frentes ficam legíveis de uma vez, sem depender de
-descobrir o ponteiro. A descrição de cada uma fica junto do nome dela. E a
-segunda fila entra deslocada, o que impede a grade de ler como tabela.
+**O que se ganhou.** As frentes ficam legíveis de uma vez, sem depender de
+descobrir o ponteiro. A descrição de cada uma fica junto do nome dela. E o
+formato aceita uma frente nova sem redesenhar a seção — foi o que aconteceu em
+27/08, quando Captação de Conteúdo entrou como sexto card.
 
 Cada card tem quatro peças, nesta ordem:
 
@@ -557,11 +558,12 @@ funcionar.
 chapa em tinta a 72%, e o painel é filho da chapa — sem a regra
 `.serv__painel .ap`, as etiquetas saem marrom sobre marrom, invisíveis.
 
-**Corpo único para os cinco nomes**, ao contrário do índice. Entre cards de
+**Corpo único para todos os nomes**, ao contrário do índice. Entre cards de
 mesma largura, corpo diferente é lido como ranking comercial, não como
 composição. Os nomes longos **quebram em duas linhas em corpo cheio** em vez de
 encolher, e o rótulo tem duas linhas reservadas — é o que alinha o texto dos
-cinco cards. A correção óptica de primeira letra (`--optico`) sobreviveu; o
+cards de uma mesma fila. Metade dos nomes já quebra: Web Development, Tráfego
+Pago, Social Media e Captação de Conteúdo. A correção óptica de primeira letra (`--optico`) sobreviveu; o
 `--fit` não.
 
 **A escala do nome é própria, e não `--fs-display-2` cru.** Medido: o display--2
@@ -579,7 +581,13 @@ largura cai na faixa, nenhuma transborda o card, e o menor corpo abaixo de 1025
 | até 768 | 1 | fluxo |
 | 769 a 1024 | 2 | — |
 | 1025 a 1279 | 2 | o aparato come 8,5rem; um terço do que sobra não comporta "Development" em corpo de display sem encolher para a faixa proibida |
-| 1280 em diante | 3 + 2 | a segunda fila começa na coluna 3, não na margem |
+| 1280 em diante | 3 | duas filas cheias |
+
+⚠ **Se a lista voltar a ter número ímpar de cards, a última fila fica
+incompleta — e aí ela não pode começar na margem.** Com cinco cards havia uma
+regra deslocando a segunda fila para as colunas 3 e 7, para que a sobra lesse
+como composição e não como buraco. Ela saiu quando o sexto card entrou e a fila
+ficou cheia; o comentário no CSS diz onde ela morava.
 
 **Entrada escalonada.** Os cards de uma mesma fila entram juntos pelo
 observador; 70ms de atraso por índice devolvem a sequência de leitura. Mesma
@@ -590,15 +598,28 @@ máscara, mesma curva, mesma duração — só o atraso é novo.
 que não sobe esconderia conteúdo — e nada neste site pode depender de
 JavaScript para existir.
 
-**Textos aprovados e no ar.** As cinco frentes são cinco formas de recusa. A
-ordem — Branding, Social Media, Styling, Tráfego Pago, Web Development — é a da
-copy de 25/08.
+**Textos aprovados e no ar, menos os do sexto.** A ordem — Branding, Social
+Media, Styling, Tráfego Pago, Web Development — é a da copy de 25/08. **Captação
+de Conteúdo entrou em 27/08 sem copy**, a pedido da Jozzi, e é o único card com
+descrição e etiquetas pendentes.
+
+Os dois campos ficam **marcados**, não preenchidos: a descrição é um `…` em
+`.serv__txt--falta`, na cor do aparato e não na do texto, para que ninguém leia
+como se a Jozzi tivesse escrito reticências; as etiquetas são a linha *etiquetas
+a definir*, que só aparece ao passar o ponteiro. É a mesma regra do campo de
+imagem — nunca preencher com copy genérica de agência, nem provisoriamente.
 
 | Campo | Registro | Estado |
 | --- | --- | --- |
-| Descrição | Texto | ✓ as cinco |
-| Etiquetas | Aparato | ✓ as cinco |
-| Imagem | **16:9** | ✗ a fornecer — cinco arquivos |
+| Descrição | Texto | ✓ cinco de seis — falta Captação de Conteúdo |
+| Etiquetas | Aparato | ✓ cinco de seis — falta Captação de Conteúdo |
+| Imagem | **16:9** | ✗ a fornecer — seis arquivos |
+
+⚠ **A abertura ainda anuncia cinco frentes.** A nota de margem do `<h1>` lista
+Branding, Social Media, Styling, Tráfego Pago e Web Development. Captação de
+Conteúdo não entrou lá porque a lista é copy da Jozzi de 25/08 e mexer nela
+muda a composição da primeira tela. **Decisão da Jozzi**, não minha — mas as
+duas listas discordarem é um defeito enquanto durar.
 
 ⚠ **A proporção da imagem de Serviços mudou de 3:4 para 16:9.** Continua dentro
 das três permitidas. A chapa antiga era a metade direita da página, sangrando
@@ -777,8 +798,9 @@ Falta preencher:
 2. Aprovação dos quatro textos de sustentação do *Nosso olhar* — as quatro
    afirmações estão aprovadas, o segundo tempo de cada uma ainda não.
 3. Imagem real da seção 01, proporção 3:4.
-4. Os campos marcados como *a fornecer* nos componentes 03 a 07 — em Serviços
-   restam só as cinco imagens.
+4. Os campos marcados como *a fornecer* nos componentes 03 a 07. Em Serviços:
+   as seis imagens, mais a descrição e as etiquetas de **Captação de Conteúdo**,
+   e a decisão sobre incluí-la na lista de frentes da abertura.
 6. Qualquer número que possa ir ao ar: clientes por vez, projetos por ano,
    prazo de resposta, tempo de existência.
 5. Ano de fundação e demais dados institucionais — sem lugar definido ainda; a
