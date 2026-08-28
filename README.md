@@ -25,6 +25,7 @@
 - [Componentes previstos](#componentes-previstos) — 03 a 06
 - [O que falta de conteúdo](#o-que-falta-de-conteúdo)
 - [Portfólio de Styling (28/08)](#portfólio-de-styling-2808--grade--página-por-caso)
+- [Favicon e auditoria mobile (28/08)](#favicon-e-auditoria-mobile-2808)
 - [Licenças de tipografia](#licenças-de-tipografia)
 
 ---
@@ -935,6 +936,25 @@ NÚMERO da seção muda, e toda página deste portfólio tem uma seção só,
 `data-num="00"` — o número nunca muda, o texto nunca troca. As 20 páginas
 (a grade + os 19 casos) precisaram do hardcoded já certo desde o início, não
 copiado sem ajuste do `index.html`.
+
+---
+
+## Favicon e auditoria mobile (28/08)
+
+**Favicon oficial da Jozzi** — o círculo bordô com "JZI", arquivo
+`Logos - Jozzi Creative-26.svg` — instalado como está, sem alteração, em
+`assets/img/favicon.svg`, com dois PNGs de fallback (`favicon-32.png`,
+`apple-touch-icon.png`) rasterizados do próprio SVG via QuickLook + `sips`,
+não redesenhados. Referenciado nas 21 páginas do site.
+
+**Auditoria mobile pedida junto** — três achados, mesma causa: alvo de toque
+abaixo de 44px em `.marca` (o logotipo, 11–15px por desenho — a proporção
+15,6:1 do lockup é intencional, não um bug), `.topo__voltar` e
+`.caso__voltar`. Corrigido com padding invisível + margem negativa
+compensando, em todos os três — a posição visual não mudou, só a área
+clicável. Testado 320/375/390/768px nas cinco páginas-modelo (home, grade de
+Styling, três casos): zero overflow, zero erro de console, zero alvo de
+toque abaixo do mínimo depois da correção.
 
 ---
 

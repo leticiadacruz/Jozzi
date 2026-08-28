@@ -574,6 +574,63 @@ que faz o mesmo arquivo servir papel, verde e bordô. Se um path vier com
 O sprite usa `position:absolute; width:0; height:0` e **não** `display:none` —
 `display:none` quebra a referência do `<use>` em alguns navegadores.
 
+## Favicon
+
+`assets/img/favicon.svg` é o arquivo oficial da Jozzi (Logos - Jozzi
+Creative-26.svg — o círculo bordô com "JZI" em negativo), copiado sem
+alteração. Referenciado em TODAS as 21 páginas do site:
+
+```html
+<link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+```
+
+Nas páginas dentro de `styling/`, os três caminhos levam `../` na frente.
+
+**Por que três `<link>` e não só o SVG:** navegadores modernos leem
+`image/svg+xml` direto, mas o Safari mais antigo e alguns contextos (aba
+fixada, atalho de tela inicial no iOS) só aceitam raster. `favicon-32.png` e
+`apple-touch-icon.png` foram gerados a partir do próprio SVG — via
+`qlmanage -t -s 1024` (renderiza o SVG usando o motor do QuickLook) e depois
+`sips -z` para os tamanhos finais — não são um arquivo novo desenhado, é o
+mesmo círculo, só rasterizado. Se o SVG mudar, os dois PNGs têm que ser
+regerados do mesmo jeito.
+
+---
+
+## Auditoria mobile (28/08)
+
+Três achados reais, os três a mesma causa: **alvo de toque menor que 44px**
+em links de navegação reais (não decorativos) — `.marca` (o logotipo no
+topo, 11 a 15px de altura por desenho, proporção 15,6:1), `.topo__voltar` e
+`.caso__voltar` (o texto de 11px do aparato tem ~15px de linha). Testado em
+320/375/390/768px nas cinco páginas-modelo do site (home, grade de Styling,
+três páginas de caso).
+
+**A correção é sempre a mesma receita — padding invisível + margem
+negativa que cancela o padding:** a área clicável cresce até 44px, a
+posição visual do texto/logo não muda nada. Não é a única forma de resolver
+(dava pra crescer o próprio texto, por exemplo), mas é a que não mexe em
+nenhuma medida que já estava calibrada.
+
+**Se acrescentar um link de navegação novo e pequeno** (um ícone, um "voltar"
+em outra seção), aplicar a mesma receita direto — não como reação a uma
+próxima auditoria:
+
+```css
+.alvo-pequeno {
+  padding: Npx 0;
+  margin: -Npx 0;   /* ou -Npx 0 <margem-que-já-existia-menos-N> */
+}
+```
+
+Onde N é grande o bastante pra `altura-visível + 2N ≥ 44`.
+
+Zero overflow horizontal e zero erro de console nas cinco páginas-modelo, nas
+quatro larguras — a mesma bateria de sempre, sem achado novo além dos alvos
+de toque.
+
 ---
 
 ## O que NÃO fazer
@@ -636,5 +693,5 @@ assets/css/style.css        folha única, com sumário numerado no topo
 assets/js/main.js           IIFE, nove módulos numerados
 assets/js/lenis.min.js      rolagem interpolada (não editar)
 assets/fonts/               Switzer + IBM Plex Mono + licença
-assets/img/                 imagens do site + jozzi-creative-lab.svg (mestre)
+assets/img/                 imagens do site + jozzi-creative-lab.svg (mestre) + favicon.{svg,png}
 ```
