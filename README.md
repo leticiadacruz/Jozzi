@@ -24,7 +24,7 @@
 - [O sistema](#o-sistema) — as regras que não podem ser quebradas
 - [Componentes previstos](#componentes-previstos) — 03 a 06
 - [O que falta de conteúdo](#o-que-falta-de-conteúdo)
-- [Portfólio de Styling (28/08)](#portfólio-de-styling-2808--segunda-página-do-site)
+- [Portfólio de Styling (28/08)](#portfólio-de-styling-2808--grade--página-por-caso)
 - [Licenças de tipografia](#licenças-de-tipografia)
 
 ---
@@ -873,42 +873,68 @@ fornecida pedia esse texto sem entregá-lo pronto ("mini texto explicando o
 termo"). Segue a Voz da Jozzi, mas precisa da aprovação de quem realmente sabe
 a origem do nome.
 
-## Portfólio de Styling (28/08) — segunda página do site
+## Portfólio de Styling (28/08) — grade + página por caso
 
 O card de Styling em Serviços parou de só abrir um painel de etiquetas: agora
 `.serv__nome` daquele card é `<a href="styling.html">`. Pedido explícito da
-Jozzi — o portfólio de styling tem 19 cases com copy pronta, grande demais
-para uma etiqueta.
+Jozzi — o portfólio de styling tem 19 cases, grande demais para uma etiqueta
+de card.
 
-**`styling.html` não é `sobre.html` de novo.** O `sobre.html` da rodada
-anterior foi revertido porque a Jozzi pediu seção no scroll, não página. Desta
-vez o pedido foi o oposto — página, explicitamente — e por um motivo diferente:
-aquele era conteúdo institucional (quem é a Jozzi), que cabe na narrativa
-00–07; este é um catálogo de 19 itens, que não cabe em lugar nenhum do scroll
-sem quebrar o ritmo dele.
+**Duas rodadas no mesmo dia.** A primeira versão de `styling.html` reaproveitava
+o componente de Projetos inteiro (`.marcas__lista`/`.cliente`, a diagonal de
+três colunas) com os 19 casos em lista longa. A Jozzi pediu outra coisa:
+**grade de fotos, referência mrjobim.com/projetos** — quadrado 1:1, três
+colunas, título sobre a foto — e **uma página própria por trabalho**, para
+escrever mais texto e acrescentar mais fotos sem depender de mim. A primeira
+versão foi descartada inteira; se aparecer `.cliente` no histórico do git
+dentro de `styling.html`, é resquício dela.
 
-A página reaproveita o componente de Projetos (`.marcas__lista` / `.cliente`,
-a diagonal de três colunas) inteiro — mesma CSS, mesmo JS de parallax por
-scroll —, só que com 19 itens em vez de 4. O `nth-child` de `.cliente` no CSS
-foi estendido de 12 para 19 (era exatamente o número de marcas do site
-inteiro; agora é o número de cases só desta página).
+**`styling.html` não é `sobre.html` de novo.** O `sobre.html` de uma rodada
+anterior foi revertido porque a Jozzi pediu seção no scroll, não página.
+`styling.html` é o oposto — página, pedido explícito — por um motivo
+diferente: aquele era conteúdo institucional que cabia na narrativa 00–07;
+isto é um catálogo de 19 itens, cada um querendo crescer sozinho, o que não
+cabe em lugar nenhum do scroll sem quebrar o ritmo dele.
 
-Cada item pode ter até dois campos que os quatro "Projetos" originais não
-tinham: `.cliente__projeto` (quando o nome do projeto não é o nome do
-cliente — "Amanda" fez a campanha "Woman") e `.cliente__tags` (as etiquetas,
-reaproveitando `.serv__tags` sem CSS novo).
+**Arquitetura:** `styling.html` é só a grade — 19 `<a>` para
+`styling/<slug>.html`, cada foto num contêiner `.styling-grid__foto` (mesmo
+padrão de `.serv__plate`: contêiner permanente, foto entra depois como filho
+absoluto) com o título sobre um véu em `--marrom` (gradiente, não preto — a
+paleta continua sendo só as sete cores da marca). Cada `styling/<slug>.html`
+é uma página completa — cabeçalho, aparato, rodapé, tudo duplicado como em
+qualquer outra página do site — com o texto que já estava na grade e três
+placeholders de foto pra começar.
+
+⚠ **Duas armadilhas de CSS pegas antes de publicar, ambas no card da grade:**
+
+1. O subtítulo do projeto (`.styling-grid__projeto` — ex.: "Amanda" fez a
+   campanha "Woman") nasceu posicionado ACIMA da caixa da foto
+   (`bottom: 100%`) e a caixa tem `overflow: hidden` (precisa ter, pra foto
+   futura recortar em quadrado). O subtítulo sumia, cortado. Corrigido:
+   projeto e título moram os dois DENTRO do mesmo bloco, no rodapé da foto.
+2. **"Grid blowout":** nomes de uma palavra só (Alfaiataria, Klisievicz) sem
+   espaço pra quebrar estouravam a largura da caixa mesmo com
+   `overflow-wrap: break-word` no título — porque todo item de CSS grid tem
+   `min-width: auto` implícito, que ignora quebra de palavra do conteúdo.
+   Corrigido com `min-width: 0` explícito. Sem isso, o sintoma só aparece com
+   nome de uma palavra numa coluna estreita — fácil de não pegar testando só
+   com nomes curtos.
+
+**Responsivo:** uma coluna até 480px (nomes longos em duas colunas nessa
+largura empilhavam em três linhas dentro do quadrado), duas de 480 a 1024,
+três dali pra cima.
 
 **Três entradas da copy recebida não entraram, por não terem texto pronto:**
 Shop Carol (só etiquetas, sem parágrafo), o evento Apelo Fashion ("Versão pro
 site:" sem nada depois) e o projeto "New Again" da Malena (o parágrafo corta
 no meio da frase). Nenhum texto foi inventado para completar essas três.
 
-⚠ **Bug que corrigi antes de publicar:** o rótulo do aparato (`data-aparato-sec`)
-é hardcoded no HTML e só é reescrito pelo `main.js` quando o NÚMERO da seção
-muda — e como `styling.html` só tem uma seção, também `data-num="00"`, o texto
-nunca troca. Copiar o bloco do aparato do `index.html` sem ajustar teria
-deixado "Abertura" escrito permanentemente no topo desta página. O hardcoded
-aqui já nasce "Styling".
+⚠ **O bug do rótulo do aparato hardcoded, que já apareceu duas vezes:** o
+texto inicial (`data-aparato-sec`) só é reescrito pelo `main.js` quando o
+NÚMERO da seção muda, e toda página deste portfólio tem uma seção só,
+`data-num="00"` — o número nunca muda, o texto nunca troca. As 20 páginas
+(a grade + os 19 casos) precisaram do hardcoded já certo desde o início, não
+copiado sem ajuste do `index.html`.
 
 ---
 

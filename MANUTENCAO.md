@@ -192,35 +192,22 @@ imagem no HTML.
 
 ---
 
-## Acrescentar uma marca (ou um case de Styling)
+## Acrescentar uma marca
 
-O mesmo componente serve os dois: `.marcas__lista` / `.cliente` aparece tanto
-em "Projetos que já fizemos" (`index.html`) quanto em `styling.html`. **A doc
-antiga desta seção descrevia um `<dl>` de Setor/Escopo que não existe mais** —
-a estrutura real, desde a rodada de 25/08, é parágrafo corrido:
+`.marcas__lista` / `.cliente` — hoje só usado em "Projetos que já fizemos"
+(`index.html`). **`styling.html` usava este componente até 28/08** (segunda
+rodada de Styling trocou aquilo por uma grade de fotos — ver "Portfólio de
+Styling" mais abaixo); se achar `.cliente` referenciado em `styling.html` no
+histórico do git, é resquício daquela versão.
 
 ```html
 <li class="cliente" role="listitem">
   <h3 class="cliente__nome d d--2 rv">Nome da marca</h3>
-
-  <!-- opcional: só quando o nome do projeto não é o nome do
-       cliente/modelo (ex.: "Amanda" fez a campanha "Woman") -->
-  <p class="cliente__projeto ap rv">Nome do projeto</p>
-
-  <!-- opcional: nem todo case tem etiqueta pronta -->
-  <ul class="cliente__tags serv__tags ap rv" aria-label="Etiquetas">
-    <li>styling</li>
-    <li>produção de moda</li>
-  </ul>
-
   <p class="cliente__corpo rv">O texto final, corrido.</p>
 </li>
 ```
 
-E, se passar de dezenove marcas/cases (contando os dois arquivos juntos — o
-`nth-child` é por posição dentro do PRÓPRIO `<ul>`, então index.html e
-styling.html não competem pela mesma numeração, mas cada um sozinho não pode
-passar de 19 sem uma linha nova), uma linha em `style.css` na seção 10e:
+E, se passar de doze marcas, uma linha em `style.css` na seção 10e:
 
 ```css
 .cliente:nth-child(20) { grid-column: 4 / span 5; grid-row: 20; }
@@ -404,32 +391,110 @@ document.documentElement.scrollWidth - innerWidth   // tem que dar 0
 
 ---
 
-## Portfólio de Styling — `styling.html`
+## Portfólio de Styling — `styling.html` + `styling/*.html`
 
-Segunda página do site (a primeira foi o `sobre.html` que virou seção — ver
-abaixo — e não existe mais como página). Diferente daquele caso: **esta foi
-pedido explícito da Jozzi**, para o card de Styling em Serviços, que tem
-portfólio grande demais para caber num painel de etiquetas.
+**Duas camadas, desde 28/08 (segunda rodada).** `styling.html` é a GRADE —
+fotos 1:1, três colunas, título sobre a foto, referência pedida pela Jozzi
+(mrjobim.com/projetos). Cada card leva a uma página própria em
+`styling/<slug>.html` — 19 arquivos, um por caso —, onde mora o texto
+completo e é onde entram mais fotos de cada trabalho.
 
-**O que é copiado de `index.html`, e por quê não é um `<link>`/import:**
-o site inteiro é HTML autoral sem build step, então cada página duplica os
-blocos que precisa — sprite do logotipo (`<symbol id="marca-jozzi">`), a
-cortina de carregamento, o aparato, o rodapé. **Se algum desses blocos mudar
-em `index.html`, replicar a mudança aqui manualmente.** Não existe
-sincronização automática.
+**A primeira versão desta página era uma lista longa** (reaproveitando
+`.cliente`/`.marcas__lista`, o mesmo componente de "Projetos que já
+fizemos"). Foi trocada pela grade a pedido da Jozzi. Se encontrar rastro de
+`.cliente` em `styling.html` no histórico do git, é essa versão anterior —
+não voltar a ela sem pedido.
 
-**Uma armadilha específica desta página, já corrigida uma vez:** o texto
+**O que é copiado em TODA página deste site (index, styling, e os 19 de
+styling/), e por quê não é um `<link>`/import:** o site inteiro é HTML
+autoral sem build step, então cada página duplica os blocos que precisa —
+sprite do logotipo (`<symbol id="marca-jozzi">`), a cortina de carregamento,
+o aparato, o rodapé. **Se algum desses blocos mudar em `index.html`,
+replicar a mudança em TODAS as outras 20 manualmente.** Não existe
+sincronização automática — isso é o preço de não ter build step, e com 19
+páginas de caso o preço ficou mais alto do que quando só existia
+`styling.html`.
+
+**A armadilha do aparato hardcoded, que já pegou duas vezes:** o texto
 inicial do aparato (`<span data-aparato-sec>`) é hardcoded no HTML — o
-`main.js` só o atualiza quando o NÚMERO da seção muda
-(`trocarSecao` faz early-return se `num === secaoAtual`, e `secaoAtual` começa
-em `"00"`). Como esta página só tem uma seção e ela também é `data-num="00"`,
-o texto nunca é reescrito pelo JS. Por isso o hardcoded aqui já é "Styling",
-não "Abertura" copiado sem pensar do index — se algum dia esta página ganhar
-uma seção 01, o problema desaparece sozinho.
+`main.js` só o atualiza quando o NÚMERO da seção muda (`trocarSecao` faz
+early-return se `num === secaoAtual`, e `secaoAtual` começa em `"00"`). Toda
+página deste portfólio tem uma seção só, `data-num="00"`, então o número
+nunca muda e o JS nunca reescreve o texto. Por isso o hardcoded já nasce
+certo em cada arquivo — "Styling" em `styling.html`, o nome do caso em cada
+`styling/*.html`. **Ao gerar uma página nova, conferir que o texto do
+aparato bate com `data-nome` da seção**, ou vai ficar "Abertura" (o valor
+copiado do `index.html`) travado pra sempre.
 
-**O link de volta** (`.topo__voltar`, `href="index.html#servicos"`) só existe
-nesta página — é a única do site que não é a home, então é a única que
-precisa de um jeito de sair.
+**Links de volta:** `styling.html` volta pra `index.html#servicos`; cada
+`styling/<slug>.html` volta pra `styling.html` (dois links: `.topo__voltar`
+no cabeçalho e `.caso__voltar` acima do título). Os arquivos em `styling/`
+usam `../` em TODO caminho — CSS, fontes, JS, sprite, links de volta. Um
+`href="assets/..."` sem o `../` funciona em `styling.html` mas quebra dentro
+de `styling/`, porque a pasta é um nível mais funda.
+
+### O card da grade
+
+```html
+<li class="styling-grid__item">
+  <a class="ap" href="styling/carol-merlo.html" data-cursor="Ver">
+    <div class="styling-grid__foto">
+      <span class="ap">Foto 1:1</span>              <!-- some quando entrar a foto -->
+      <div class="styling-grid__veu" aria-hidden="true"></div>
+      <div class="styling-grid__base">
+        <p class="styling-grid__projeto ap">Woman</p> <!-- opcional -->
+        <h3 class="styling-grid__titulo d d--2">Amanda</h3>
+      </div>
+    </div>
+  </a>
+</li>
+```
+
+**Duas armadilhas de CSS já corrigidas aqui, registradas para não repetir:**
+
+1. `.styling-grid__projeto` nasceu posicionado ACIMA da caixa
+   (`bottom: 100%`), fora da área visível — e `.styling-grid__foto` tem
+   `overflow: hidden` (precisa ter, para a foto futura ser recortada em
+   quadrado). O projeto sumia, cortado. Corrigido: projeto e título moram
+   os dois DENTRO de `.styling-grid__base`, empilhados.
+2. **"Grid blowout":** um nome de uma palavra só (Alfaiataria, Klisievicz)
+   sem espaço pra quebrar virava o `min-content` da coluna do grid e
+   estourava a caixa por baixo do `overflow: hidden`, mesmo com
+   `overflow-wrap: break-word` no título — porque todo item de grid tem
+   `min-width: auto` implícito, que ignora o overflow-wrap do conteúdo.
+   Corrigido com `min-width: 0` em `.styling-grid__base` e nos filhos
+   diretos. **Se tirar essas duas linhas, o sintoma some em nomes curtos e
+   só reaparece com um nome de uma palavra só numa coluna estreita** — fácil
+   de não notar no teste.
+
+**Quando a foto chegar:** trocar o `<span class="ap">Foto 1:1</span>` por
+`<img class="styling-grid__foto__real" src="..." alt="...">` — mesmo padrão
+de `.serv__plate`/`.serv__plate__foto`, contêiner permanente e a foto como
+filho absoluto.
+
+### A página de um caso — `styling/<slug>.html`
+
+```html
+<div class="caso__cabeca">
+  <a class="ap caso__voltar" href="../styling.html">&larr; Styling</a>
+  <h1 class="d rv" data-linhas>Amanda</h1>
+  <p class="caso__projeto ap rv">Woman</p>              <!-- opcional -->
+  <ul class="serv__tags ap rv" aria-label="Etiquetas">   <!-- opcional -->
+    <li>styling</li>
+  </ul>
+  <div class="caso__corpo">
+    <p class="rv">O texto que já estava na grade.</p>    <!-- acrescentar <p> pra escrever mais -->
+  </div>
+</div>
+
+<ul class="caso__galeria" role="list">
+  <li><div class="fig__campo"><span class="ap">Foto 1</span></div></li>
+  <!-- mais fotos: copiar este <li>, ou trocar fig__campo por <img class="fig__campo"> -->
+</ul>
+```
+
+Três placeholders de foto por padrão — acrescentar mais é só copiar o
+`<li>`. Mais texto é só acrescentar `<p>` dentro de `.caso__corpo`.
 
 **Conteúdo:** copy definitiva da Jozzi (28/08), a lista "Styling" do
 documento. Três entradas ficaram de fora por não terem texto pronto pra
@@ -441,9 +506,9 @@ site, só nota interna de produção — **não inventar texto pra elas**:
 | Evento Apelo Fashion | "Versão pro site:" no documento, sem texto depois |
 | Malena — "New Again" | o parágrafo corta no meio: `A campanha "New Again"` |
 
-Se a Jozzi mandar o texto de qualquer uma das três, o `<li class="cliente">`
-é o mesmo template da seção anterior — entra na lista, na posição 20 (ou
-onde for), com a linha de `nth-child` correspondente.
+Se a Jozzi mandar o texto de qualquer uma das três: criar
+`styling/<slug-novo>.html` a partir do template acima, e acrescentar o
+`<li>` correspondente na grade de `styling.html`.
 
 ---
 
@@ -565,7 +630,8 @@ O sprite usa `position:absolute; width:0; height:0` e **não** `display:none` �
 
 ```
 index.html                  as oito seções (00–07) + sprite da marca
-styling.html                portfólio de Styling, página própria
+styling.html                grade de fotos do portfólio de Styling
+styling/*.html               19 páginas de caso, uma por trabalho
 assets/css/style.css        folha única, com sumário numerado no topo
 assets/js/main.js           IIFE, nove módulos numerados
 assets/js/lenis.min.js      rolagem interpolada (não editar)

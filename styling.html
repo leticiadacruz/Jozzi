@@ -17,7 +17,7 @@
 
 <link rel="preload" href="assets/fonts/Switzer-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/IBMPlexMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/style.css?v=45">
+<link rel="stylesheet" href="assets/css/style.css?v=46">
 
 <script>
 (function () {
@@ -133,15 +133,18 @@
 
 <!-- ============================================================
      00 — STYLING
-     Página própria, fora do scroll da home: o card de Serviços
-     redireciona o clique para cá em vez de só abrir o painel de
-     etiquetas — o portfólio de styling é grande demais para uma
-     etiqueta de card.
+     Grade de fotos, referência pedida: mrjobim.com/projetos — três
+     colunas, quadrado 1:1, título sobre a foto. Cada card leva a
+     uma página própria em styling/<slug>.html, onde mora o texto
+     completo e (quando chegarem) mais fotos do mesmo trabalho.
 
-     Reaproveita o mesmo componente de Projetos (.marcas__lista /
-     .cliente, a diagonal de três colunas) da home, só que com 19
-     casos em vez de 4 — por isso o nth-child de .cliente no CSS foi
-     estendido até o 19 (era até o 12).
+     Sem foto ainda: nenhuma. O campo é .styling-grid__foto, mesmo
+     padrão de .serv__plate — contêiner permanente, a foto entra
+     como filho absoluto (.styling-grid__foto__real) quando chegar.
+     Ver MANUTENCAO.md.
+
+     .marcas reaproveitado só pelo padding/border-top — a seção não
+     usa .campo (bege): a grade de fotos respira melhor sobre papel.
 
      Conteúdo: copy definitiva fornecida pela Jozzi (28/08), a
      seção "Styling" do documento — "os outros, versão pro site é o
@@ -151,180 +154,242 @@
      no meio da frase). Nenhuma foi inventada para completar a
      lacuna.
      ============================================================ -->
-<section class="marcas campo wrap" id="styling" data-secao
+<section class="marcas wrap" id="styling" data-secao
          data-num="00" data-nome="Styling" aria-labelledby="styling-titulo">
 
   <h2 class="secao__ap ap rv" id="styling-titulo">Styling</h2>
   <p class="marcas__lede lede rv">Construímos narrativas que vão para além da moda, comunicando a harmonia perfeita entre identidade visual, propósito e público-alvo.</p>
 
-  <ul class="marcas__lista" role="list">
+  <ul class="styling-grid" role="list">
 
-    <li class="cliente" role="listitem">
-      <h3 class="cliente__nome d d--2 rv">Carol Merlo</h3>
-      <ul class="cliente__tags serv__tags ap rv" aria-label="Etiquetas">
-          <li>produção de moda</li>
-          <li>styling e direção criativa</li>
-      </ul>
-      <p class="cliente__corpo rv">A Carol Merlo chegou à Jozzi com o propósito de renovar o seu portfólio de modelo através de um shooting que comunicasse o início de uma nova fase. A partir disso, construímos um projeto completo que uniu a ideia de renascimento da imagem da cliente com um conceito de moda particular.</p>
+    <li class="styling-grid__item">
+      <a class="ap" href="styling/carol-merlo.html" data-cursor="Ver">
+        <div class="styling-grid__foto">
+          <span class="ap">Foto 1:1</span>
+          <div class="styling-grid__veu" aria-hidden="true"></div>
+          <div class="styling-grid__base">
+            <h3 class="styling-grid__titulo d d--2">Carol Merlo</h3>
+          </div>
+        </div>
+      </a>
     </li>
 
-    <li class="cliente" role="listitem">
-      <h3 class="cliente__nome d d--2 rv">Sis2 Alfaiataria</h3>
-      <ul class="cliente__tags serv__tags ap rv" aria-label="Etiquetas">
-          <li>produção de moda</li>
-          <li>styling e direção criativa</li>
-      </ul>
-      <p class="cliente__corpo rv">Com uma proposta inovadora de upcycling, a marca de alfaiataria Sis2 chegou até nós buscando estratégias para aprimorar a imagem dela. Após um alinhamento de ideias, a direção de arte expressou exatamente aquilo que um bom branding deve conter: a essência da marca.</p>
+    <li class="styling-grid__item">
+      <a class="ap" href="styling/sis2-alfaiataria.html" data-cursor="Ver">
+        <div class="styling-grid__foto">
+          <span class="ap">Foto 1:1</span>
+          <div class="styling-grid__veu" aria-hidden="true"></div>
+          <div class="styling-grid__base">
+            <h3 class="styling-grid__titulo d d--2">Sis2 Alfaiataria</h3>
+          </div>
+        </div>
+      </a>
     </li>
 
-    <li class="cliente" role="listitem">
-      <h3 class="cliente__nome d d--2 rv">Stella Maranhão</h3>
-      <p class="cliente__projeto ap rv">Cartas de Tarot</p>
-      <ul class="cliente__tags serv__tags ap rv" aria-label="Etiquetas">
-          <li>produção de moda</li>
-          <li>styling</li>
-      </ul>
-      <p class="cliente__corpo rv">A artista Stella Maranhão chegou à Jozzi com o desejo de construir toda a imagem estética de sua produção musical “Cartas de Tarot”. A narrativa da melodia buscava retratar 4 personagens — a Lua, a Imperatriz, o Joker e a Taróloga. Com o objetivo de comunicar no styling a vibe singular de cada personagem, fizemos uma seleção minuciosa de cada elemento para que o clipe transmitisse o conceito esperado.</p>
+    <li class="styling-grid__item">
+      <a class="ap" href="styling/stella-maranhao-cartas-de-tarot.html" data-cursor="Ver">
+        <div class="styling-grid__foto">
+          <span class="ap">Foto 1:1</span>
+          <div class="styling-grid__veu" aria-hidden="true"></div>
+          <div class="styling-grid__base">
+            <p class="styling-grid__projeto ap">Cartas de Tarot</p>
+            <h3 class="styling-grid__titulo d d--2">Stella Maranhão</h3>
+          </div>
+        </div>
+      </a>
     </li>
 
-    <li class="cliente" role="listitem">
-      <h3 class="cliente__nome d d--2 rv">Circulei</h3>
-      <ul class="cliente__tags serv__tags ap rv" aria-label="Etiquetas">
-          <li>styling</li>
-          <li>direção criativa</li>
-      </ul>
-      <p class="cliente__corpo rv">Consolidada como uma plataforma de aluguel de roupas, a Circulei tinha o desejo de posicionar a marca ainda mais no mercado da moda. Esse propósito se uniu ao nosso de criar memória. A nossa direção criativa e o styling mesclaram exatamente o tom chique e descontraído com uma proposta de “rolê de amigas” que a marca esperava.</p>
+    <li class="styling-grid__item">
+      <a class="ap" href="styling/circulei.html" data-cursor="Ver">
+        <div class="styling-grid__foto">
+          <span class="ap">Foto 1:1</span>
+          <div class="styling-grid__veu" aria-hidden="true"></div>
+          <div class="styling-grid__base">
+            <h3 class="styling-grid__titulo d d--2">Circulei</h3>
+          </div>
+        </div>
+      </a>
     </li>
 
-    <li class="cliente" role="listitem">
-      <h3 class="cliente__nome d d--2 rv">Etérea Cookies</h3>
-      <ul class="cliente__tags serv__tags ap rv" aria-label="Etiquetas">
-          <li>direção criativa</li>
-          <li>styling e produção de moda</li>
-      </ul>
-      <p class="cliente__corpo rv">A Etérea Cookies buscava um posicionamento de marca de cookie que ultrapassasse o padrão de mercado. Toda a ideia inicial remetia à uma vibe de fuga da cidade, para que a experiência do cookie realmente significasse um momento de reconexão. Assim, unimos essa estética com uma produção que significou conceito.</p>
+    <li class="styling-grid__item">
+      <a class="ap" href="styling/eterea-cookies.html" data-cursor="Ver">
+        <div class="styling-grid__foto">
+          <span class="ap">Foto 1:1</span>
+          <div class="styling-grid__veu" aria-hidden="true"></div>
+          <div class="styling-grid__base">
+            <h3 class="styling-grid__titulo d d--2">Etérea Cookies</h3>
+          </div>
+        </div>
+      </a>
     </li>
 
-    <li class="cliente" role="listitem">
-      <h3 class="cliente__nome d d--2 rv">Coccola Club</h3>
-      <p class="cliente__corpo rv">Com um propósito de consolidar-se como uma comunidade de assinaturas de produtos de gatos, o Coccola Club buscava transmitir uma vibe vintage e romântica no seu posicionamento. Ao entendermos a proposta, fizemos a direção criativa e transformamos a imagem do club em uma verdadeira comunidade de garotas cool.</p>
+    <li class="styling-grid__item">
+      <a class="ap" href="styling/coccola-club.html" data-cursor="Ver">
+        <div class="styling-grid__foto">
+          <span class="ap">Foto 1:1</span>
+          <div class="styling-grid__veu" aria-hidden="true"></div>
+          <div class="styling-grid__base">
+            <h3 class="styling-grid__titulo d d--2">Coccola Club</h3>
+          </div>
+        </div>
+      </a>
     </li>
 
-    <li class="cliente" role="listitem">
-      <h3 class="cliente__nome d d--2 rv">Leandra Klisievicz</h3>
-      <ul class="cliente__tags serv__tags ap rv" aria-label="Etiquetas">
-          <li>styling</li>
-          <li>shooting</li>
-      </ul>
-      <p class="cliente__corpo rv">Leandra Klisievicz é influenciadora digital de moda e tinha o objetivo claro de produzir fotos de posicionamento que expressassem toda a pegada fashion de sua imagem nas redes sociais. Organizamos todo o mood do shooting, do detalhe à beleza, e fizemos um styling que emitia uma presença única.</p>
+    <li class="styling-grid__item">
+      <a class="ap" href="styling/leandra-klisievicz.html" data-cursor="Ver">
+        <div class="styling-grid__foto">
+          <span class="ap">Foto 1:1</span>
+          <div class="styling-grid__veu" aria-hidden="true"></div>
+          <div class="styling-grid__base">
+            <h3 class="styling-grid__titulo d d--2">Leandra Klisievicz</h3>
+          </div>
+        </div>
+      </a>
     </li>
 
-    <li class="cliente" role="listitem">
-      <h3 class="cliente__nome d d--2 rv">Effeá</h3>
-      <ul class="cliente__tags serv__tags ap rv" aria-label="Etiquetas">
-          <li>direção criativa</li>
-          <li>styling e direção de moda</li>
-      </ul>
-      <p class="cliente__corpo rv">A Effeá é uma marca de acessórios com a qual produzimos quatro campanhas de posicionamento. Cada uma expressou detalhes que remetiam à vibe articulada na direção criativa, alinhada com os princípios da marca: mood backstage, foco em detalhes e mood verão. O resultado do projeto foi uma produção criativa que fugiu dos padrões do ramo.</p>
+    <li class="styling-grid__item">
+      <a class="ap" href="styling/effea.html" data-cursor="Ver">
+        <div class="styling-grid__foto">
+          <span class="ap">Foto 1:1</span>
+          <div class="styling-grid__veu" aria-hidden="true"></div>
+          <div class="styling-grid__base">
+            <h3 class="styling-grid__titulo d d--2">Effeá</h3>
+          </div>
+        </div>
+      </a>
     </li>
 
-    <li class="cliente" role="listitem">
-      <h3 class="cliente__nome d d--2 rv">Amanda</h3>
-      <p class="cliente__projeto ap rv">Woman</p>
-      <ul class="cliente__tags serv__tags ap rv" aria-label="Etiquetas">
-          <li>styling</li>
-          <li>direção criativa</li>
-          <li>produção de moda</li>
-      </ul>
-      <p class="cliente__corpo rv">O projeto Woman nasce da valorização do feminino em contraste com a alfaiataria clássica. A mescla de gravatas e ternos vão de encontro com a presença inconfundível da silhueta feminina, tornando esse editorial autoral uma verdadeira construção de conceito, pensado em cada corte.</p>
+    <li class="styling-grid__item">
+      <a class="ap" href="styling/amanda-woman.html" data-cursor="Ver">
+        <div class="styling-grid__foto">
+          <span class="ap">Foto 1:1</span>
+          <div class="styling-grid__veu" aria-hidden="true"></div>
+          <div class="styling-grid__base">
+            <p class="styling-grid__projeto ap">Woman</p>
+            <h3 class="styling-grid__titulo d d--2">Amanda</h3>
+          </div>
+        </div>
+      </a>
     </li>
 
-    <li class="cliente" role="listitem">
-      <h3 class="cliente__nome d d--2 rv">Solstice Magazine</h3>
-      <ul class="cliente__tags serv__tags ap rv" aria-label="Etiquetas">
-          <li>styling</li>
-      </ul>
-      <p class="cliente__corpo rv">Esse projeto, modelado por Manuella Prestes, foi um editorial de moda desenhado para a revista inglesa Solstice Magazine. Criamos todo o styling pensando em uma estética que valorizasse o cerne do feminino, valorizando a transparência e as curvas. Essa produção fez com que nascesse uma presença marcante da fluidez.</p>
+    <li class="styling-grid__item">
+      <a class="ap" href="styling/solstice-magazine.html" data-cursor="Ver">
+        <div class="styling-grid__foto">
+          <span class="ap">Foto 1:1</span>
+          <div class="styling-grid__veu" aria-hidden="true"></div>
+          <div class="styling-grid__base">
+            <h3 class="styling-grid__titulo d d--2">Solstice Magazine</h3>
+          </div>
+        </div>
+      </a>
     </li>
 
-    <li class="cliente" role="listitem">
-      <h3 class="cliente__nome d d--2 rv">Carol Andrade</h3>
-      <ul class="cliente__tags serv__tags ap rv" aria-label="Etiquetas">
-          <li>styling autoral</li>
-      </ul>
-      <p class="cliente__corpo rv">Buscando o encontro entre o meio urbano e o conceito da moda curitibana, realizamos um styling autoral que valorizava a fluidez e a monocromia. Toda a produção foi externa e teve o apoio de peças de marcas curitibanas, para que toda a estética acendesse de uma forma natural.</p>
+    <li class="styling-grid__item">
+      <a class="ap" href="styling/carol-andrade.html" data-cursor="Ver">
+        <div class="styling-grid__foto">
+          <span class="ap">Foto 1:1</span>
+          <div class="styling-grid__veu" aria-hidden="true"></div>
+          <div class="styling-grid__base">
+            <h3 class="styling-grid__titulo d d--2">Carol Andrade</h3>
+          </div>
+        </div>
+      </a>
     </li>
 
-    <li class="cliente" role="listitem">
-      <h3 class="cliente__nome d d--2 rv">Allysiane</h3>
-      <ul class="cliente__tags serv__tags ap rv" aria-label="Etiquetas">
-          <li>styling</li>
-          <li>produção de moda</li>
-      </ul>
-      <p class="cliente__corpo rv">A produção para a Allysiane nasce do propósito de expressar o feminino através da elegância e de uma vibe estética chique. Fizemos todo o styling pensando em elementos que valorizam as curvas, o empoderamento e um estilo clássico. O resultado foi uma produção que transmitiu uma energia marcante.</p>
+    <li class="styling-grid__item">
+      <a class="ap" href="styling/allysiane.html" data-cursor="Ver">
+        <div class="styling-grid__foto">
+          <span class="ap">Foto 1:1</span>
+          <div class="styling-grid__veu" aria-hidden="true"></div>
+          <div class="styling-grid__base">
+            <h3 class="styling-grid__titulo d d--2">Allysiane</h3>
+          </div>
+        </div>
+      </a>
     </li>
 
-    <li class="cliente" role="listitem">
-      <h3 class="cliente__nome d d--2 rv">Amanda II</h3>
-      <ul class="cliente__tags serv__tags ap rv" aria-label="Etiquetas">
-          <li>styling</li>
-          <li>produção de moda</li>
-      </ul>
-      <p class="cliente__corpo rv">A campanha modelada por Amanda X foi construída a partir de uma proposta de construir um cenário brutalista. Nós inserimos elementos do meio urbano, do feminino e da elegância, para que uma demonstração do poder feminino fosse o principal resultado alcançado.</p>
+    <li class="styling-grid__item">
+      <a class="ap" href="styling/amanda-ii.html" data-cursor="Ver">
+        <div class="styling-grid__foto">
+          <span class="ap">Foto 1:1</span>
+          <div class="styling-grid__veu" aria-hidden="true"></div>
+          <div class="styling-grid__base">
+            <h3 class="styling-grid__titulo d d--2">Amanda II</h3>
+          </div>
+        </div>
+      </a>
     </li>
 
-    <li class="cliente" role="listitem">
-      <h3 class="cliente__nome d d--2 rv">Jéssica</h3>
-      <ul class="cliente__tags serv__tags ap rv" aria-label="Etiquetas">
-          <li>styling</li>
-          <li>produção de moda</li>
-      </ul>
-      <p class="cliente__corpo rv">O conceito idealizado para a Jéssica mesclou o minimalismo com a estética do meio urbano, para que a fluidez do cotidiano se encontrasse com o feminino. Diante disso, produzimos um editorial de moda que passou a transmitir uma vibe clean em cada detalhe.</p>
+    <li class="styling-grid__item">
+      <a class="ap" href="styling/jessica.html" data-cursor="Ver">
+        <div class="styling-grid__foto">
+          <span class="ap">Foto 1:1</span>
+          <div class="styling-grid__veu" aria-hidden="true"></div>
+          <div class="styling-grid__base">
+            <h3 class="styling-grid__titulo d d--2">Jéssica</h3>
+          </div>
+        </div>
+      </a>
     </li>
 
-    <li class="cliente" role="listitem">
-      <h3 class="cliente__nome d d--2 rv">Bazaar Fashion</h3>
-      <ul class="cliente__tags serv__tags ap rv" aria-label="Etiquetas">
-          <li>styling</li>
-          <li>produção de moda</li>
-          <li>produção executiva de desfile e de equipe</li>
-      </ul>
-      <p class="cliente__corpo rv">A Bazaar Fashion chegou à Jozzi com a idealização de gerar memória com a sua participação em um evento de moda na temática de casamentos. A partir disso, unimos o glamour da marca com um projeto completo de styling, produção de moda e produção executiva de desfile e equipe.</p>
+    <li class="styling-grid__item">
+      <a class="ap" href="styling/bazaar-fashion.html" data-cursor="Ver">
+        <div class="styling-grid__foto">
+          <span class="ap">Foto 1:1</span>
+          <div class="styling-grid__veu" aria-hidden="true"></div>
+          <div class="styling-grid__base">
+            <h3 class="styling-grid__titulo d d--2">Bazaar Fashion</h3>
+          </div>
+        </div>
+      </a>
     </li>
 
-    <li class="cliente" role="listitem">
-      <h3 class="cliente__nome d d--2 rv">Luciana Burgos</h3>
-      <ul class="cliente__tags serv__tags ap rv" aria-label="Etiquetas">
-          <li>styling</li>
-          <li>produção de moda</li>
-      </ul>
-      <p class="cliente__corpo rv">Com o propósito de posicionar-se na área da biomedicina, Luciana Burgos alinhou com a Jozzi a sua estética clean e a imagem que gostaria de transmitir ao seu público. Dessa forma, realizamos um styling e uma produção de moda voltada totalmente aos objetivos da cliente, gerando um posicionamento real de sua marca.</p>
+    <li class="styling-grid__item">
+      <a class="ap" href="styling/luciana-burgos.html" data-cursor="Ver">
+        <div class="styling-grid__foto">
+          <span class="ap">Foto 1:1</span>
+          <div class="styling-grid__veu" aria-hidden="true"></div>
+          <div class="styling-grid__base">
+            <h3 class="styling-grid__titulo d d--2">Luciana Burgos</h3>
+          </div>
+        </div>
+      </a>
     </li>
 
-    <li class="cliente" role="listitem">
-      <h3 class="cliente__nome d d--2 rv">Teacher Paula</h3>
-      <ul class="cliente__tags serv__tags ap rv" aria-label="Etiquetas">
-          <li>styling</li>
-          <li>produção de moda</li>
-      </ul>
-      <p class="cliente__corpo rv">A Teacher Paula chegou à Jozzi com o intuito de potencializar o seu posicionamento, principalmente, no meio digital. Após compreendermos que a sua mensagem para o público seria uma pegada que mesclava o cool com o institucional, produzimos um styling que a elevou para um patamar de diferencial.</p>
+    <li class="styling-grid__item">
+      <a class="ap" href="styling/teacher-paula.html" data-cursor="Ver">
+        <div class="styling-grid__foto">
+          <span class="ap">Foto 1:1</span>
+          <div class="styling-grid__veu" aria-hidden="true"></div>
+          <div class="styling-grid__base">
+            <h3 class="styling-grid__titulo d d--2">Teacher Paula</h3>
+          </div>
+        </div>
+      </a>
     </li>
 
-    <li class="cliente" role="listitem">
-      <h3 class="cliente__nome d d--2 rv">Lacoste</h3>
-      <ul class="cliente__tags serv__tags ap rv" aria-label="Etiquetas">
-          <li>styling autoral</li>
-      </ul>
-      <p class="cliente__corpo rv">O projeto Lacoste foi um styling autoral da Jozzi pensado em unir a moda com o mundo esportivo. Criamos, após desenharmos os elementos criativos, um trabalho estético que emitiu como esse encontro pode ser harmônico e sofisticado de uma forma única.</p>
+    <li class="styling-grid__item">
+      <a class="ap" href="styling/lacoste.html" data-cursor="Ver">
+        <div class="styling-grid__foto">
+          <span class="ap">Foto 1:1</span>
+          <div class="styling-grid__veu" aria-hidden="true"></div>
+          <div class="styling-grid__base">
+            <h3 class="styling-grid__titulo d d--2">Lacoste</h3>
+          </div>
+        </div>
+      </a>
     </li>
 
-    <li class="cliente" role="listitem">
-      <h3 class="cliente__nome d d--2 rv">Tate The Lable</h3>
-      <ul class="cliente__tags serv__tags ap rv" aria-label="Etiquetas">
-          <li>styling</li>
-          <li>produção de moda</li>
-      </ul>
-      <p class="cliente__corpo rv">O projeto Tate The Lable, do início ao fim, uniu a vibe country a uma estética romântica, para que a imagem final comunicasse um tom sofisticado clássico e divertido. Essa campanha ficou marcada como uma das primeiras experiências de styling da Jozzi, fazendo com que a paixão pela moda crescesse ainda mais.</p>
+    <li class="styling-grid__item">
+      <a class="ap" href="styling/tate-the-lable.html" data-cursor="Ver">
+        <div class="styling-grid__foto">
+          <span class="ap">Foto 1:1</span>
+          <div class="styling-grid__veu" aria-hidden="true"></div>
+          <div class="styling-grid__base">
+            <h3 class="styling-grid__titulo d d--2">Tate The Lable</h3>
+          </div>
+        </div>
+      </a>
     </li>
 
   </ul>

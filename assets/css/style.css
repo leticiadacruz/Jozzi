@@ -1774,6 +1774,166 @@ html.js--sem-motor .carregando { display: none; }
 }
 
 
+/* 10k. STYLING — GRADE E PÁGINA DE CASO -----------------------
+   A referência pedida (mrjobim.com/projetos) é um grid Squarespace
+   clássico: fotos 1:1, três colunas, título sobre a foto. Reproduzido
+   aqui com o vocabulário do site — sem cor nova (o véu embaixo do
+   título é --marrom, não preto) e sem esconder o título atrás de
+   hover: ele fica visível em repouso, porque nada essencial pode
+   depender de ponteiro neste site (mesma regra das etiquetas de
+   Serviços, só que aplicada ao contrário — lá o extra é que espera
+   o hover; aqui o título nunca é o extra).
+   ----------------------------------------------------------- */
+.styling-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  /* uma coluna só até 480px: nomes de uma palavra só (Alfaiataria,
+     Klisievicz) em duas colunas nessa largura quebravam em três
+     linhas dentro de um quadrado — cabe, mas fica apertado. Duas
+     colunas de 480 a 1024, três dali pra cima — mesmos limiares que
+     o resto do site usa (ver bateria de testes no README). */
+  grid-template-columns: repeat(1, 1fr);
+  gap: clamp(1rem, 2.4vw, 1.75rem);
+}
+@media (min-width: 481px) {
+  .styling-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.styling-grid__item { display: block; }
+
+/* mesmo padrão de .serv__plate/.serv__plate__foto: o contêiner é
+   permanente, a foto entra como filho absoluto quando chegar — ver
+   MANUTENCAO.md. */
+.styling-grid__foto {
+  position: relative;
+  aspect-ratio: 1;
+  background: var(--papel-2);
+  overflow: hidden;
+  --fg-3: rgb(var(--marrom-rgb) / .72);
+}
+/* o rótulo do placeholder mora no TOPO da caixa, nunca no centro —
+   centralizado ele brigava com o título, que é ancorado embaixo:
+   numa caixa pequena (grade de 2 colunas no mobile) os dois se
+   encostavam. Bug pego antes de publicar. */
+.styling-grid__foto > .ap {
+  position: absolute;
+  top: clamp(1rem, 2.5vw, 1.5rem);
+  left: clamp(1rem, 2.5vw, 1.5rem);
+  color: var(--fg-3);
+}
+
+.styling-grid__foto__real {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* o véu: --marrom em gradiente, não preto — a paleta tem sete cores
+   e nenhuma é a de fora dela. Cobre só o terço de baixo, onde mora
+   o título; o resto da foto fica limpo. */
+.styling-grid__veu {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 55%;
+  background: linear-gradient(to top, rgb(var(--marrom-rgb) / .78), transparent);
+  pointer-events: none;
+}
+
+/* projeto e título moram DENTRO da caixa, empilhados no canto —
+   nunca fora dela. bottom:100% (fora da caixa) foi a primeira
+   tentativa e o overflow:hidden do .styling-grid__foto cortava o
+   projeto inteiro; corrigido antes de publicar. */
+.styling-grid__base {
+  position: absolute;
+  inset: auto 0 0 0;
+  margin: 0;
+  padding: clamp(1rem, 2.5vw, 1.5rem);
+  display: grid;
+  gap: .3rem;
+  /* sem isto, um item de grid não encolhe abaixo do min-content —
+     "Alfaiataria" sem espaço pra quebrar virava o min-content da
+     coluna e estourava a caixa por baixo do overflow:hidden, mesmo
+     com overflow-wrap:break-word no título. É o "grid blowout"
+     clássico: min-width:auto implícito em todo item de grid. */
+  min-width: 0;
+}
+.styling-grid__base > * { min-width: 0; }
+
+.styling-grid__projeto {
+  margin: 0;
+  color: rgb(var(--off-white-rgb) / .82);
+}
+
+.styling-grid__titulo {
+  margin: 0;
+  color: var(--off-white);
+  /* nomes de uma palavra só (ALFAIATARIA, KLISIEVICZ) não têm onde
+     quebrar por espaço, e na grade de 2 colunas do mobile a caixa
+     fica estreita o bastante pra a palavra ficar mais larga do que
+     ela — sem isto, o excesso simplesmente sumia atrás do
+     overflow:hidden da caixa. */
+  overflow-wrap: break-word;
+}
+
+/* o quadro inteiro escala 1.03 no hover — o mesmo gesto de
+   .serv__plate__foto, só que aplicado à foto e não ao numeral, e
+   sem o estado is-ativo: aqui não há painel para coordenar, é hover
+   puro em CSS. */
+.styling-grid__foto__real,
+.styling-grid__foto {
+  transition: transform var(--t-entra) var(--curva);
+}
+.styling-grid__item:hover .styling-grid__foto__real,
+.styling-grid__item:focus-visible .styling-grid__foto__real {
+  transform: scale(1.035);
+}
+
+@media (min-width: 1025px) {
+  .styling-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+
+/* ---- a página de um caso — styling/<slug>.html ---- */
+.caso__voltar {
+  display: inline-block;
+  margin-bottom: clamp(2.5rem, 8vh, 4.5rem);
+}
+
+.caso__cabeca {
+  padding-top: clamp(3rem, 10vh, 6rem);
+  padding-bottom: clamp(3rem, 10vh, 6rem);
+  border-top: 1px solid var(--fio);
+}
+.caso__projeto {
+  margin: -.4rem 0 clamp(1.2rem, 3.5vh, 2rem);
+  color: var(--fg-3);
+}
+.caso__corpo {
+  max-width: 58ch;
+  margin: clamp(1.6rem, 5vh, 2.6rem) 0 0;
+  color: var(--fg-2);
+}
+.caso__corpo p + p { margin-top: 1.1em; }
+
+.caso__galeria {
+  list-style: none;
+  margin: 0;
+  padding: clamp(3rem, 10vh, 6rem) 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(1rem, 2.4vw, 1.75rem);
+}
+@media (min-width: 1025px) {
+  .caso__galeria { grid-template-columns: repeat(3, 1fr); }
+}
+
+
 /* 11. RODAPÉ DO PROTÓTIPO ----------------------------------- */
 .fim {
   display: grid;
