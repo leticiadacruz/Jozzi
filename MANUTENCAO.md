@@ -82,8 +82,9 @@ emprestada.
 
 ## Preencher um serviço
 
-São seis serviços. **Cinco estão com a copy no ar; Captação de Conteúdo, não** —
-a descrição e as etiquetas dele estão marcadas como pendentes.
+São seis serviços, e os seis estão com a copy definitiva no ar (a de Captação
+de Conteúdos entrou em 28/08 — ver histórico do git para o texto que ficava no
+lugar antes).
 
 Cada serviço é um **card** em `index.html`, e o card tem quatro peças nesta
 ordem:
@@ -120,19 +121,16 @@ alto que os vizinhos e a fila desalinha.
 proposital, e é por isso que **nenhuma informação essencial pode morar só ali** —
 etiqueta é dado complementar, não a descrição do serviço.
 
-### Preencher Captação de Conteúdo
+### O card de Styling é diferente dos outros cinco
 
-É o único card com campos pendentes. Quando a copy chegar:
+Todo `.serv__nome` é um `<button>`, exceto o de Styling, que é um `<a
+href="styling.html">` — ver "Portfólio de Styling" mais abaixo. Se algum script
+futuro fizer `document.querySelectorAll('.serv__nome')` esperando só botões,
+esse é o card que quebra a suposição.
 
-1. Trocar `<p class="serv__txt serv__txt--falta">…</p>` pelo texto, **e tirar a
-   classe `serv__txt--falta`** — ela existe só para pintar a pendência na cor do
-   aparato. Deixá-la faz o texto real sair apagado.
-2. Trocar `<li>etiquetas a definir</li>` pelas etiquetas de verdade.
-
-**Decisão pendente da Jozzi:** a nota de margem da abertura lista cinco frentes
-e não inclui Captação de Conteúdo. As duas listas discordarem é um defeito, mas
-mexer na abertura muda a composição da primeira tela — é decisão de quem
-escreveu a copy.
+**A nota de margem da abertura ainda lista só cinco frentes**, sem Captação de
+Conteúdos — é a copy literal que a Jozzi mandou para a capa, não um esquecimento
+meu. Se um dia pedirem para incluir a sexta, é lá que mexe, não aqui.
 
 ### Acrescentar um serviço
 
@@ -194,29 +192,44 @@ imagem no HTML.
 
 ---
 
-## Acrescentar uma marca
+## Acrescentar uma marca (ou um case de Styling)
 
-Duas coisas. O `<li>` novo em `index.html`, dentro de `.marcas__lista`:
+O mesmo componente serve os dois: `.marcas__lista` / `.cliente` aparece tanto
+em "Projetos que já fizemos" (`index.html`) quanto em `styling.html`. **A doc
+antiga desta seção descrevia um `<dl>` de Setor/Escopo que não existe mais** —
+a estrutura real, desde a rodada de 25/08, é parágrafo corrido:
 
 ```html
 <li class="cliente" role="listitem">
   <h3 class="cliente__nome d d--2 rv">Nome da marca</h3>
-  <dl class="cliente__dados ap rv">
-    <div><dt>Setor</dt><dd>Setor real</dd></div>
-    <div><dt>Escopo</dt><dd>O que a Jozzi fez</dd></div>
-  </dl>
+
+  <!-- opcional: só quando o nome do projeto não é o nome do
+       cliente/modelo (ex.: "Amanda" fez a campanha "Woman") -->
+  <p class="cliente__projeto ap rv">Nome do projeto</p>
+
+  <!-- opcional: nem todo case tem etiqueta pronta -->
+  <ul class="cliente__tags serv__tags ap rv" aria-label="Etiquetas">
+    <li>styling</li>
+    <li>produção de moda</li>
+  </ul>
+
+  <p class="cliente__corpo rv">O texto final, corrido.</p>
 </li>
 ```
 
-E, se passar de doze marcas, uma linha em `style.css` na seção 10e:
+E, se passar de dezenove marcas/cases (contando os dois arquivos juntos — o
+`nth-child` é por posição dentro do PRÓPRIO `<ul>`, então index.html e
+styling.html não competem pela mesma numeração, mas cada um sozinho não pode
+passar de 19 sem uma linha nova), uma linha em `style.css` na seção 10e:
 
 ```css
-.cliente:nth-child(13) { grid-column: 1 / span 5; grid-row: 13; }
+.cliente:nth-child(20) { grid-column: 4 / span 5; grid-row: 20; }
 ```
 
-A coluna segue 1, 4, 7, 1, 4, 7… e a linha é o número da marca. A colocação
-automática do Grid **não** serve: a partir da quarta marca ela encaixaria o
-bloco ao lado do anterior em vez de abrir linha nova, e a diagonal quebraria.
+A coluna segue 1, 4, 7, 1, 4, 7… e a linha é a posição do item na lista. A
+colocação automática do Grid **não** serve: a partir da quarta marca ela
+encaixaria o bloco ao lado do anterior em vez de abrir linha nova, e a
+diagonal quebraria.
 
 **Todas as marcas ficam no mesmo corpo.** Não aumentar o nome de um cliente
 para "dar destaque": entre clientes, escala é declaração sobre a relação, não
@@ -391,6 +404,49 @@ document.documentElement.scrollWidth - innerWidth   // tem que dar 0
 
 ---
 
+## Portfólio de Styling — `styling.html`
+
+Segunda página do site (a primeira foi o `sobre.html` que virou seção — ver
+abaixo — e não existe mais como página). Diferente daquele caso: **esta foi
+pedido explícito da Jozzi**, para o card de Styling em Serviços, que tem
+portfólio grande demais para caber num painel de etiquetas.
+
+**O que é copiado de `index.html`, e por quê não é um `<link>`/import:**
+o site inteiro é HTML autoral sem build step, então cada página duplica os
+blocos que precisa — sprite do logotipo (`<symbol id="marca-jozzi">`), a
+cortina de carregamento, o aparato, o rodapé. **Se algum desses blocos mudar
+em `index.html`, replicar a mudança aqui manualmente.** Não existe
+sincronização automática.
+
+**Uma armadilha específica desta página, já corrigida uma vez:** o texto
+inicial do aparato (`<span data-aparato-sec>`) é hardcoded no HTML — o
+`main.js` só o atualiza quando o NÚMERO da seção muda
+(`trocarSecao` faz early-return se `num === secaoAtual`, e `secaoAtual` começa
+em `"00"`). Como esta página só tem uma seção e ela também é `data-num="00"`,
+o texto nunca é reescrito pelo JS. Por isso o hardcoded aqui já é "Styling",
+não "Abertura" copiado sem pensar do index — se algum dia esta página ganhar
+uma seção 01, o problema desaparece sozinho.
+
+**O link de volta** (`.topo__voltar`, `href="index.html#servicos"`) só existe
+nesta página — é a única do site que não é a home, então é a única que
+precisa de um jeito de sair.
+
+**Conteúdo:** copy definitiva da Jozzi (28/08), a lista "Styling" do
+documento. Três entradas ficaram de fora por não terem texto pronto pra
+site, só nota interna de produção — **não inventar texto pra elas**:
+
+| Entrada | Por quê ficou de fora |
+| --- | --- |
+| Shop Carol | só uma linha de etiquetas, sem parágrafo |
+| Evento Apelo Fashion | "Versão pro site:" no documento, sem texto depois |
+| Malena — "New Again" | o parágrafo corta no meio: `A campanha "New Again"` |
+
+Se a Jozzi mandar o texto de qualquer uma das três, o `<li class="cliente">`
+é o mesmo template da seção anterior — entra na lista, na posição 20 (ou
+onde for), com a linha de `nth-child` correspondente.
+
+---
+
 ## Sobre a Jozzi — a seção 05
 
 Vive no `index.html` como qualquer outra seção, entre Projetos e Contato.
@@ -509,6 +565,7 @@ O sprite usa `position:absolute; width:0; height:0` e **não** `display:none` �
 
 ```
 index.html                  as oito seções (00–07) + sprite da marca
+styling.html                portfólio de Styling, página própria
 assets/css/style.css        folha única, com sumário numerado no topo
 assets/js/main.js           IIFE, nove módulos numerados
 assets/js/lenis.min.js      rolagem interpolada (não editar)

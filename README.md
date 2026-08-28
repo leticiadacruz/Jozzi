@@ -24,6 +24,7 @@
 - [O sistema](#o-sistema) — as regras que não podem ser quebradas
 - [Componentes previstos](#componentes-previstos) — 03 a 06
 - [O que falta de conteúdo](#o-que-falta-de-conteúdo)
+- [Portfólio de Styling (28/08)](#portfólio-de-styling-2808--segunda-página-do-site)
 - [Licenças de tipografia](#licenças-de-tipografia)
 
 ---
@@ -598,28 +599,30 @@ máscara, mesma curva, mesma duração — só o atraso é novo.
 que não sobe esconderia conteúdo — e nada neste site pode depender de
 JavaScript para existir.
 
-**Textos aprovados e no ar, menos os do sexto.** A ordem — Branding, Social
-Media, Styling, Tráfego Pago, Web Development — é a da copy de 25/08. **Captação
-de Conteúdo entrou em 27/08 sem copy**, a pedido da Jozzi, e é o único card com
-descrição e etiquetas pendentes.
-
-Os dois campos ficam **marcados**, não preenchidos: a descrição é um `…` em
-`.serv__txt--falta`, na cor do aparato e não na do texto, para que ninguém leia
-como se a Jozzi tivesse escrito reticências; as etiquetas são a linha *etiquetas
-a definir*, que só aparece ao passar o ponteiro. É a mesma regra do campo de
-imagem — nunca preencher com copy genérica de agência, nem provisoriamente.
+**Textos aprovados e no ar, os seis.** A ordem — Branding, Social Media,
+Styling, Tráfego Pago, Web Development — é a da copy de 25/08; Captação de
+Conteúdos entrou em 27/08 e teve a descrição e as etiquetas completadas em
+28/08 (o texto provisório `…` em `.serv__txt--falta` saiu — a classe continua
+no CSS, pronta pra um próximo card pendente, mas não está em uso).
 
 | Campo | Registro | Estado |
 | --- | --- | --- |
-| Descrição | Texto | ✓ cinco de seis — falta Captação de Conteúdo |
-| Etiquetas | Aparato | ✓ cinco de seis — falta Captação de Conteúdo |
+| Descrição | Texto | ✓ seis de seis |
+| Etiquetas | Aparato | ✓ seis de seis |
 | Imagem | **16:9** | ✗ a fornecer — seis arquivos |
 
 ⚠ **A abertura ainda anuncia cinco frentes.** A nota de margem do `<h1>` lista
 Branding, Social Media, Styling, Tráfego Pago e Web Development. Captação de
-Conteúdo não entrou lá porque a lista é copy da Jozzi de 25/08 e mexer nela
+Conteúdos não entrou lá porque a lista é copy da Jozzi de 25/08 e mexer nela
 muda a composição da primeira tela. **Decisão da Jozzi**, não minha — mas as
 duas listas discordarem é um defeito enquanto durar.
+
+⚠ **O card de Styling não abre mais só um painel — ele navega.** `.serv__nome`
+deste card é `<a href="styling.html">`, não `<button>` como os outros cinco;
+pedido explícito da Jozzi em 28/08, porque o portfólio de styling é grande
+demais para uma etiqueta de card (19 cases). O hover continua abrindo o painel
+de etiquetas — o listener está no `<li>`, intocado —, só o clique muda de
+função. Ver "styling.html" logo abaixo.
 
 ⚠ **A proporção da imagem de Serviços mudou de 3:4 para 16:9.** Continua dentro
 das três permitidas. A chapa antiga era a metade direita da página, sangrando
@@ -870,9 +873,44 @@ fornecida pedia esse texto sem entregá-lo pronto ("mini texto explicando o
 termo"). Segue a Voz da Jozzi, mas precisa da aprovação de quem realmente sabe
 a origem do nome.
 
----
+## Portfólio de Styling (28/08) — segunda página do site
 
-## Licenças de tipografia
+O card de Styling em Serviços parou de só abrir um painel de etiquetas: agora
+`.serv__nome` daquele card é `<a href="styling.html">`. Pedido explícito da
+Jozzi — o portfólio de styling tem 19 cases com copy pronta, grande demais
+para uma etiqueta.
+
+**`styling.html` não é `sobre.html` de novo.** O `sobre.html` da rodada
+anterior foi revertido porque a Jozzi pediu seção no scroll, não página. Desta
+vez o pedido foi o oposto — página, explicitamente — e por um motivo diferente:
+aquele era conteúdo institucional (quem é a Jozzi), que cabe na narrativa
+00–07; este é um catálogo de 19 itens, que não cabe em lugar nenhum do scroll
+sem quebrar o ritmo dele.
+
+A página reaproveita o componente de Projetos (`.marcas__lista` / `.cliente`,
+a diagonal de três colunas) inteiro — mesma CSS, mesmo JS de parallax por
+scroll —, só que com 19 itens em vez de 4. O `nth-child` de `.cliente` no CSS
+foi estendido de 12 para 19 (era exatamente o número de marcas do site
+inteiro; agora é o número de cases só desta página).
+
+Cada item pode ter até dois campos que os quatro "Projetos" originais não
+tinham: `.cliente__projeto` (quando o nome do projeto não é o nome do
+cliente — "Amanda" fez a campanha "Woman") e `.cliente__tags` (as etiquetas,
+reaproveitando `.serv__tags` sem CSS novo).
+
+**Três entradas da copy recebida não entraram, por não terem texto pronto:**
+Shop Carol (só etiquetas, sem parágrafo), o evento Apelo Fashion ("Versão pro
+site:" sem nada depois) e o projeto "New Again" da Malena (o parágrafo corta
+no meio da frase). Nenhum texto foi inventado para completar essas três.
+
+⚠ **Bug que corrigi antes de publicar:** o rótulo do aparato (`data-aparato-sec`)
+é hardcoded no HTML e só é reescrito pelo `main.js` quando o NÚMERO da seção
+muda — e como `styling.html` só tem uma seção, também `data-num="00"`, o texto
+nunca troca. Copiar o bloco do aparato do `index.html` sem ajustar teria
+deixado "Abertura" escrito permanentemente no topo desta página. O hardcoded
+aqui já nasce "Styling".
+
+---
 
 ## Licenças de tipografia
 

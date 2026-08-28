@@ -17,7 +17,7 @@
 
 <link rel="preload" href="assets/fonts/Switzer-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/IBMPlexMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/style.css?v=44">
+<link rel="stylesheet" href="assets/css/style.css?v=45">
 
 <script>
 (function () {
@@ -279,9 +279,8 @@
 
      Conteúdo: copy definitiva fornecida pela Jozzi (rodada de
      25/08). Ordem: Branding, Social Media, Styling, Tráfego Pago,
-     Web Development. Captação de Conteúdo entrou depois, em 27/08,
-     e é o único card com descrição e etiquetas PENDENTES — os dois
-     campos ficam marcados, não preenchidos com copy genérica.
+     Web Development, Captação de Conteúdos — o sexto card entrou em
+     27/08 e teve descrição e etiquetas completadas em 28/08.
      ============================================================ -->
 <section class="serv wrap" id="servicos" data-secao
          data-num="03" data-nome="Serviços" aria-labelledby="serv-titulo">
@@ -357,11 +356,16 @@
         </div>
       </div>
 
-      <button class="serv__nome" type="button"
-              id="serv-bt-styling" aria-controls="serv-rev-styling" aria-expanded="false">
+      <!-- único card que navega em vez de só abrir o painel de
+           etiquetas: Styling tem portfólio próprio demais para
+           caber aqui, e virou página — ver styling.html. O hover
+           continua abrindo o painel (o listener de ponteiro está
+           no <li>, não neste elemento), então o gesto de "ver as
+           etiquetas" não muda; só o clique passa a navegar. -->
+      <a class="serv__nome" href="styling.html" id="serv-bt-styling">
         <span class="serv__num ap" aria-hidden="true">03</span>
         <span class="serv__rotulo">Styling</span>
-      </button>
+      </a>
 
       <p class="serv__txt">Construímos narrativas que vão para além da moda, comunicando a harmonia perfeita entre identidade visual, propósito e público-alvo.</p>
     </li>
@@ -421,11 +425,7 @@
       <p class="serv__txt">Essa é a ponte de início que liga o seu posicionamento com a conversão. Criamos e gerenciamos sites do zero para a sua marca, gerando também experiência.</p>
     </li>
 
-    <!-- 06 · CAPTAÇÃO DE CONTEÚDO — copy pendente.
-         A Jozzi ainda não forneceu a descrição nem as etiquetas. Os
-         dois campos ficam MARCADOS, como o campo de imagem já fica:
-         nada de copy genérica de agência, nem provisoriamente.
-         Descrição: 90 a 170 caracteres quando chegar. -->
+    <!-- 06 · CAPTAÇÃO DE CONTEÚDOS — copy definitiva recebida em 28/08. -->
     <li class="serv__card rv" role="listitem" data-cursor="Ver">
       <div class="serv__plate">
         <span class="serv__plate-num" aria-hidden="true">06</span>
@@ -433,7 +433,10 @@
 
         <div class="serv__painel" id="serv-rev-captacao-de-conteudo" aria-labelledby="serv-bt-captacao-de-conteudo" aria-hidden="true">
           <ul class="serv__tags ap" aria-label="Etiquetas">
-            <li>etiquetas a definir</li>
+          <li>roteirização</li>
+          <li>direcionamento</li>
+          <li>gravação</li>
+          <li>edição</li>
           </ul>
         </div>
       </div>
@@ -441,10 +444,10 @@
       <button class="serv__nome" type="button"
               id="serv-bt-captacao-de-conteudo" aria-controls="serv-rev-captacao-de-conteudo" aria-expanded="false">
         <span class="serv__num ap" aria-hidden="true">06</span>
-        <span class="serv__rotulo">Captação de Conteúdo</span>
+        <span class="serv__rotulo">Captação de Conteúdos</span>
       </button>
 
-      <p class="serv__txt serv__txt--falta">…</p>
+      <p class="serv__txt">Priorizamos um olhar estratégico em cada etapa que precede a publicação dos vídeos, para que cada take alcance o objetivo final.</p>
     </li>
 
   </ul>

@@ -450,6 +450,23 @@ a { color: inherit; text-decoration: none; }
   color: var(--fg);
 }
 
+/* link de volta, só na página de Styling — o site inteiro é uma
+   página só, exceto esta. Mesmo tratamento de link do rodapé de
+   Onde ficamos: fio embaixo, escurece e vira sinal no hover. */
+.topo__voltar {
+  color: var(--fg-2);
+  border-bottom: 1px solid var(--fio);
+  padding-bottom: .2em;
+  transition: color var(--t-micro) var(--curva),
+              border-color var(--t-micro) var(--curva);
+}
+.topo__voltar:hover,
+.topo__voltar:focus-visible,
+.topo__voltar:active {
+  color: var(--fg);
+  border-color: var(--sinal);
+}
+
 
 /* 08. MOVIMENTO ---------------------------------------------
    Um gesto: máscara de baixo para cima, com 10px de
@@ -1230,6 +1247,21 @@ img.onde__mapa {
   color: var(--fg-2);
 }
 
+/* subtítulo opcional do projeto — quando o nome do cliente e o nome
+   do projeto não são o mesmo (ex.: "Amanda" / "Woman"). Mesma régua
+   de .sobre__papel: aparato, 65% de tinta. */
+.cliente__projeto {
+  margin: -.4rem 0 clamp(.9rem, 2.2vh, 1.4rem);
+  color: var(--fg-3);
+}
+
+/* etiquetas do case: mesma lista de Serviços (.serv__tags), só com
+   espaço próprio antes do parágrafo — lá ela nasce dentro de um
+   painel que já tem padding; aqui ela é filha direta do <li>. */
+.cliente__tags {
+  margin: 0 0 clamp(.9rem, 2.2vh, 1.4rem);
+}
+
 /* subtítulo da seção, único lede fora da abertura — a mesma
    função: uma frase de transição antes do conteúdo denso */
 .marcas__lede {
@@ -1245,7 +1277,8 @@ img.onde__mapa {
   /* Coluna e linha explícitas. A colocação automática não serve:
      a partir da quarta marca ela encaixaria o bloco AO LADO do
      terceiro em vez de abrir linha nova, e a diagonal quebraria.
-     Uma marca por linha, sempre. Passando de doze, acrescentar uma
+     Uma marca por linha, sempre. Estendido até o 19 em 28/08, para
+     o portfólio de Styling. Passando de dezenove, acrescentar uma
      linha aqui — a coluna é 1, 4, 7, 1, 4, 7... */
   .cliente:nth-child(1) { grid-column: 1 / span 5; grid-row: 1; }
   .cliente:nth-child(2) { grid-column: 4 / span 5; grid-row: 2; }
@@ -1259,6 +1292,15 @@ img.onde__mapa {
   .cliente:nth-child(10) { grid-column: 1 / span 5; grid-row: 10; }
   .cliente:nth-child(11) { grid-column: 4 / span 5; grid-row: 11; }
   .cliente:nth-child(12) { grid-column: 7 / span 5; grid-row: 12; }
+  /* estendido em 28/08 para o portfólio de Styling — mesma fórmula,
+     coluna 1, 4, 7 se repetindo a cada três linhas */
+  .cliente:nth-child(13) { grid-column: 1 / span 5; grid-row: 13; }
+  .cliente:nth-child(14) { grid-column: 4 / span 5; grid-row: 14; }
+  .cliente:nth-child(15) { grid-column: 7 / span 5; grid-row: 15; }
+  .cliente:nth-child(16) { grid-column: 1 / span 5; grid-row: 16; }
+  .cliente:nth-child(17) { grid-column: 4 / span 5; grid-row: 17; }
+  .cliente:nth-child(18) { grid-column: 7 / span 5; grid-row: 18; }
+  .cliente:nth-child(19) { grid-column: 1 / span 5; grid-row: 19; }
 }
 
 
