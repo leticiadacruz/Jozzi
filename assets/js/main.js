@@ -501,9 +501,16 @@
         var est = roloItens[r].style;
         est.setProperty('--ang', giro.toFixed(2) + 'deg');
         est.setProperty('--op', op.toFixed(3));
-        /* a face que sumiu sai do caminho do ponteiro e do leitor de
-           tela — senão o texto invisível continua clicável e narrável */
-        roloItens[r].setAttribute('aria-hidden', op < 0.05 ? 'true' : 'false');
+        /* A face que sumiu sai do caminho por inteiro. `aria-hidden`
+           sozinho não bastava depois que cada projeto ganhou um
+           "Saiba mais": ele esconde do leitor de tela mas NÃO tira
+           do Tab, e o teclado passava por cinco links invisíveis
+           antes de sair da seção. `inert` tira dos três de uma vez —
+           foco, ponteiro e árvore de acessibilidade. */
+        var sumiu = op < 0.05;
+        roloItens[r].setAttribute('aria-hidden', sumiu ? 'true' : 'false');
+        if (sumiu) roloItens[r].setAttribute('inert', '');
+        else roloItens[r].removeAttribute('inert');
       }
 
       /* o vídeo de cada projeto acompanha a face dele, mas some mais

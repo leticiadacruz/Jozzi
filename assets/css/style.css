@@ -123,6 +123,44 @@
 }
 
 
+/* 02b. TRANSIÇÃO DE PÁGINA ----------------------------------
+   A página nova entra deslizando pela direita; a anterior sai pela
+   esquerda, um pouco mais devagar e sem chegar ao fim — é a mesma
+   ideia de duas camadas que o site já usa nas máscaras de entrada.
+
+   View Transitions nativa, e não JavaScript: o navegador tira o
+   retrato das duas páginas e faz a troca sozinho. Onde a API não
+   existe (Firefox, hoje) a regra é simplesmente ignorada e a
+   navegação é a de sempre — nada quebra, nada precisa de fallback.
+
+   Vale para o site inteiro, não só para o botão: navegar de uma
+   página de projeto para outra, ou voltar, usa o mesmo gesto.
+   ----------------------------------------------------------- */
+@view-transition { navigation: auto; }
+
+@keyframes pag-entra {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+@keyframes pag-sai {
+  from { transform: translateX(0); opacity: 1; }
+  to   { transform: translateX(-22%); opacity: .4; }
+}
+
+::view-transition-old(root) {
+  animation: pag-sai var(--t-entra) var(--curva) both;
+}
+::view-transition-new(root) {
+  animation: pag-entra var(--t-entra) var(--curva) both;
+}
+
+/* quem pediu menos movimento troca de página sem deslizar */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none; }
+}
+
+
 /* 03. BASE -------------------------------------------------- */
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -1282,6 +1320,59 @@ img.onde__mapa {
 .rolo__cabeca { align-self: start; }
 
 
+/* ---- "Saiba mais" ----
+   Um link por projeto, dentro do próprio <li>. Sem JavaScript ele
+   aparece embaixo do texto, como qualquer link; com o tambor
+   montado ele vai para a lateral direita e — como só a face da
+   frente está opaca — só existe um na tela por vez. Nenhuma
+   duplicação: o "botão lateral" É o link do projeto que está sendo
+   lido. */
+.rolo__saiba {
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
+  margin-top: clamp(1.2rem, 3.5vh, 2rem);
+  color: var(--fg);
+  border-bottom: 1px solid var(--fio);
+  /* alvo de toque: o texto de 11px tem ~15px de linha, e o padding
+     invisível leva a caixa a 44px — mesma receita da auditoria de
+     28/08 aplicada de saída, e não como conserto depois. */
+  padding: 14px 0;
+  transition: color var(--t-micro) var(--curva),
+              border-color var(--t-micro) var(--curva);
+}
+.rolo__saiba:hover,
+.rolo__saiba:focus-visible {
+  color: var(--sinal);
+  border-color: var(--sinal);
+}
+
+/* a flecha: dois fios de 1px, como a seta da abertura — nada de
+   ícone de fonte nem SVG novo */
+.rolo__saiba__seta {
+  position: relative;
+  width: 22px;
+  height: 1px;
+  background: currentColor;
+  flex: none;
+  transition: transform var(--t-micro) var(--curva);
+}
+.rolo__saiba__seta::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  border-top: 1px solid currentColor;
+  border-right: 1px solid currentColor;
+  transform: translateY(-50%) rotate(45deg);
+  transform-origin: center;
+}
+.rolo__saiba:hover .rolo__saiba__seta,
+.rolo__saiba:focus-visible .rolo__saiba__seta { transform: translateX(5px); }
+
+
 /* ---- o fundo em vídeo ----
    Só existe com o tambor montado: sem JavaScript nenhum vídeo é
    baixado nem exibido, e a seção continua sendo bege com texto
@@ -1416,6 +1507,18 @@ img.onde__mapa {
 
 .js--rolo .rolo__conta { visibility: visible; }
 
+/* com o tambor montado o link sai do fluxo e encosta na margem
+   direita da face, alinhado pela base do texto */
+@media (min-width: 769px) {
+  .js--rolo .rolo__item { position: absolute; }
+  .js--rolo .rolo__saiba {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin-top: 0;
+  }
+}
+
 /* motor morto: o tambor nunca se monta, a lista fica em pé */
 .js--sem-motor .rolo__lista { position: static; display: grid; }
 .js--sem-motor .rolo__item { position: static; transform: none; opacity: 1; }
@@ -1429,10 +1532,26 @@ img.onde__mapa {
 
    Se um texto novo passar de ~20 linhas no telefone, este é o ponto
    que volta a estourar — ver MANUTENCAO. */
-@media (max-height: 660px) {
+@media (max-height: 740px) {
   .rolo__nome { font-size: clamp(1.5rem, 5.5vw, 1.9rem); }
   .rolo__frase { font-size: .9375rem; line-height: 1.32; }
   .rolo__fixo { padding-top: clamp(1.2rem, 4vh, 2rem); }
+  /* o "Saiba mais" custa ~74px no fluxo; em tela baixa ele encosta
+     no texto para o conjunto caber */
+  .rolo__saiba { margin-top: .6rem; padding: 12px 0; }
+}
+
+/* Segundo degrau, para as telas realmente baixas (320x568 é o piso
+   que o site testa). Só o primeiro degrau ainda deixava 16px de
+   texto fora do recorte no parágrafo mais longo. */
+@media (max-height: 600px) {
+  .rolo__nome { font-size: 1.4rem; }
+  .rolo__frase { font-size: .875rem; line-height: 1.28; }
+  .rolo__fixo { padding-top: 1rem; padding-bottom: 1rem; }
+  /* o cabeçalho da seção também disputa a altura: o vão embaixo do
+     lede é o que sobrava para fechar os últimos pixels */
+  .rolo .marcas__lede { margin-bottom: .8rem; font-size: 1rem; }
+  .rolo__lista { min-height: 0; }
 }
 
 @media (max-width: 768px) {

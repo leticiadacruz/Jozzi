@@ -221,6 +221,51 @@ Se um texto novo estourar esse limite, os lugares para mexer, nesta ordem:
 menos linhas) e a media query `max-height: 660px`, que já encolhe o corpo
 para caber.
 
+### O "Saiba mais" e as páginas de projeto
+
+Cada projeto do rolo tem um `<a class="rolo__saiba">` **dentro do próprio
+`<li>`**, apontando para `projetos/<slug>.html`. Não existe um botão lateral
+separado: com o tambor montado o link sai do fluxo e vai para a margem
+direita, e como só a face da frente está opaca, só existe um na tela por vez.
+O "botão lateral" É o link do projeto que está sendo lido.
+
+Sem JavaScript ele volta para o fluxo, embaixo do texto — e no telefone fica
+assim mesmo, empilhado, que é onde faz sentido.
+
+**Acrescentou um projeto?** Além do `<li>`, do vídeo e do total do contador,
+crie `projetos/<slug>.html`. O texto dessas páginas é **cópia do que está no
+rolo** — se mudar um, mude o outro, senão as duas versões divergem.
+
+**As faces invisíveis recebem `inert`.** Sem isso o Tab passava por cinco
+links escondidos antes de sair da seção: `aria-hidden` esconde do leitor de
+tela mas não tira do foco. `inert` tira dos três de uma vez.
+
+⚠ **Ao auditar alvo de toque, ignore o que está dentro de `[inert]`.** As
+faces giradas têm caixa achatada pela projeção 3D (12 a 33px), e uma
+auditoria ingênua acusa quatro alvos pequenos que não são tocáveis nem
+focáveis. O link de verdade mede 44×114px — medido em 320, 375, 390 e 768.
+
+### A transição de página
+
+`@view-transition { navigation: auto }` mais duas animações em
+`::view-transition-old/new(root)`: a página nova entra pela direita, a
+anterior sai pela esquerda sem chegar ao fim.
+
+É a API nativa do navegador, não JavaScript — onde ela não existe (Firefox,
+hoje) a regra é ignorada e a navegação é a de sempre. Não há fallback a
+manter. Sob `prefers-reduced-motion` a animação é desligada.
+
+**As páginas de projeto não têm cortina de carregamento**, de propósito: a
+cortina reaparecendo no meio da navegação mata a fluidez da transição — são
+duas animações competindo. Elas também não usam `.rv`: numa página que entra
+deslizando, o conteúdo surgindo depois seria uma segunda animação por cima da
+primeira. O gesto é um só.
+
+Isso vale para `projetos/`. As 19 páginas de `styling/` **ainda têm** a
+cortina e as revelações — se quiser o mesmo comportamento lá, é remover o
+bloco `<div class="carregando">` e as classes `rv`, como está feito em
+`projetos/`.
+
 ### Trocar os vídeos de fundo
 
 **Os quatro `.mp4` em `assets/video/` são temporários**: stock do Pexels
@@ -786,6 +831,7 @@ de toque.
 
 ```
 index.html                  as oito seções (00–07) + sprite da marca
+projetos/                   uma página por projeto do rolo (5)
 styling.html                grade de fotos do portfólio de Styling
 styling/*.html               19 páginas de caso, uma por trabalho
 assets/css/style.css        folha única, com sumário numerado no topo
