@@ -297,11 +297,27 @@
 
   var secoes   = [].slice.call(document.querySelectorAll('[data-secao]'));
   var invSecs  = [].slice.call(document.querySelectorAll('[data-inv]'));
-  var clientes = [].slice.call(document.querySelectorAll('.cliente'));
-
   var TETO = 12;   /* teto de deslocamento, o mesmo do resto do sistema */
 
-  var med = { vh: 0, secs: [], inv: [], cli: [], idMeio: 0, horaMeio: 0, regua: false };
+  /* ---- o rolo de Projetos ----
+     O tambor 3D da seção 04. Os números vieram medidos da
+     referência que a Jozzi pediu (twist.com.br): 30° entre uma face
+     e a seguinte, e a opacidade caindo 1 → 1/3 → 0 conforme a face
+     se afasta da frente. */
+  var rolo      = document.querySelector('[data-rolo]');
+  var roloLista = document.querySelector('[data-rolo-lista]');
+  var roloItens = [].slice.call(document.querySelectorAll('[data-rolo-item]'));
+  var roloConta = document.querySelector('[data-rolo-conta]');
+  var ROLO_PASSO_ANG = 30;    /* graus entre uma face e a seguinte */
+  /* A opacidade cai com o QUADRADO da distância, não linearmente.
+     Linear (o que a referência sugere de relance) deixa um vale no
+     meio do caminho entre um cliente e o seguinte onde NENHUM dos
+     dois passa de 55% — o texto fica lavado durante boa parte do
+     curso. Com o quadrado, a face da frente segura 75% no pior
+     ponto e some exatamente quando a próxima chega. Medido. */
+  var roloUltimo = -1;
+
+  var med = { vh: 0, secs: [], inv: [], rolo: null, idMeio: 0, horaMeio: 0, regua: false };
   var segs = [];
 
   function topoDoc(el) {
@@ -343,9 +359,13 @@
       return { topo: t, base: t + el.offsetHeight };
     });
 
-    med.cli = clientes.map(function (el) {
-      return { el: el, meio: topoDoc(el) + el.offsetHeight / 2 };
-    });
+    /* o rolo mede o TRILHO, não os itens: o curso útil é a altura da
+       seção menos uma tela — é nesse trecho que o tambor dá a volta
+       inteira, e é ele que o progresso divide. */
+    if (rolo) {
+      var alt = rolo.offsetHeight;
+      med.rolo = { topo: topoDoc(rolo), curso: Math.max(1, alt - med.vh) };
+    }
 
     /* o aparato é fixo: a posição dos dois blocos na TELA não muda
        com a rolagem, então basta medi-la uma vez */
@@ -424,19 +444,34 @@
       pintarBloco(apHora, y + med.horaMeio);
     }
 
-    /* NÍVEL 3 — a diagonal de Projetos. Doze pixels de teto: o
-       bastante para respirar, pouco o bastante para não virar
-       parallax. */
-    if (!menosMovimento) {
-      for (var c = 0; c < med.cli.length; c++) {
-        var alvoC = med.cli[c];
-        var dist  = alvoC.meio - meio;
-        if (dist < -med.vh - 200 || dist > med.vh + 200) continue;
-        var d = dist / med.vh;
-        var desloc = Math.max(-TETO, Math.min(TETO, d * TETO * (1 + c * 0.45)));
-        var prox   = Math.max(0, 1 - Math.min(1, Math.abs(d) * 2.2));
-        alvoC.el.style.setProperty('--desloc', desloc.toFixed(1) + 'px');
-        alvoC.el.style.setProperty('--escala', (1 + prox * 0.05).toFixed(3));
+    /* O ROLO — o tambor 3D de Projetos.
+       Uma conta só, sem ler layout nenhum: o progresso dentro do
+       trilho vira um índice contínuo, e o índice vira ângulo. A face
+       k está de frente (0°); a de trás dela, a 30°; e assim por
+       diante, nos dois sentidos. */
+    if (med.rolo && roloItens.length) {
+      var p = (y - med.rolo.topo) / med.rolo.curso;
+      p = p < 0 ? 0 : (p > 1 ? 1 : p);
+
+      var k = p * (roloItens.length - 1);
+
+      for (var r = 0; r < roloItens.length; r++) {
+        var delta = k - r;
+        var op    = 1 - delta * delta;
+        if (op < 0) op = 0;
+
+        var est = roloItens[r].style;
+        est.setProperty('--ang', (delta * ROLO_PASSO_ANG).toFixed(2) + 'deg');
+        est.setProperty('--op', op.toFixed(3));
+        /* a face que sumiu sai do caminho do ponteiro e do leitor de
+           tela — senão o texto invisível continua clicável e narrável */
+        roloItens[r].setAttribute('aria-hidden', op < 0.05 ? 'true' : 'false');
+      }
+
+      var atual = Math.round(k) + 1;
+      if (atual !== roloUltimo && roloConta) {
+        roloUltimo = atual;
+        roloConta.textContent = (atual < 10 ? '0' : '') + atual;
       }
     }
 
@@ -510,6 +545,17 @@
       li.querySelector('.serv__painel').setAttribute('aria-hidden', String(!ligado));
     });
   }
+
+  /* Monta o tambor. É esta função que TROCA a lista empilhada pelo
+     cilindro — nunca o contrário: sem ela (script fora do ar, ou
+     leitor que pediu menos movimento) a seção continua sendo quatro
+     nomes legíveis, em pé. */
+  function ligarRolo() {
+    if (!rolo || !roloItens.length || menosMovimento) return;
+    rolo.style.setProperty('--rolo-n', String(roloItens.length));
+    document.documentElement.classList.add('js--rolo');
+  }
+
 
   function ligarServicos() {
     if (!cards.length) return;
@@ -831,6 +877,12 @@
       if (menosMovimento) revelarTudo();
       else { revelarAbertura(); ligarObservador(); ligarEsteira(); }
 
+      /* ligarRolo ANTES de ligarMarca: é ele que põe .js--rolo, e é
+         .js--rolo que dá ao trilho a altura alta. ligarMarca chama
+         medir(), e medir lê essa altura — na ordem inversa o rolo
+         seria medido com o tamanho da lista empilhada e o tambor
+         giraria inteiro em poucos pixels de rolagem. */
+      ligarRolo();
       ligarMarca();
       ligarRelogio();
       ligarServicos();

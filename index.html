@@ -20,7 +20,7 @@
 
 <link rel="preload" href="assets/fonts/Switzer-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/IBMPlexMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/style.css?v=48">
+<link rel="stylesheet" href="assets/css/style.css?v=52">
 
 <script>
 (function () {
@@ -480,58 +480,51 @@
      Widepine Cafés. Substitui a versão anterior (nome + setor +
      escopo curto); a estrutura .cliente__dados/.cliente__falta saiu.
      ============================================================ -->
-<section class="marcas campo wrap" id="marcas" data-secao data-campo
+<section class="rolo campo" id="marcas" data-secao data-campo data-rolo
          data-num="04" data-nome="Projetos" aria-labelledby="marcas-titulo">
-  <h2 class="secao__ap ap rv" id="marcas-titulo">Projetos que já fizemos</h2>
-  <p class="marcas__lede lede rv">Traduzimos a essência de cada marca, do detalhe ao resultado final.</p>
 
-  <ul class="marcas__lista" role="list">
+  <!-- O trilho: a seção é ALTA (uma tela + um passo por cliente) só
+       para dar curso de rolagem. Quem fica parado na tela é o
+       .rolo__fixo, com position:sticky — nenhum scroll-jack, nenhuma
+       biblioteca: a rolagem continua sendo a do navegador, o JS só
+       lê o progresso e escreve o ângulo. -->
+  <div class="rolo__fixo">
 
-    <li class="cliente" role="listitem">
-      <h3 class="cliente__nome d d--2 rv">Collab</h3>
-      <p class="cliente__corpo rv">O Collab Brechós chegou à Jozzi como um evento de moda circular
-      premium que ainda precisava se posicionar nas redes sociais e atingir novos públicos. Com um
-      diagnóstico do objetivo da marca, construímos um plano de comunicação que acompanhou todas as
-      fases presentes nas datas do evento: descoberta, desejo, adesão e conversão. Após a criação da
-      identidade, posicionamos a marca como o maior encontro de brechós de Curitiba, expressando o
-      seu diferencial de propor uma moda secondhand com curadoria especializada.</p>
-    </li>
+    <div class="rolo__cabeca">
+      <h2 class="secao__ap ap rv" id="marcas-titulo">Projetos que já fizemos</h2>
+      <p class="marcas__lede lede rv">Traduzimos a essência de cada marca, do detalhe ao resultado final.</p>
+    </div>
 
-    <li class="cliente" role="listitem">
-      <h3 class="cliente__nome d d--2 rv">Claudia Choma</h3>
-      <p class="cliente__corpo rv">Claudia Choma, nutricionista materno-infantil há mais de 33 anos e
-      professora aposentada da Universidade Federal do Paraná, chegou à Jozzi com o objetivo de
-      finalizar a sua carreira no consultório, tendo um posicionamento maior nas redes sociais. A
-      partir disso, criamos a identidade da marca, que combinou o estilo clássico e romântico da
-      cliente com a tendência estratégica atual de profissionais da nutrição no meio digital. Com a
-      execução de um plano de conteúdos — da roteirização à aprovação — e de um site profissional,
-      os resultados, além de impressionantes, foram reais quando tratamos de métricas.</p>
-    </li>
+    <!-- Sem JavaScript esta lista é uma lista: os quatro nomes
+         empilhados, legíveis, sem 3D nenhum. É a classe .js--rolo
+         que monta o cilindro — nunca o contrário. -->
+    <ul class="rolo__lista" role="list" data-rolo-lista>
 
-    <li class="cliente" role="listitem">
-      <h3 class="cliente__nome d d--2 rv">Descomplica Perícias</h3>
-      <p class="cliente__corpo rv">A relação do direito com o mundo digital requer atenção e cuidado
-      na construção da linguagem ideal. O escritório de advocacia com foco em perícias e direito
-      médico Descomplica Perícias chegou à Jozzi com o objetivo de promover a marca nas redes
-      sociais. Com a criação da identidade, do blog de conteúdos e de um plano concreto de
-      postagens em paralelo ao tráfego pago, passamos a analisar as métricas que geram um alcance
-      maior do público específico almejado — transformando a imagem da Descomplica numa
-      oportunidade autêntica de orientação especializada, com a linguagem jurídica adaptada às
-      tendências do mercado.</p>
-    </li>
+      <li class="rolo__item" data-rolo-item>
+        <h3 class="rolo__nome d d--2">Collab</h3>
+        <p class="rolo__frase lede">O maior encontro de brechós de Curitiba.</p>
+      </li>
 
-    <li class="cliente" role="listitem">
-      <h3 class="cliente__nome d d--2 rv">Widepine Cafés</h3>
-      <p class="cliente__corpo rv">A Widepine chegou à Jozzi com uma identidade já preexistente e uma
-      consolidação forte no mercado, mas com o desejo de ampliar a experiência do site. Com pesquisa
-      de referências e de mercado, construímos banners mais dinâmicos e atualizamos as ferramentas
-      de acesso para formatos mais otimizados. O dono da marca acompanhou cada mudança para que o
-      desenvolvimento acompanhasse o que ele realmente queria transmitir. Com um novo copywriting
-      geral do site, a marca pôde fortalecer ainda mais o seu posicionamento, propondo uma melhor
-      experiência ao visitante.</p>
-    </li>
+      <li class="rolo__item" data-rolo-item>
+        <h3 class="rolo__nome d d--2">Claudia Choma</h3>
+        <p class="rolo__frase lede">Identidade, conteúdo e site para 33 anos de consultório.</p>
+      </li>
 
-  </ul>
+      <li class="rolo__item" data-rolo-item>
+        <h3 class="rolo__nome d d--2">Descomplica Perícias</h3>
+        <p class="rolo__frase lede">A linguagem jurídica adaptada ao digital.</p>
+      </li>
+
+      <li class="rolo__item" data-rolo-item>
+        <h3 class="rolo__nome d d--2">Widepine Cafés</h3>
+        <p class="rolo__frase lede">Uma nova experiência de site, do banner ao copywriting.</p>
+      </li>
+
+    </ul>
+
+    <p class="rolo__conta ap" aria-hidden="true"><span data-rolo-conta>01</span> / 04</p>
+
+  </div>
 </section>
 
 

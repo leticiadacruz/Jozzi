@@ -25,6 +25,7 @@
 - [Componentes previstos](#componentes-previstos) — 03 a 06
 - [O que falta de conteúdo](#o-que-falta-de-conteúdo)
 - [Portfólio de Styling (28/08)](#portfólio-de-styling-2808--grade--página-por-caso)
+- [Projetos vira um rolo (29/08)](#projetos-vira-um-rolo-2908)
 - [Favicon e auditoria mobile (28/08)](#favicon-e-auditoria-mobile-2808)
 - [Licenças de tipografia](#licenças-de-tipografia)
 
@@ -936,6 +937,55 @@ NÚMERO da seção muda, e toda página deste portfólio tem uma seção só,
 `data-num="00"` — o número nunca muda, o texto nunca troca. As 20 páginas
 (a grade + os 19 casos) precisaram do hardcoded já certo desde o início, não
 copiado sem ajuste do `index.html`.
+
+---
+
+## Projetos vira um rolo (29/08)
+
+A seção 04 era uma lista estática em diagonal, com um estudo de caso de
+6 a 8 linhas por cliente. A Jozzi pediu para transformar num rolo, com a
+referência da twist.com.br, e para trocar os textos longos por uma frase de
+impacto.
+
+**O que a referência realmente é.** De relance parece um marquee horizontal
+de logotipos. Não é: é um **cilindro 3D**. Medido no site deles — os nomes
+ficam nas faces de um tambor deitado, `rotateX` de 30° entre uma face e a
+seguinte, `translateZ(min(40vw,40vh))` de raio, `perspective: 1056px`, e a
+seção presa na tela enquanto o tambor gira com a rolagem. Reproduzido com os
+mesmos números; o que muda é o material: tipografia da Jozzi, o bege da
+seção, nenhuma cor nova.
+
+**Sem sequestrar a rolagem e sem biblioteca.** O trilho é uma seção alta com
+um filho `position: sticky` — a rolagem continua sendo a do navegador. O JS
+não anima nada: lê o progresso dentro do trilho e escreve dois números por
+face (`--ang`, `--op`), no mesmo quadro de rAF que já desenhava a régua do
+aparato. Nenhuma dependência nova.
+
+**Três decisões que a referência não entrega de graça:**
+
+1. *A face da frente transbordava a margem.* `translateZ` positivo amplia
+   (14%, com esses números), e como o item ocupa a largura da lista o excesso
+   sai pelos dois lados. Resolvido com um `scale()` derivado dos próprios
+   tokens de raio e perspectiva — por isso os dois são números puros: CSS não
+   divide `px` por `px`.
+2. *A opacidade linear deixa um vale.* No meio do caminho entre dois projetos
+   nenhum dos dois passava de 55% e o texto ficava lavado. Trocado pelo
+   quadrado da distância: o pior ponto virou 75%.
+3. *A ordem de partida importa.* `ligarRolo()` precisa vir antes de
+   `ligarMarca()`, porque é ele que dá ao trilho a altura que `medir()` vai
+   ler. Na ordem inversa o tambor gira inteiro em poucos pixels.
+
+**Os textos.** Os quatro estudos de caso saíram e viraram uma frase cada. As
+frases são **sínteses do que a própria Jozzi já tinha aprovado**, não
+material novo — "o maior encontro de brechós de Curitiba" está literalmente
+no texto antigo da Collab. Nada foi inventado, mas as quatro precisam do
+aval da Jozzi como copy final.
+
+**O que morreu junto:** `.marcas__lista`, `.cliente`, `.cliente__nome`,
+`.cliente__corpo`, `.cliente__projeto`, `.cliente__tags` e as 19 linhas de
+`nth-child` da diagonal — mais o trecho do `main.js` que movia os blocos com
+teto de 12px. Tudo removido, não comentado. `.marcas` e `.marcas__lede`
+ficaram: são usados pela página de Styling.
 
 ---
 

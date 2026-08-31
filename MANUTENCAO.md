@@ -192,40 +192,65 @@ imagem no HTML.
 
 ---
 
-## Acrescentar uma marca
+## Acrescentar um projeto ao rolo
 
-`.marcas__lista` / `.cliente` — hoje só usado em "Projetos que já fizemos"
-(`index.html`). **`styling.html` usava este componente até 28/08** (segunda
-rodada de Styling trocou aquilo por uma grade de fotos — ver "Portfólio de
-Styling" mais abaixo); se achar `.cliente` referenciado em `styling.html` no
-histórico do git, é resquício daquela versão.
+A seção 04 deixou de ser uma lista estática e virou um **tambor 3D**
+dirigido pela rolagem (referência pedida pela Jozzi: twist.com.br). Cada
+projeto é um `<li>` dentro de `[data-rolo-lista]`, no `index.html`:
 
 ```html
-<li class="cliente" role="listitem">
-  <h3 class="cliente__nome d d--2 rv">Nome da marca</h3>
-  <p class="cliente__corpo rv">O texto final, corrido.</p>
+<li class="rolo__item" data-rolo-item>
+  <h3 class="rolo__nome d d--2">Nome do cliente</h3>
+  <p class="rolo__frase lede">Uma frase. Curta.</p>
 </li>
 ```
 
-E, se passar de doze marcas, uma linha em `style.css` na seção 10e:
+**Não precisa mexer em CSS nem em JS para acrescentar.** O JS conta os itens
+sozinho (`--rolo-n`), o trilho cresce um passo por projeto e os ângulos são
+calculados a partir da contagem. Só o `0N` fixo do contador, no
+`.rolo__conta`, é escrito à mão — é o total, e é o único número a atualizar.
 
-```css
-.cliente:nth-child(20) { grid-column: 4 / span 5; grid-row: 20; }
-```
+**A frase é uma frase, não um parágrafo.** O tambor gira: se o texto passar
+de duas linhas, a face vizinha começa a colidir com a da frente. Duas linhas
+no desktop, três no telefone, é o teto real.
 
-A coluna segue 1, 4, 7, 1, 4, 7… e a linha é a posição do item na lista. A
-colocação automática do Grid **não** serve: a partir da quarta marca ela
-encaixaria o bloco ao lado do anterior em vez de abrir linha nova, e a
-diagonal quebraria.
+### Os três números do tambor
 
-**Todas as marcas ficam no mesmo corpo.** Não aumentar o nome de um cliente
-para "dar destaque": entre clientes, escala é declaração sobre a relação, não
-composição.
+Todos no `.rolo`, em `style.css`:
 
-Sobre logotipos: hoje a seção usa só os nomes tipográficos. Se um dia entrarem
-logos, precisam ser vetor bom para **todas** as marcas — um PNG no meio de dois
-SVGs aparece. Nunca redesenhar, redimensionar fora de proporção ou aplicar
-efeito no logo de um cliente.
+| | | |
+| --- | --- | --- |
+| `--rolo-passo` | 62svh | quanto de rolagem cada projeto ocupa. Aumentar = tambor mais "pesado" |
+| `--rolo-raio-n` | 200 | o raio do cilindro. Maior = faces mais espalhadas |
+| `--rolo-persp-n` | 1600 | a profundidade. Menor = distorção mais dramática |
+
+**`--rolo-fator` é derivado, não se mexe nele.** Ele existe porque
+`translateZ` positivo aproxima do observador e AMPLIA: sem compensar, a face
+da frente saía 14% maior e transbordava a margem da página pelos dois lados.
+O `scale(var(--rolo-fator))` devolve a face da frente ao tamanho real. Se
+mudar o raio ou a perspectiva, o fator se recalcula sozinho — é por isso que
+os dois são números puros e não comprimentos (CSS não divide `px` por `px`).
+
+### Duas armadilhas já pagas
+
+**`ligarRolo()` tem de rodar ANTES de `ligarMarca()`.** É `ligarRolo` que põe
+a classe `.js--rolo`, e é `.js--rolo` que dá ao trilho a altura alta.
+`ligarMarca` chama `medir()`, que lê essa altura. Na ordem inversa o rolo é
+medido com o tamanho da lista empilhada e o tambor gira inteiro em poucos
+pixels de rolagem.
+
+**A opacidade cai com o QUADRADO da distância, não linearmente.** Com queda
+linear existe um vale no meio do caminho entre um projeto e o seguinte onde
+nenhum dos dois passa de 55% — o texto fica lavado em boa parte do curso. Com
+o quadrado, o pior ponto é 75%. Medido.
+
+### Sem JavaScript, sem tambor
+
+O 3D inteiro vive atrás de `.js--rolo`. Sem script, com o script quebrado
+(`.js--sem-motor`) ou sob `prefers-reduced-motion`, a seção é o que o HTML
+diz que ela é: quatro nomes e quatro frases empilhados, todos opacos, sem
+trilho alto e sem `sticky`. **É essa a ordem certa** — o JS MONTA o tambor,
+nunca o desmonta. Um script que não sobe não pode esconder conteúdo.
 
 ---
 

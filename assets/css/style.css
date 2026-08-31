@@ -1209,20 +1209,21 @@ img.onde__mapa {
 .js--cursor [data-cursor] { cursor: none; }
 
 
-/* 10e. SEÇÃO 04 — MARCAS ------------------------------------
-   Blocos esparsos numa diagonal sobre campo aberto. Sem colunas
-   pareadas, sem duas zonas, sem interação — nada aqui repete a
-   estrutura de 01, 02 ou 03.
+/* 10e. SEÇÃO 04 — PROJETOS · O ROLO -------------------------
+   A referência pedida (twist.com.br) NÃO é um marquee horizontal:
+   é um cilindro 3D. Os nomes ficam nas faces de um tambor deitado
+   que gira em rotateX conforme a rolagem, com a seção presa na
+   tela. Medido no site deles: passo de 30° por item, raio
+   translateZ(min(40vw,40vh)), perspective ~1056px, e a opacidade
+   caindo 1 → 1/3 → 0 nas faces que se afastam. Reproduzido com os
+   mesmos números — o que muda é o material: tipografia da Jozzi,
+   fundo bege da seção, nenhuma cor nova.
 
-   Regra de posição: cada marca avança três colunas e uma linha em
-   relação à anterior, dando a volta a cada três. Com a quarta
-   marca a diagonal reinicia na coluna 1.
-
-   O corpo é o MESMO para todas. Variar a escala entre clientes não
-   é composição — é declaração sobre a relação.
-
-   O item chama-se .cliente e não .marca: .marca já é o logotipo da
-   Jozzi no topo da página.
+   Como se prende sem sequestrar a rolagem: a seção é ALTA e o
+   filho é `position: sticky`. Não há scroll-jack, não há
+   biblioteca — a rolagem continua sendo a do navegador, e o JS só
+   lê o progresso e escreve o ângulo. Se o JS não subir, sobra uma
+   lista de nomes empilhados (ver .js--rolo).
    ----------------------------------------------------------- */
 .marcas {
   padding-top: clamp(5rem, 16vh, 11rem);
@@ -1230,103 +1231,135 @@ img.onde__mapa {
   border-top: 1px solid var(--fio);
 }
 
-.marcas__lista {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: clamp(3.5rem, 11vh, 7rem) var(--calha);
-}
-
-/* NÍVEL 3 — interpolação por scroll, com teto de 12px, que é o mesmo
-   limite de deslocamento do resto do sistema. Os três blocos não se
-   movem juntos: é o bastante para a diagonal respirar e pouco o
-   bastante para não virar parallax. */
-/* sem transition aqui: o JS já recalcula --desloc e --escala em
-   todo quadro de rolagem, e o Lenis já suaviza a rolagem por baixo.
-   Uma transição CSS por cima do valor contínuo só atrasaria o
-   elemento atrás do scroll — dupla suavização lê como flutuante. */
-.cliente {
-  transform: translateY(var(--desloc, 0px)) scale(var(--escala, 1));
-  transform-origin: left center;
-  will-change: transform;
-}
-
-.cliente__nome {
-  margin: 0 0 clamp(.9rem, 2.2vh, 1.4rem);
-  font-weight: 500;
-}
-
-/* Estudo de caso curto, no registro de texto — a mesma cor e o
-   mesmo corpo de qualquer parágrafo do site. A medida vem da
-   própria coluna da diagonal (5 de 12), não de um max-width novo:
-   é a mesma lógica de .quem__corpo. */
-.cliente__corpo {
-  margin: 0;
-  color: var(--fg-2);
-}
-
-/* subtítulo opcional do projeto — quando o nome do cliente e o nome
-   do projeto não são o mesmo (ex.: "Amanda" / "Woman"). Mesma régua
-   de .sobre__papel: aparato, 65% de tinta. */
-.cliente__projeto {
-  margin: -.4rem 0 clamp(.9rem, 2.2vh, 1.4rem);
-  color: var(--fg-3);
-}
-
-/* etiquetas do case: mesma lista de Serviços (.serv__tags), só com
-   espaço próprio antes do parágrafo — lá ela nasce dentro de um
-   painel que já tem padding; aqui ela é filha direta do <li>. */
-.cliente__tags {
-  margin: 0 0 clamp(.9rem, 2.2vh, 1.4rem);
-}
-
-/* subtítulo da seção, único lede fora da abertura — a mesma
-   função: uma frase de transição antes do conteúdo denso */
 .marcas__lede {
   margin: -.6rem 0 clamp(2.5rem, 8vh, 4.5rem);
   max-width: 32ch;
 }
 
+/* ---- o trilho ---- */
+.rolo {
+  border-top: 1px solid var(--fio);
+  /* um passo de rolagem por cliente. É este número que decide se o
+     tambor gira "pesado" ou "solto" — não a duração de nenhuma
+     animação, porque não há nenhuma: quem anda é o dedo. */
+  --rolo-passo: 62svh;
+  /* Profundidade e raio como NÚMEROS puros, não comprimentos: é o
+     que permite calcular o fator de compensação abaixo (CSS não
+     divide length por length, mas divide número por número).
 
-/* ---- ≥1025: a diagonal ---- */
-@media (min-width: 1025px) {
-  .marcas__lista { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+     Por que compensar: translateZ positivo aproxima do observador e
+     AMPLIA — com perspectiva 1600 e raio 200, a face da frente sai
+     14% maior. Como o item tem a largura da lista, esse excesso
+     transborda a margem da página pelos dois lados e o nome encosta
+     na borda da tela. O scale(fator) devolve a face da frente ao
+     tamanho real; as faces que giram continuam encolhendo sozinhas,
+     porque o Z efetivo delas é menor. */
+  --rolo-persp-n: 1600;
+  --rolo-raio-n: 200;
+  --rolo-fator: calc((var(--rolo-persp-n) - var(--rolo-raio-n)) / var(--rolo-persp-n));
+}
 
-  /* Coluna e linha explícitas. A colocação automática não serve:
-     a partir da quarta marca ela encaixaria o bloco AO LADO do
-     terceiro em vez de abrir linha nova, e a diagonal quebraria.
-     Uma marca por linha, sempre. Estendido até o 19 em 28/08, para
-     o portfólio de Styling. Passando de dezenove, acrescentar uma
-     linha aqui — a coluna é 1, 4, 7, 1, 4, 7... */
-  .cliente:nth-child(1) { grid-column: 1 / span 5; grid-row: 1; }
-  .cliente:nth-child(2) { grid-column: 4 / span 5; grid-row: 2; }
-  .cliente:nth-child(3) { grid-column: 7 / span 5; grid-row: 3; }
-  .cliente:nth-child(4) { grid-column: 1 / span 5; grid-row: 4; }
-  .cliente:nth-child(5) { grid-column: 4 / span 5; grid-row: 5; }
-  .cliente:nth-child(6) { grid-column: 7 / span 5; grid-row: 6; }
-  .cliente:nth-child(7) { grid-column: 1 / span 5; grid-row: 7; }
-  .cliente:nth-child(8) { grid-column: 4 / span 5; grid-row: 8; }
-  .cliente:nth-child(9) { grid-column: 7 / span 5; grid-row: 9; }
-  .cliente:nth-child(10) { grid-column: 1 / span 5; grid-row: 10; }
-  .cliente:nth-child(11) { grid-column: 4 / span 5; grid-row: 11; }
-  .cliente:nth-child(12) { grid-column: 7 / span 5; grid-row: 12; }
-  /* estendido em 28/08 para o portfólio de Styling — mesma fórmula,
-     coluna 1, 4, 7 se repetindo a cada três linhas */
-  .cliente:nth-child(13) { grid-column: 1 / span 5; grid-row: 13; }
-  .cliente:nth-child(14) { grid-column: 4 / span 5; grid-row: 14; }
-  .cliente:nth-child(15) { grid-column: 7 / span 5; grid-row: 15; }
-  .cliente:nth-child(16) { grid-column: 1 / span 5; grid-row: 16; }
-  .cliente:nth-child(17) { grid-column: 4 / span 5; grid-row: 17; }
-  .cliente:nth-child(18) { grid-column: 7 / span 5; grid-row: 18; }
-  .cliente:nth-child(19) { grid-column: 1 / span 5; grid-row: 19; }
+.rolo__fixo {
+  position: sticky;
+  top: 0;
+  min-height: 100svh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding-top: clamp(3rem, 10vh, 7rem);
+  padding-bottom: clamp(2rem, 6vh, 4rem);
+  padding-left: var(--recuo);
+  padding-right: var(--margem);
+  overflow: hidden;
+}
+
+.rolo__cabeca { align-self: start; }
+
+
+/* ---- a lista, antes de virar tambor ----
+   Este é o estado SEM JavaScript, e é ele que tem de ser legível:
+   quatro nomes e quatro frases, empilhados. */
+.rolo__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: clamp(2.5rem, 8vh, 5rem);
+  align-content: center;
+}
+
+.rolo__nome { margin: 0; }
+
+.rolo__frase {
+  margin: .5rem 0 0;
+  max-width: 34ch;
+  color: var(--fg-2);
+}
+
+.rolo__conta {
+  align-self: end;
+  justify-self: end;
+  margin: 0;
+  color: var(--fg-3);
+  font-variant-numeric: tabular-nums;
+  /* só faz sentido quando existe um tambor girando */
+  visibility: hidden;
 }
 
 
-/* ---- ≤1024: a diagonal não sobrevive a campo estreito ---- */
-@media (max-width: 1024px) {
-  .marcas__lista { gap: clamp(3rem, 9vh, 5rem); }
-  .cliente__corpo { max-width: 32rem; }
+/* ---- com JavaScript: o tambor ---- */
+.js--rolo .rolo {
+  min-height: calc(100svh + (var(--rolo-n, 4) - 1) * var(--rolo-passo));
+}
+
+.js--rolo .rolo__lista {
+  position: relative;
+  display: block;
+  perspective: calc(var(--rolo-persp-n) * 1px);
+  align-self: center;
+  height: 100%;
+  min-height: 15rem;
+}
+
+.js--rolo .rolo__item {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  /* 100% e não uma medida menor: o ponto de fuga da perspectiva
+     fica no CENTRO da lista, e um item mais estreito teria o
+     próprio centro à esquerda desse ponto — com translateZ a
+     projeção o empurraria para fora da tela pela esquerda. Item da
+     largura da lista = centro do item sobre o ponto de fuga = zero
+     deslize horizontal. Quem limita a medida do texto é a frase,
+     não a caixa. */
+  width: 100%;
+  /* --ang e --op são escritos pelo JS a cada quadro. O translate de
+     -50% em Y é o que põe o item no eixo do tambor; o translateZ é
+     o raio. */
+  transform:
+    translateY(-50%)
+    rotateX(var(--ang, 0deg))
+    translateZ(calc(var(--rolo-raio-n) * 1px))
+    scale(var(--rolo-fator));
+  opacity: var(--op, 0);
+  /* sem transition: o valor já é contínuo, vem da rolagem. Uma
+     transição por cima viraria arrasto — a mesma razão pela qual a
+     diagonal antiga também não tinha. */
+  backface-visibility: hidden;
+}
+
+.js--rolo .rolo__conta { visibility: visible; }
+
+/* motor morto: o tambor nunca se monta, a lista fica em pé */
+.js--sem-motor .rolo__lista { position: static; display: grid; }
+.js--sem-motor .rolo__item { position: static; transform: none; opacity: 1; }
+
+
+@media (max-width: 768px) {
+  .rolo__fixo { padding-top: clamp(2rem, 8vh, 4rem); }
+  .rolo__frase { max-width: 28ch; }
+  /* tela baixa: tambor mais fechado, senão as faces vizinhas saem
+     da área visível e o rolo vira um item só piscando */
+  .rolo { --rolo-raio-n: 120; }
 }
 
 
@@ -2101,7 +2134,14 @@ html.js--sem-motor .carregando { display: none; }
   /* a régua continua medindo — o que sai é o deslizar da largura e
      da cor entre um segmento e o seguinte */
   .aparato__seg { transition: none; }
-  .cliente { transform: none; }
+  /* quem pediu menos movimento não recebe tambor nenhum: o JS nem
+     liga o módulo (ver ligarRolo), e estas regras cobrem o intervalo
+     até ele rodar — a seção vira a lista empilhada de sempre. */
+  .rolo { min-height: 0; }
+  .rolo__fixo { position: static; min-height: 0; }
+  .rolo__lista { position: static; display: grid; perspective: none; height: auto; }
+  .rolo__item { position: static; transform: none; opacity: 1; }
+  .rolo__conta { display: none; }
   .serv__nome,
   .serv__card.is-ativo .serv__nome { transition: color var(--t-micro) linear; }
   .js--serv .serv__painel { transition: none; }
