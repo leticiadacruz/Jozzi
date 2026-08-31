@@ -993,10 +993,20 @@ próprias:
   texto marrom. O `data-inv` do HTML não pinta nada — é só o aviso ao aparato
   para trocar de cor ao atravessar.
 
-⚠ **Os quatro `.mp4` são placeholders**, texturas geradas com ffmpeg a pedido
-da Jozzi ("ainda não tenho os vídeos, pode colocar aleatório"). Não são
-material de campanha e **não devem ir ao ar**. Deliberadamente não usei vídeo
-de stock nem os da referência — aqueles são de clientes de outra agência.
+⚠ **Os quatro `.mp4` são temporários.** A Jozzi ainda não tem os vídeos e
+autorizou stock ("pode ser um vídeo da web"). São clipes de seda em movimento
+do Pexels — licença de uso gratuito e comercial, sem atribuição — baixados em
+HD e tratados aqui: dessaturados e puxados para o marrom da paleta, o mesmo
+tratamento do mapa em Onde ficamos.
+
+**Continuam não sendo material de campanha, e não deviam ir ao ar assim.**
+São tecido genérico: funcionam porque a Jozzi é agência de moda e a textura
+conversa com isso, mas não mostram trabalho nenhum. Escolhi textura em vez de
+cena de propósito — um café de stock atrás de "Widepine Cafés" sugeriria ser
+o café deles, o que a própria licença do Pexels proíbe ("não sugerir endosso
+por marcas") e que seria enganoso de qualquer forma. Os vídeos da referência
+também estavam fora de questão: são campanhas de clientes de outra agência.
+
 Trocar mantendo o nome do arquivo; nada mais muda.
 
 **Os textos.** Os quatro estudos de caso saíram e viraram uma frase cada. As

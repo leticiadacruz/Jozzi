@@ -216,9 +216,17 @@ no desktop, três no telefone, é o teto real.
 
 ### Trocar os vídeos de fundo
 
-**Os quatro `.mp4` em `assets/video/` são placeholders**, gerados aqui com
-ffmpeg — textura, não conteúdo. Não são material de campanha de ninguém, e
-não devem ir ao ar.
+**Os quatro `.mp4` em `assets/video/` são temporários**: stock do Pexels
+(seda em movimento), baixado em HD e tratado aqui — dessaturado e puxado para
+o marrom da paleta, o mesmo tratamento do mapa do Google em Onde ficamos.
+Licença Pexels: uso gratuito e comercial, sem atribuição, modificação
+permitida.
+
+**Não são material de campanha da Jozzi e não deviam ir ao ar assim.** São
+tecido genérico — servem porque a Jozzi é uma agência de moda e a textura
+conversa com isso, mas não mostram trabalho nenhum. A licença do Pexels
+também proíbe usar a imagem de forma que sugira endosso de marca: por isso
+são texturas e não cenas que finjam ser o cliente.
 
 Para pôr o vídeo real: **substituir o arquivo mantendo o nome**
 (`collab.mp4`, `claudia-choma.mp4`, `descomplica-pericias.mp4`,
@@ -230,9 +238,12 @@ Ao exportar o vídeo real:
   faixa de som só adiciona peso.
 - **Curto e em laço** (8 a 15s). Ele repete enquanto o leitor estiver
   naquele projeto.
-- **Leve.** Os quatro placeholders somam 848KB. O vídeo entra por cima de um
-  véu a 82% — detalhe fino se perde de qualquer jeito, então não vale
-  exportar em alta taxa. 1280×720 é suficiente.
+- **Leve.** Os quatro temporários somam 4,2MB (~1MB cada). O vídeo entra por
+  cima de um véu a 82% — detalhe fino se perde de qualquer jeito, então não
+  vale exportar em alta taxa. 1280×720 e CRF 31 é o que está sendo usado.
+- **Dessaturar.** O comando de tratamento está no histórico do git (commit do
+  vídeo): `hue=s=0.14` mais `colorbalance` puxando para o quente. Vídeo cru,
+  com cor saturada, briga com a paleta de sete cores do site.
 - **O centro é o que aparece.** `object-fit: cover` recorta as bordas
   conforme a proporção da tela.
 
