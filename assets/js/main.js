@@ -310,13 +310,30 @@
   var roloConta = document.querySelector('[data-rolo-conta]');
   var roloVideos = [].slice.call(document.querySelectorAll('[data-rolo-video]'));
   var roloTocando = -1;   /* qual vídeo está tocando agora */
-  var ROLO_PASSO_ANG = 30;    /* graus entre uma face e a seguinte */
-  /* A opacidade cai com o QUADRADO da distância, não linearmente.
-     Linear (o que a referência sugere de relance) deixa um vale no
-     meio do caminho entre um cliente e o seguinte onde NENHUM dos
-     dois passa de 55% — o texto fica lavado durante boa parte do
-     curso. Com o quadrado, a face da frente segura 75% no pior
-     ponto e some exatamente quando a próxima chega. Medido. */
+  /* 60° e não os 30° da referência: lá cada face é um nome e uma
+     linha; aqui é um parágrafo inteiro. Com 30° as faces vizinhas
+     ficavam quase de frente e o texto de trás atravessava o da
+     frente. A 60° a vizinha já está bem inclinada — o texto dela
+     comprime e sai de leitura sozinho, antes mesmo da opacidade. */
+  var ROLO_PASSO_ANG = 60;
+  /* A opacidade tem PLATÔ e depois cai — não é uma rampa.
+     Rampa (linear, ou mesmo o quadrado que usei enquanto os textos
+     eram curtos) mantém as duas faces meio visíveis por metade do
+     curso, e com parágrafo inteiro isso vira dois textos sobrepostos
+     e ilegíveis. Com o platô, a face da frente fica CHEIA em quase
+     todo o trecho dela e a troca acontece rápido, num pedaço curto
+     de rolagem: lê-se um texto por vez.
+     Os dois números são o começo e o fim da queda, em unidades de
+     "distância até a face". */
+  var ROLO_OP_INI = 0.34;
+  var ROLO_OP_FIM = 0.64;
+
+  /* transição suave entre 0 e 1 — sem isto a troca tem quina */
+  function suavizar(a, b, x) {
+    var t = (x - a) / (b - a);
+    if (t < 0) t = 0; else if (t > 1) t = 1;
+    return t * t * (3 - 2 * t);
+  }
   var roloUltimo = -1;
 
   var med = { vh: 0, secs: [], inv: [], rolo: null, idMeio: 0, horaMeio: 0, regua: false };
@@ -460,11 +477,29 @@
 
       for (var r = 0; r < roloItens.length; r++) {
         var delta = k - r;
-        var op    = 1 - delta * delta;
-        if (op < 0) op = 0;
+        var op    = 1 - suavizar(ROLO_OP_INI, ROLO_OP_FIM, Math.abs(delta));
+
+        /* O ângulo também tem platô. Linear (ang = delta * passo), a
+           face da frente só fica reta no ponto exato da troca — em
+           todo o resto do trecho ela carrega alguns graus de
+           inclinação, e num parágrafo de oito linhas isso lê como
+           itálico torto. Com a suavização a face fica praticamente
+           reta na maior parte do curso e gira rápido na passagem.
+           Custa a equidistância angular entre as faces, que ninguém
+           percebe; devolve texto reto, que todo mundo percebe. */
+        var d1 = Math.abs(delta);
+        if (d1 > 1) d1 = 1;
+        /* o platô começa em 0,30 e não em 0: suavizar(0,1,x) ainda
+           devolvia 21° no meio do trecho de leitura. Deslocado, a
+           face fica a ~1° enquanto está sendo lida e concentra o
+           giro no fim, quando já está saindo. */
+        var giro = (delta < 0 ? -1 : 1) * suavizar(0.30, 1, d1) * ROLO_PASSO_ANG;
+        /* fora do primeiro vizinho o ângulo volta a ser linear, senão
+           as faces distantes empilhariam todas no mesmo lugar */
+        if (Math.abs(delta) > 1) giro = delta * ROLO_PASSO_ANG;
 
         var est = roloItens[r].style;
-        est.setProperty('--ang', (delta * ROLO_PASSO_ANG).toFixed(2) + 'deg');
+        est.setProperty('--ang', giro.toFixed(2) + 'deg');
         est.setProperty('--op', op.toFixed(3));
         /* a face que sumiu sai do caminho do ponteiro e do leitor de
            tela — senão o texto invisível continua clicável e narrável */

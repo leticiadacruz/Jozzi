@@ -1242,7 +1242,9 @@ img.onde__mapa {
   /* um passo de rolagem por cliente. É este número que decide se o
      tambor gira "pesado" ou "solto" — não a duração de nenhuma
      animação, porque não há nenhuma: quem anda é o dedo. */
-  --rolo-passo: 62svh;
+  /* 88svh e não 62: o texto de cada projeto passou de duas linhas
+     para um parágrafo, e o curso tem de dar tempo de ler. */
+  --rolo-passo: 88svh;
   /* Profundidade e raio como NÚMEROS puros, não comprimentos: é o
      que permite calcular o fator de compensação abaixo (CSS não
      divide length por length, mas divide número por número).
@@ -1255,7 +1257,10 @@ img.onde__mapa {
      tamanho real; as faces que giram continuam encolhendo sozinhas,
      porque o Z efetivo delas é menor. */
   --rolo-persp-n: 1600;
-  --rolo-raio-n: 200;
+  /* 380 e não 200: o raio é o que separa uma face da seguinte.
+     Com faces de ~100px (as frases curtas) 200 bastava; com o
+     parágrafo inteiro a face tem ~340px e precisa de mais volta. */
+  --rolo-raio-n: 380;
   --rolo-fator: calc((var(--rolo-persp-n) - var(--rolo-raio-n)) / var(--rolo-persp-n));
 }
 
@@ -1348,8 +1353,12 @@ img.onde__mapa {
 .rolo__nome { margin: 0; }
 
 .rolo__frase {
-  margin: .5rem 0 0;
-  max-width: 34ch;
+  margin: .8rem 0 0;
+  /* 62ch e não 34: com os textos longos que a Jozzi trouxe, 34ch
+     dava treze linhas e a face empilhava mais alto que a distância
+     entre uma face e a seguinte — o texto de trás atravessava o da
+     frente. Mais largura, menos linhas. */
+  max-width: 62ch;
   color: var(--fg-2);
 }
 
@@ -1412,12 +1421,26 @@ img.onde__mapa {
 .js--sem-motor .rolo__item { position: static; transform: none; opacity: 1; }
 
 
+/* Tela BAIXA — o critério é altura, não largura: o parágrafo mais
+   longo (Claudia Choma, 19 linhas em telefone) media 516px e a face
+   é recortada pelo overflow do .rolo__fixo a partir de ~568px de
+   viewport. Medido em 320x568, onde o texto perdia as últimas
+   linhas. Aqui o corpo encolhe o suficiente para caber inteiro.
+
+   Se um texto novo passar de ~20 linhas no telefone, este é o ponto
+   que volta a estourar — ver MANUTENCAO. */
+@media (max-height: 660px) {
+  .rolo__nome { font-size: clamp(1.5rem, 5.5vw, 1.9rem); }
+  .rolo__frase { font-size: .9375rem; line-height: 1.32; }
+  .rolo__fixo { padding-top: clamp(1.2rem, 4vh, 2rem); }
+}
+
 @media (max-width: 768px) {
   .rolo__fixo { padding-top: clamp(2rem, 8vh, 4rem); }
   .rolo__frase { max-width: 28ch; }
   /* tela baixa: tambor mais fechado, senão as faces vizinhas saem
      da área visível e o rolo vira um item só piscando */
-  .rolo { --rolo-raio-n: 120; }
+  .rolo { --rolo-raio-n: 240; }
 }
 
 

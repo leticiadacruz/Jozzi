@@ -1,6 +1,6 @@
 # Manutenção
 
-Guia para quem edita o site. Não é preciso saber programar.
+Guia para quem edita o site.
 
 As regras completas da direção estão no `README.md`. Aqui está só o que fazer,
 e o que nunca fazer.
@@ -210,9 +210,16 @@ sozinho (`--rolo-n`), o trilho cresce um passo por projeto e os ângulos são
 calculados a partir da contagem. Duas coisas ficam à mão: o `0N` do contador
 em `.rolo__conta` (é o total), e o `<video>` correspondente — ver abaixo.
 
-**A frase é uma frase, não um parágrafo.** O tambor gira: se o texto passar
-de duas linhas, a face vizinha começa a colidir com a da frente. Duas linhas
-no desktop, três no telefone, é o teto real.
+**O texto pode ser um parágrafo** — foi recalibrado para isso em 29/08,
+quando a Jozzi trocou as frases curtas pelos textos completos dos cases. O
+teto real hoje é **cerca de 20 linhas no telefone**. Acima disso a face passa
+de ~520px e o `overflow` do `.rolo__fixo` corta as últimas linhas em telas
+baixas (medido em 320×568, o pior caso).
+
+Se um texto novo estourar esse limite, os lugares para mexer, nesta ordem:
+`--rolo-passo` (mais curso), `max-width` da `.rolo__frase` (mais largura,
+menos linhas) e a media query `max-height: 660px`, que já encolhe o corpo
+para caber.
 
 ### Trocar os vídeos de fundo
 
@@ -261,9 +268,24 @@ Todos no `.rolo`, em `style.css`:
 
 | | | |
 | --- | --- | --- |
-| `--rolo-passo` | 62svh | quanto de rolagem cada projeto ocupa. Aumentar = tambor mais "pesado" |
-| `--rolo-raio-n` | 200 | o raio do cilindro. Maior = faces mais espalhadas |
+| `--rolo-passo` | 88svh | quanto de rolagem cada projeto ocupa. Aumentar = tambor mais "pesado" |
+| `--rolo-raio-n` | 380 | o raio do cilindro. Maior = faces mais espalhadas |
 | `--rolo-persp-n` | 1600 | a profundidade. Menor = distorção mais dramática |
+
+E três no `main.js`, que decidem o RITMO da troca:
+
+| | | |
+| --- | --- | --- |
+| `ROLO_PASSO_ANG` | 60° | ângulo entre uma face e a seguinte |
+| `ROLO_OP_INI` / `ROLO_OP_FIM` | 0.34 / 0.64 | onde a opacidade começa e termina de cair |
+
+**Os três platôs.** Tanto o ângulo quanto a opacidade usam `suavizar()`
+(smoothstep) com o início deslocado, e não uma rampa. A razão é a mesma nos
+dois casos: com rampa, a face da frente carrega inclinação e transparência
+durante todo o trecho em que está sendo lida. Com platô, ela fica reta e
+opaca enquanto é o assunto, e a mudança se concentra num pedaço curto de
+rolagem. Com parágrafo de oito linhas isso é a diferença entre ler e não ler
+— alguns graus de rotação num texto longo leem como itálico torto.
 
 **`--rolo-fator` é derivado, não se mexe nele.** Ele existe porque
 `translateZ` positivo aproxima do observador e AMPLIA: sem compensar, a face
