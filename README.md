@@ -975,6 +975,30 @@ aparato. Nenhuma dependência nova.
    `ligarMarca()`, porque é ele que dá ao trilho a altura que `medir()` vai
    ler. Na ordem inversa o tambor gira inteiro em poucos pixels.
 
+**O fundo em vídeo (29/08).** Um vídeo por projeto, empilhados, com a
+opacidade seguindo o mesmo giro do tambor — como na referência. Três decisões
+próprias:
+
+- **Só um toca, e só em cena.** `preload="none"` e sem `autoplay` no HTML:
+  quem manda tocar é o JS, no vídeo da face da frente, e pausa tudo quando o
+  leitor sai da seção. Com `autoplay` na tag os quatro baixariam e tocariam na
+  carga da página, para quem nunca chega na 04. Medido: **zero vídeo baixado**
+  sem JavaScript e sob `prefers-reduced-motion`.
+- **O véu é marrom, não preto.** É a tinta do texto do site, já está na paleta
+  e era a única das sete cores que ainda não servia de fundo a nenhuma seção.
+  A 82% o vídeo respira por baixo e o nome fica com 7,4:1 mesmo no pior caso
+  aritmético (vídeo branco puro sob o véu).
+- **A inversão de cor mora em `.js--rolo`, não na classe `.inv`.** Sem vídeo
+  por baixo não há motivo para escurecer: sem JS a seção continua bege com
+  texto marrom. O `data-inv` do HTML não pinta nada — é só o aviso ao aparato
+  para trocar de cor ao atravessar.
+
+⚠ **Os quatro `.mp4` são placeholders**, texturas geradas com ffmpeg a pedido
+da Jozzi ("ainda não tenho os vídeos, pode colocar aleatório"). Não são
+material de campanha e **não devem ir ao ar**. Deliberadamente não usei vídeo
+de stock nem os da referência — aqueles são de clientes de outra agência.
+Trocar mantendo o nome do arquivo; nada mais muda.
+
 **Os textos.** Os quatro estudos de caso saíram e viraram uma frase cada. As
 frases são **sínteses do que a própria Jozzi já tinha aprovado**, não
 material novo — "o maior encontro de brechós de Curitiba" está literalmente

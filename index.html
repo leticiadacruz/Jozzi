@@ -20,7 +20,7 @@
 
 <link rel="preload" href="assets/fonts/Switzer-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/IBMPlexMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/style.css?v=52">
+<link rel="stylesheet" href="assets/css/style.css?v=54">
 
 <script>
 (function () {
@@ -480,7 +480,7 @@
      Widepine Cafés. Substitui a versão anterior (nome + setor +
      escopo curto); a estrutura .cliente__dados/.cliente__falta saiu.
      ============================================================ -->
-<section class="rolo campo" id="marcas" data-secao data-campo data-rolo
+<section class="rolo campo" id="marcas" data-secao data-campo data-rolo data-inv
          data-num="04" data-nome="Projetos" aria-labelledby="marcas-titulo">
 
   <!-- O trilho: a seção é ALTA (uma tela + um passo por cliente) só
@@ -489,6 +489,29 @@
        biblioteca: a rolagem continua sendo a do navegador, o JS só
        lê o progresso e escreve o ângulo. -->
   <div class="rolo__fixo">
+
+    <!-- O fundo. Um vídeo por projeto, empilhados, com a opacidade
+         seguindo o mesmo giro do tambor — igual à referência.
+
+         `preload="none"` e SEM `autoplay`: quem manda tocar é o JS, e
+         só no vídeo que está à frente. Com autoplay no HTML os quatro
+         baixariam e tocariam de uma vez, na carga da página, mesmo
+         que o leitor nunca chegue nesta seção.
+
+         PLACEHOLDERS: os quatro .mp4 são texturas geradas aqui, não
+         material de campanha. Trocar pelo vídeo real de cada projeto
+         mantendo o nome do arquivo — nada mais precisa mudar. -->
+    <div class="rolo__fundo" aria-hidden="true">
+      <video class="rolo__video" data-rolo-video muted loop playsinline preload="none"
+             src="assets/video/collab.mp4"></video>
+      <video class="rolo__video" data-rolo-video muted loop playsinline preload="none"
+             src="assets/video/claudia-choma.mp4"></video>
+      <video class="rolo__video" data-rolo-video muted loop playsinline preload="none"
+             src="assets/video/descomplica-pericias.mp4"></video>
+      <video class="rolo__video" data-rolo-video muted loop playsinline preload="none"
+             src="assets/video/widepine-cafes.mp4"></video>
+    </div>
+    <div class="rolo__veu" aria-hidden="true"></div>
 
     <div class="rolo__cabeca">
       <h2 class="secao__ap ap rv" id="marcas-titulo">Projetos que já fizemos</h2>

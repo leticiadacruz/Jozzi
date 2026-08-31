@@ -1265,6 +1265,8 @@ img.onde__mapa {
   min-height: 100svh;
   display: grid;
   grid-template-rows: auto 1fr auto;
+  /* o conteúdo sobe acima do vídeo e do véu */
+  isolation: isolate;
   padding-top: clamp(3rem, 10vh, 7rem);
   padding-bottom: clamp(2rem, 6vh, 4rem);
   padding-left: var(--recuo);
@@ -1273,6 +1275,62 @@ img.onde__mapa {
 }
 
 .rolo__cabeca { align-self: start; }
+
+
+/* ---- o fundo em vídeo ----
+   Só existe com o tambor montado: sem JavaScript nenhum vídeo é
+   baixado nem exibido, e a seção continua sendo bege com texto
+   marrom. É por isso que a inversão de cor mora em .js--rolo e não
+   na classe .inv — inverter sem o vídeo por baixo deixaria a seção
+   escura à toa. */
+.rolo__fundo,
+.rolo__veu { display: none; }
+
+.js--rolo .rolo__fundo,
+.js--rolo .rolo__veu {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.js--rolo .rolo__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  /* --opv é escrito pelo JS a cada quadro, junto do ângulo da face
+     correspondente. Sem transição: o valor já vem contínuo da
+     rolagem. */
+  opacity: var(--opv, 0);
+}
+
+/* O véu. Marrom e não preto: é a tinta do texto do site, já está na
+   paleta, e é a única das sete cores que ainda não era fundo de
+   nenhuma seção. 82% deixa o vídeo respirar por baixo e ainda dá
+   12,4:1 no nome sobre ele. */
+.js--rolo .rolo__veu { background: rgb(var(--marrom-rgb) / .82); }
+
+/* Com vídeo por baixo o texto precisa inverter — mesmos tokens da
+   classe .inv, aplicados só quando o tambor existe. O `data-inv` no
+   HTML é o par disto: é ele que avisa o aparato para trocar de cor
+   ao atravessar a seção. */
+.js--rolo .rolo {
+  background: var(--texto);
+  /* `color` explícito, e não só os tokens: o nome do projeto (.d)
+     não declara cor nenhuma — herda. Sem esta linha ele herdava o
+     marrom do body e sumia dentro do véu, que também é marrom.
+     É exatamente o que a classe .inv faz, e por isso mesmo. */
+  color: var(--papel);
+  --fg:    var(--papel);
+  --fg-2:  rgb(var(--off-white-rgb) / .78);
+  --fg-3:  rgb(var(--off-white-rgb) / .62);
+  --fio:   rgb(var(--off-white-rgb) / .22);
+  --sinal: var(--sinal-inv);
+}
 
 
 /* ---- a lista, antes de virar tambor ----

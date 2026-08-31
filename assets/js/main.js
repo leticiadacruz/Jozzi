@@ -308,6 +308,8 @@
   var roloLista = document.querySelector('[data-rolo-lista]');
   var roloItens = [].slice.call(document.querySelectorAll('[data-rolo-item]'));
   var roloConta = document.querySelector('[data-rolo-conta]');
+  var roloVideos = [].slice.call(document.querySelectorAll('[data-rolo-video]'));
+  var roloTocando = -1;   /* qual vídeo está tocando agora */
   var ROLO_PASSO_ANG = 30;    /* graus entre uma face e a seguinte */
   /* A opacidade cai com o QUADRADO da distância, não linearmente.
      Linear (o que a referência sugere de relance) deixa um vale no
@@ -364,7 +366,8 @@
        inteira, e é ele que o progresso divide. */
     if (rolo) {
       var alt = rolo.offsetHeight;
-      med.rolo = { topo: topoDoc(rolo), curso: Math.max(1, alt - med.vh) };
+      var t = topoDoc(rolo);
+      med.rolo = { topo: t, base: t + alt, curso: Math.max(1, alt - med.vh) };
     }
 
     /* o aparato é fixo: a posição dos dois blocos na TELA não muda
@@ -468,10 +471,39 @@
         roloItens[r].setAttribute('aria-hidden', op < 0.05 ? 'true' : 'false');
       }
 
+      /* o vídeo de cada projeto acompanha a face dele, mas some mais
+         rápido que o texto: com a mesma curva os quatro ficariam
+         translúcidos ao mesmo tempo no meio do caminho e o fundo
+         viraria uma sopa. 1.6 dá um crossfade curto. */
+      for (var v = 0; v < roloVideos.length; v++) {
+        var ov = 1 - Math.abs(k - v) * 1.6;
+        roloVideos[v].style.setProperty('--opv', (ov < 0 ? 0 : ov).toFixed(3));
+      }
+
       var atual = Math.round(k) + 1;
-      if (atual !== roloUltimo && roloConta) {
+      if (atual !== roloUltimo) {
         roloUltimo = atual;
-        roloConta.textContent = (atual < 10 ? '0' : '') + atual;
+        if (roloConta) roloConta.textContent = (atual < 10 ? '0' : '') + atual;
+      }
+
+      /* Só UM vídeo toca, e só enquanto a seção está em cena. Quatro
+         vídeos rodando ao mesmo tempo — ou continuando a rodar depois
+         que o leitor passou — é gasto de bateria sem ninguém olhando.
+         O play/pause acontece na TROCA, não a cada quadro: chamar
+         play() 60 vezes por segundo devolve uma enxurrada de
+         promises rejeitadas. */
+      var emCena = (y + med.vh > med.rolo.topo) && (y < med.rolo.base);
+      var querTocar = emCena ? Math.round(k) : -1;
+
+      if (querTocar !== roloTocando) {
+        if (roloVideos[roloTocando]) roloVideos[roloTocando].pause();
+        roloTocando = querTocar;
+        var alvoV = roloVideos[roloTocando];
+        if (alvoV) {
+          var pr = alvoV.play();
+          /* navegador que recusa autoplay não pode derrubar o resto */
+          if (pr && pr.catch) pr.catch(function () {});
+        }
       }
     }
 

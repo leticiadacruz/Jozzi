@@ -207,12 +207,42 @@ projeto é um `<li>` dentro de `[data-rolo-lista]`, no `index.html`:
 
 **Não precisa mexer em CSS nem em JS para acrescentar.** O JS conta os itens
 sozinho (`--rolo-n`), o trilho cresce um passo por projeto e os ângulos são
-calculados a partir da contagem. Só o `0N` fixo do contador, no
-`.rolo__conta`, é escrito à mão — é o total, e é o único número a atualizar.
+calculados a partir da contagem. Duas coisas ficam à mão: o `0N` do contador
+em `.rolo__conta` (é o total), e o `<video>` correspondente — ver abaixo.
 
 **A frase é uma frase, não um parágrafo.** O tambor gira: se o texto passar
 de duas linhas, a face vizinha começa a colidir com a da frente. Duas linhas
 no desktop, três no telefone, é o teto real.
+
+### Trocar os vídeos de fundo
+
+**Os quatro `.mp4` em `assets/video/` são placeholders**, gerados aqui com
+ffmpeg — textura, não conteúdo. Não são material de campanha de ninguém, e
+não devem ir ao ar.
+
+Para pôr o vídeo real: **substituir o arquivo mantendo o nome**
+(`collab.mp4`, `claudia-choma.mp4`, `descomplica-pericias.mp4`,
+`widepine-cafes.mp4`). Nada mais muda — nem HTML, nem CSS, nem JS.
+
+Ao exportar o vídeo real:
+
+- **Sem áudio.** A tag não tem `controls` e o autoplay depende de `muted`;
+  faixa de som só adiciona peso.
+- **Curto e em laço** (8 a 15s). Ele repete enquanto o leitor estiver
+  naquele projeto.
+- **Leve.** Os quatro placeholders somam 848KB. O vídeo entra por cima de um
+  véu a 82% — detalhe fino se perde de qualquer jeito, então não vale
+  exportar em alta taxa. 1280×720 é suficiente.
+- **O centro é o que aparece.** `object-fit: cover` recorta as bordas
+  conforme a proporção da tela.
+
+**Não pôr `autoplay` na tag.** Quem manda tocar é o JS, e só no vídeo que
+está à frente — com `autoplay` no HTML os quatro baixariam e tocariam na
+carga da página, mesmo para quem nunca chega na seção 04. O `preload="none"`
+é par disso.
+
+**Acrescentou um projeto? Acrescente o vídeo na mesma ordem.** O JS casa
+vídeo com face por índice: o terceiro `<video>` é a face do terceiro `<li>`.
 
 ### Os três números do tambor
 
@@ -244,13 +274,24 @@ linear existe um vale no meio do caminho entre um projeto e o seguinte onde
 nenhum dos dois passa de 55% — o texto fica lavado em boa parte do curso. Com
 o quadrado, o pior ponto é 75%. Medido.
 
-### Sem JavaScript, sem tambor
+### Sem JavaScript, sem tambor e sem vídeo
 
 O 3D inteiro vive atrás de `.js--rolo`. Sem script, com o script quebrado
 (`.js--sem-motor`) ou sob `prefers-reduced-motion`, a seção é o que o HTML
 diz que ela é: quatro nomes e quatro frases empilhados, todos opacos, sem
 trilho alto e sem `sticky`. **É essa a ordem certa** — o JS MONTA o tambor,
 nunca o desmonta. Um script que não sobe não pode esconder conteúdo.
+
+O vídeo segue a mesma regra, e mais uma: **nesses três casos nenhum arquivo
+de vídeo é baixado** (medido). É por isso que a inversão de cor está em
+`.js--rolo` e não na classe `.inv` — sem vídeo por baixo, a seção continua
+bege com texto marrom, como sempre foi. Inverter à toa deixaria uma seção
+escura sem motivo.
+
+**O `data-inv` no HTML é par disso.** Ele não pinta nada: é o que avisa o
+aparato para trocar de cor ao atravessar a seção. Sem JS o aparato nunca
+aplica `is-claro`, então o atributo fica inerte e a leitura continua certa
+nos dois estados.
 
 ---
 
