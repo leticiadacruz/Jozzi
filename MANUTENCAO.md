@@ -574,6 +574,25 @@ e são o caminho.
 Cada `<img>` leva `width` e `height` reais (evita o salto de layout ao
 carregar) e `loading="lazy"`.
 
+### A capa na grade
+
+A grade em `styling.html` e as fotos dentro da página do projeto são **dois
+lugares diferentes**: aplicar as fotos no caso não põe capa na grade. Os cards
+sem capa continuam mostrando o placeholder *Foto 1:1*.
+
+Para pôr a capa, trocar o `<span class="ap">Foto 1:1</span>` do card por:
+
+```html
+<img class="styling-grid__foto__real" src="assets/img/styling/<slug>/03.avif"
+     alt="<Nome> — capa do projeto"
+     width="931" height="1400" loading="lazy" decoding="async">
+```
+
+**A capa é recortada em 1:1**, então nem toda foto serve: as verticais de
+corpo inteiro viram um torso sem cabeça nem pés. Escolher close ou plano
+médio — a capa não precisa ser a foto 01. As atuais são a 03 (Carol Andrade),
+05 (Leandra), 02 (Solstice) e 01 nas duas que só têm uma foto.
+
 ### Projeto sem foto
 
 Fica com um `.fig__campo` marcado *Fotos a fornecer* — a mesma regra do resto
