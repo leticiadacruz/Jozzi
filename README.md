@@ -52,10 +52,11 @@ funciona, mas as fontes não carregam por `file://`.
 | Estilo | CSS autoral — Grid, custom properties, `clamp()`, `clip-path` |
 | Comportamento | JavaScript nativo, sem transpilação |
 | Rolagem | [Lenis 1.1.18](https://lenis.darkroom.engineering/), auto-hospedado |
-| Tipografia | Switzer Variable (ITF) + IBM Plex Mono (OFL), auto-hospedadas |
+| Tipografia | Gracio (marca, auto-hospedada) + Nexa (Adobe Fonts) + IBM Plex Mono (OFL) |
 
-Sem framework, sem bundler, sem biblioteca de animação. Fontes: **63 KB**
-(Switzer variável 43 KB + Plex Mono 2 × 10 KB).
+Sem framework, sem bundler, sem biblioteca de animação. Fontes
+auto-hospedadas: **44 KB** (Gracio 24 KB + Plex Mono 2 × 10 KB). A Nexa vem do
+kit da Adobe Fonts (`use.typekit.net/oyj0zig.css`).
 
 ---
 
@@ -68,7 +69,7 @@ que o problema está em outro lugar.
 ### Marca
 
 O logotipo oficial é o lockup **JOZZI CREATIVE LAB** — traço arredondado, com
-irregularidade de mão, proporção 15,6:1. Não é a Switzer: é arte fechada, e por
+irregularidade de mão, proporção 15,6:1. Não é a Gracio: é arte fechada, e por
 isso entra como SVG, nunca como texto.
 
 **Uma geometria, três escalas.** Os 16 paths moram uma vez só, num `<symbol>`
@@ -140,10 +141,10 @@ Dois registros, e nada entre eles.
 
 | Registro | Corpo | Família |
 | --- | --- | --- |
-| Display | 96–176px | Switzer 500 |
-| Display 2 | 48–72px | Switzer 500 (460 sobre tinta) |
-| Lede | 20–22px | Switzer 400 |
-| Texto | 16–17px | Switzer 400 |
+| Display | 96–176px | Gracio 400 |
+| Display 2 | 48–72px | Gracio 400 |
+| Lede | 20–22px | Nexa 400 |
+| Texto | 16–17px | Nexa 400 |
 | Aparato | 11px versal, `+.145em` | IBM Plex Mono 400 |
 
 **A faixa de 24 a 44px não existe** — no desktop. É onde vive o subtítulo de
@@ -160,7 +161,7 @@ Entreletra: `-.045em` no display, `-.035em` no display 2, `-.012em` nas versais
 (caixa alta pede menos aperto que caixa baixa). Medida do texto corrido: 58 a
 64 caracteres, sempre.
 
-A mono nunca aparece acima de 13px e nunca compete com a Switzer.
+A mono nunca aparece acima de 13px e nunca compete com a Gracio.
 
 ### Os três fundos
 
@@ -199,9 +200,10 @@ teto de 5% de escala no bloco mais próximo do centro, a única transformação 
 escala do sistema fora de Serviços. O bastante para a diagonal respirar, pouco
 o bastante para não virar parallax.
 
-**4 · Resposta do estado ativo.** Em Serviços o item ativo responde **no eixo
-variável da Switzer** — 430 para 560 — que é o mesmo recurso da esteira da
-abertura. O nome não muda de tamanho nem de posição: muda de peso.
+**4 · Resposta do estado ativo.** Em Serviços o item ativo responde **no peso
+da Nexa** — 400 para 700 — que é o mesmo recurso da esteira da abertura. O nome
+não muda de tamanho nem de posição: muda de peso. Com a Switzer isso era um
+eixo variável, contínuo; a Nexa é estática, então o degrau é discreto.
 
 **A abertura não entra: ela se monta,** em quatro tempos medidos —
 `120ms` o instrumento se desenha · `370ms` a marca · `610ms` a frase, linha a
@@ -347,9 +349,9 @@ Um gesto, uma curva, três durações.
   outra curva, ela não entra.
 - **Durações** — 200ms para micro-interação e troca de estado, 600ms para
   entrada. Só duas, e nada acima disso.
-- **Esteira de peso** — o eixo variável da Switzer responde à leitura na
-  abertura. Amplitude reduzida de propósito (450 → 512): é comportamento
-  tipográfico, não demonstração. Uma passada automática, 1,6s depois da entrada,
+- **Esteira de peso** — o peso da Nexa responde à leitura na abertura.
+  Amplitude reduzida de propósito: é comportamento tipográfico, não
+  demonstração. Uma passada automática, 1,6s depois da entrada,
   **uma única vez**. O título nunca vira animação contínua.
 
 - **Cursor** — sobre elementos com `data-cursor`, o ponteiro nativo dá lugar a
@@ -1044,9 +1046,11 @@ toque abaixo do mínimo depois da correção.
 
 ## Licenças de tipografia
 
-- **Switzer** — ITF Free Font License. Gratuita para uso comercial,
-  auto-hospedagem explicitamente permitida. Texto em `assets/fonts/FFL.txt`.
-  **A licença proíbe subset e conversão de formato.** O `.woff2` no repositório é
-  o arquivo oficial da Fontshare, sem alteração. Não rodar subsetter nele.
+- **Gracio** — a fonte de display da marca, desenhada no Fontself. O
+  `assets/fonts/Gracio.woff2` é conversão direta do `.otf` original, sem
+  subset. **Não rodar subsetter nela:** a página é em português e o subsetter
+  leva os acentos junto.
+- **Nexa** — servida pelo kit da Adobe Fonts (`oyj0zig`). Licenciada pela
+  assinatura, não redistribuída no repositório.
 - **IBM Plex Mono** — SIL Open Font License 1.1.
 # Jozzi

@@ -255,16 +255,44 @@ anterior sai pela esquerda sem chegar ao fim.
 hoje) a regra é ignorada e a navegação é a de sempre. Não há fallback a
 manter. Sob `prefers-reduced-motion` a animação é desligada.
 
-**As páginas de projeto não têm cortina de carregamento**, de propósito: a
-cortina reaparecendo no meio da navegação mata a fluidez da transição — são
-duas animações competindo. Elas também não usam `.rv`: numa página que entra
-deslizando, o conteúdo surgindo depois seria uma segunda animação por cima da
-primeira. O gesto é um só.
+### A cortina toca uma vez por sessão
 
-Isso vale para `projetos/`. As 19 páginas de `styling/` **ainda têm** a
-cortina e as revelações — se quiser o mesmo comportamento lá, é remover o
-bloco `<div class="carregando">` e as classes `rv`, como está feito em
-`projetos/`.
+**A cortina é a chegada ao site, não a chegada a cada página.** Ela abre na
+primeira página que o leitor carrega e não volta mais enquanto a aba estiver
+aberta. Quem controla isso é uma marca em `sessionStorage`
+(`jozzi:entrou`), lida por `jaEntrou()` no módulo 09: se ela existe,
+`ligarCarregamento` remove o `<div class="carregando">` do DOM e chama
+`aoTerminar()` no mesmo quadro.
+
+O motivo é que voltar de um projeto de styling para Serviços, ou pular da
+grade para um projeto, são gestos que o leitor **pediu** e espera imediatos.
+A cortina ali custava 1,7s antes de qualquer pixel de conteúdo, e ainda
+competia com a transição de View Transitions — duas animações de entrada
+sobrepostas.
+
+A marca morre quando a aba fecha, então a próxima visita de verdade tem a
+cortina inteira de volta. Consequência prática ao testar: **recarregar a
+página não traz a cortina.** Para revê-la, abrir uma aba anônima, ou rodar
+`sessionStorage.removeItem('jozzi:entrou')` no console.
+
+⚠ `sessionStorage` **lança** em navegação privada de alguns navegadores e com
+armazenamento de terceiros bloqueado — por isso `jaEntrou()` e
+`marcarEntrada()` são `try/catch` e não um `if`. Falhar ali devolve o
+comportamento antigo (mostrar a cortina), que é o lado seguro do erro. Não
+trocar por acesso direto ao `sessionStorage`.
+
+**As páginas de `projetos/` não têm o bloco da cortina no HTML**, nem
+precisam da marca de sessão: ali ela nunca aparece, em nenhuma circunstância.
+As 19 páginas de `styling/` **têm** o bloco — ele só sobrevive à primeira
+carga da sessão.
+
+**Os títulos entram por máscara, e entram na hora.** `#caso-titulo` leva
+`.rv` em `styling/` e em `projetos/`, e a revelação sai do
+IntersectionObserver: sem cortina na frente, ele dispara no primeiro quadro
+— medido em 1 a 2ms, com a máscara tocando normalmente. Foi o que devolveu a
+entrada às páginas de `projetos/`, que tinham ficado sem `.rv` nenhum numa
+rodada anterior. O que atrapalhava lá era a cortina, não a animação: com ela
+fora, "animado" e "instantâneo" deixam de ser opostos.
 
 ### Trocar os vídeos de fundo
 
@@ -511,8 +539,9 @@ grep -oE '^  (var|function) [A-Za-z_$][A-Za-z0-9_$]*' assets/js/main.js | awk '{
 ```
 
   Saída vazia = nenhum nome declarado duas vezes no escopo da IIFE.
-- **O peso do item ativo em Serviços** (`430` → `560`) usa o eixo variável da
-  Switzer. Se a fonte for trocada por uma estática, o estado ativo some.
+- **O peso do item ativo em Serviços** era `430` → `560` no eixo variável da
+  Switzer; com a Nexa, que é estática, virou `400` → `600`. Uma fonte sem o
+  peso de cima faz o estado ativo sumir.
 - **A escala de Marcas** (`--escala`, teto de 5%) sai da mesma função que já
   calcula `--desloc` em `moverDiagonal()`. Mexer numa mexe na outra.
 
@@ -907,16 +936,41 @@ projeto, que têm uma seção só e nada a navegar.
 mede ~90px em 11px). Sem empurrar layout e sem precisar de fundo próprio numa
 faixa que atravessa seções de cores diferentes.
 
-⚠ **Duas armadilhas pagas, não desfazer:**
+**Abre por aproximação, não por mira.** Acertar um fio com o ponteiro é
+mira, não navegação. `.aparato__escala::after` é uma faixa invisível que
+estende a área sensível por toda a calha que o `--recuo` já reserva — chegar
+perto da borda esquerda basta. Ela fica em `z-index: -1`, **atrás** dos
+segmentos (que são `position: relative`), senão cobriria os próprios links
+que existe para revelar. Não é link e não tem fundo: passar por ali não
+produz nada além do hover.
+
+**A cor sai de um canal só, `--regua-rgb`, e muda por fração.** Os dois
+rótulos do aparato são blocos pequenos: para eles "estou sobre fundo escuro"
+é sim ou não, e `pintarBloco` resolve com um `toggle`. A régua tem ~700px de
+altura e passa metade da travessia com um pé em cada fundo — ali um `toggle`
+pisca no meio do gesto. Então o `pintar()` mede o **quanto**: a fração da
+faixa da régua que cai dentro das seções invertidas vira o fator de mistura
+entre a ardósia (`120 134 146`) e o off-white (`243 240 232`). Como a fração
+cresce enquanto a aresta do fundo varre a régua, a cor sobe junto com a
+rolagem. A escrita só acontece quando a mistura anda meio por cento, para não
+gastar um estilo por quadro. Sem script, o `--regua-rgb: var(--azul-rgb)` do
+CSS segura tudo em ardósia.
+
+⚠ **Três armadilhas pagas, não desfazer:**
 
 1. A régua tem máscara de entrada **própria** (`revelar-regua`), e não a
    `revelar` compartilhada. Aquela usa `inset(… 0 …)` à direita, o que corta
-   tudo além da borda do elemento — e a régua tem 3px. Os nomes, que abrem a
+   tudo além da borda do elemento — e a régua tem 5px. Os nomes, que abrem a
    72px, sumiam por completo.
 2. O afastamento à direita é `-320px` e **não** uma porcentagem. Em `inset()`
    a porcentagem é relativa à largura do próprio elemento: `-200%` de 3px
    liberava 6px, e o nome continuava cortado. Foi o meu primeiro conserto, e
    estava errado.
+3. O recorte também precisa de `-160px` **à esquerda**. Com `left: 0` a faixa
+   de aproximação era decepada e só o lado direito abria — o ponteiro tinha
+   de estar praticamente em cima do fio de novo. Nenhum estilo computado
+   acusa isso: `visibility` e `opacity` do nome continuam corretos, só o
+   `elementFromPoint` denuncia.
 
 O `.aparato` continua com `pointer-events: none`; só `.aparato__escala`
 recebe ponteiro. Assim o número e o relógio seguem sendo instrumento passivo
@@ -925,9 +979,12 @@ navegação real dentro dele) e ficou só nos dois blocos de texto redundantes.
 
 ## O que NÃO fazer
 
-- **Não rodar subsetter na Switzer.** A licença da ITF proíbe. O arquivo em
-  `assets/fonts/Switzer-Variable.woff2` tem que continuar sendo o oficial da
-  Fontshare, byte por byte.
+- **Não subsetar a Gracio.** É a fonte desenhada da marca (`assets/fonts/
+  Gracio.woff2`, convertida do `.otf` do Fontself). Um subsetter tira os
+  acentos e a página é em português — o "Ê" de AGÊNCIA é a primeira vítima.
+- **Não devolver `line-height` abaixo de 1 ao `.d`.** Com a Switzer isso
+  funcionava; com a Gracio o circunflexo escapa da caixa de linha e o "Ê"
+  aparece decepado. `1.02` é o piso.
 - **Não adicionar biblioteca de animação.** Os gestos do sistema são CSS. Uma
   biblioteca traria dezenas de curvas novas e o movimento deixaria de parecer
   da Jozzi.
@@ -983,7 +1040,7 @@ styling/*.html               19 páginas de caso, uma por trabalho
 assets/css/style.css        folha única, com sumário numerado no topo
 assets/js/main.js           IIFE, nove módulos numerados
 assets/js/lenis.min.js      rolagem interpolada (não editar)
-assets/fonts/               Switzer + IBM Plex Mono + licença
+assets/fonts/               Gracio (marca) + IBM Plex Mono
 assets/img/                 imagens do site + logotipo + favicon
 assets/img/styling/<slug>/  as fotos de cada projeto de styling
 ```

@@ -19,13 +19,26 @@
 
 
 /* 01. FONTES ------------------------------------------------
-   Título e texto vêm do kit Typekit da Jozzi, carregado pelo
-   <link> no <head> de cada página — não há @font-face deles aqui.
-   A Switzer, que servia os dois até 01/09, saiu do projeto.
+   Nexa (texto) vem do kit Typekit da Jozzi, pelo <link> no <head>.
+
+   GRACIO (título) é AUTO-HOSPEDADA, e isso não é preferência: ela
+   NÃO está no kit. Estava só instalada no computador da Jozzi
+   (~/Library/Fonts/Gracio.otf, feita com Fontself), então o site
+   parecia certo lá e caía na Nexa para todo mundo. Convertida do
+   .otf original para woff2 aqui — 63KB viraram 24KB, sem subset
+   (a fonte tem 184 glifos e os acentos todos).
 
    IBM Plex Mono continua local (OFL): é o registro de aparato, e
-   nenhuma das duas famílias novas tem desenho monoespaçado.
+   nenhuma das famílias novas tem desenho monoespaçado.
    ----------------------------------------------------------- */
+@font-face {
+  font-family: 'Gracio';
+  src: url('../fonts/Gracio.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @font-face {
   font-family: 'IBM Plex Mono';
   src: url('../fonts/IBMPlexMono-Regular.woff2') format('woff2');
@@ -109,7 +122,7 @@
      <head> de cada página). A Nexa está no kit; a GRACIO ainda não
      — enquanto ela não for adicionada lá, o título cai na Nexa
      sozinho, sem nada a mudar aqui depois. */
-  --fonte-titulo: "gracio", "nexa", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --fonte-titulo: 'Gracio', "nexa", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --fonte-texto:  "nexa", "Helvetica Neue", Helvetica, Arial, sans-serif;
   /* o aparato continua em mono: ele é o registro de instrumento do
      site, e nenhuma das duas famílias novas tem desenho monoespaçado */
@@ -231,7 +244,11 @@ a { color: inherit; text-decoration: none; }
   font-size: var(--fs-display);
   font-weight: 500;
   letter-spacing: -.045em;
-  line-height: .93;
+  /* 1.02 e não .93: com a Gracio o circunflexo de AGÊNCIA subia
+     acima da caixa da linha e era comido pela linha de cima — o
+     entrelinha menor que 1 só funcionava com a métrica da Switzer.
+     Ainda é apertado para display; deixou de cortar diacrítico. */
+  line-height: 1.02;
   text-wrap: balance;
 }
 .d--2 {
@@ -340,14 +357,18 @@ a { color: inherit; text-decoration: none; }
      — onde estou, quanto falta — só que agora dividida em capítulos
      em vez de num escorregador contínuo.
 
-     Azul em tudo: ardósia é a única cor da paleta legível sobre
-     papel E sobre tinta, e por isso o instrumento nunca troca de
-     cor na travessia. Só os dois blocos de texto trocam. */
+     A cor sai de um canal só, `--regua-rgb`, que o script mistura da
+     ardósia até o off-white conforme a FRAÇÃO da régua que está sobre
+     seções invertidas. Ardósia é legível sobre papel e sobre tinta, e
+     por isso continua sendo o repouso — o clareamento é ganho de
+     contraste sobre o escuro, não uma troca de identidade. Sem o
+     script, o valor abaixo segura tudo em ardósia. */
   .aparato__escala {
     position: relative;
     flex: 1;
-    /* 3px de caixa para o segmento ativo caber sem empurrar nada */
-    width: 3px;
+    --regua-rgb: var(--azul-rgb);
+    /* 5px de caixa para o segmento ativo caber sem empurrar nada */
+    width: 5px;
     margin: 1.1rem 0;
     display: flex;
     flex-direction: column;
@@ -362,8 +383,8 @@ a { color: inherit; text-decoration: none; }
     left: 0;
     top: 0;
     bottom: 0;
-    width: 1px;
-    background: rgb(var(--azul-rgb) / .38);
+    width: 2px;
+    background: rgb(var(--regua-rgb) / .38);
   }
   .js--regua .aparato__escala::before { content: none; }
 
@@ -379,14 +400,34 @@ a { color: inherit; text-decoration: none; }
      cores diferentes. */
   .aparato__escala { pointer-events: auto; }
 
+  /* ---- abrir por aproximação ----
+     Acertar um fio de 2px com o ponteiro é mira, não navegação. Esta
+     faixa invisível estende a área sensível por toda a calha que o
+     --recuo já reserva à esquerda do conteúdo — exatamente o vão onde
+     os nomes vão aparecer. Chegar perto basta.
+
+     Fica ATRÁS dos segmentos (z-index:-1, e eles são `position:
+     relative`), senão cobriria os próprios links que ela existe para
+     revelar. E como não é link nem tem fundo, nada além do hover
+     acontece se o ponteiro só passar por ali. */
+  .aparato__escala::after {
+    content: "";
+    position: absolute;
+    top: -2rem;
+    bottom: -2rem;
+    left: calc(var(--margem) * -1);
+    width: calc(var(--margem) + var(--aparato-l));
+    z-index: -1;
+  }
+
   .aparato__seg {
     position: relative;
     /* o peso é a altura da seção no documento: a régua mede o
        documento, não conta seções */
     flex: var(--peso, 1) 1 0;
-    width: 1px;
+    width: 2px;
     min-height: 5px;
-    background: rgb(var(--azul-rgb) / .28);
+    background: rgb(var(--regua-rgb) / .28);
     transition:
       width var(--t-micro) var(--curva),
       background-color var(--t-micro) var(--curva);
@@ -403,7 +444,9 @@ a { color: inherit; text-decoration: none; }
     white-space: nowrap;
     opacity: 0;
     visibility: hidden;
-    color: var(--fg-3);
+    /* o nome acompanha a mesma mistura do fio: sobre as seções
+       escuras o marrom de --fg-3 sumiria no fundo */
+    color: rgb(var(--regua-rgb) / .68);
     transition:
       opacity var(--t-micro) var(--curva),
       transform var(--t-micro) var(--curva),
@@ -420,7 +463,7 @@ a { color: inherit; text-decoration: none; }
   /* com a régua aberta o fio engrossa: o alvo do ponteiro deixa de
      ser 1px e passa a ser a faixa inteira do segmento */
   .aparato__escala:hover .aparato__seg,
-  .aparato__escala:focus-within .aparato__seg { width: 3px; }
+  .aparato__escala:focus-within .aparato__seg { width: 5px; }
 
   a.aparato__seg { display: block; }
   a.aparato__seg::after {
@@ -438,13 +481,13 @@ a { color: inherit; text-decoration: none; }
   .aparato__escala:focus-within a.aparato__seg::after { pointer-events: auto; }
 
   a.aparato__seg:hover .aparato__seg-nome,
-  a.aparato__seg:focus-visible .aparato__seg-nome { color: var(--fg); }
+  a.aparato__seg:focus-visible .aparato__seg-nome { color: rgb(var(--regua-rgb)); }
   a.aparato__seg:hover,
-  a.aparato__seg:focus-visible { background: rgb(var(--azul-rgb) / .85); }
-  .aparato__seg.is-feito { background: rgb(var(--azul-rgb) / .52); }
+  a.aparato__seg:focus-visible { background: rgb(var(--regua-rgb) / .85); }
+  .aparato__seg.is-feito { background: rgb(var(--regua-rgb) / .52); }
   .aparato__seg.is-ativo {
-    width: 3px;
-    background: rgb(var(--azul-rgb) / .38);
+    width: 5px;
+    background: rgb(var(--regua-rgb) / .38);
   }
 
   /* o preenchimento anda com a rolagem dentro da própria seção.
@@ -456,22 +499,22 @@ a { color: inherit; text-decoration: none; }
     top: 0;
     width: 100%;
     height: 0;
-    background: rgb(var(--azul-rgb) / .85);
+    background: rgb(var(--regua-rgb) / .85);
   }
 
   /* a agulha: um fio de 9px na borda do preenchimento, só no
      segmento corrente. É o que faz a régua ser lida como
      instrumento e não como barra de progresso. */
-  .aparato__seg.is-ativo .aparato__seg-nome { color: var(--fg); }
+  .aparato__seg.is-ativo .aparato__seg-nome { color: rgb(var(--regua-rgb)); }
 
   .aparato__seg.is-ativo .aparato__seg-feito::after {
     content: "";
     position: absolute;
     left: 0;
     bottom: -1px;
-    width: 9px;
+    width: 12px;
     height: 1px;
-    background: rgb(var(--azul-rgb) / .95);
+    background: rgb(var(--regua-rgb) / .95);
   }
 
   /* na carga, a escala se desenha de cima para baixo */
@@ -481,7 +524,7 @@ a { color: inherit; text-decoration: none; }
      régua tem 3px de largura. Os nomes das seções, que abrem a
      72px, sumiam por completo. O -200% à direita libera a
      horizontal e mantém a revelação vertical igual. */
-  .js .aparato__escala { clip-path: inset(0 -320px 100% 0); }
+  .js .aparato__escala { clip-path: inset(0 -320px 100% -160px); }
   .js .aparato.is-ligado .aparato__escala {
     animation: revelar-regua var(--t-entra) var(--curva) both;
   }
@@ -489,9 +532,12 @@ a { color: inherit; text-decoration: none; }
      largura do próprio elemento, e a régua tem 3px — os "200%"
      liberavam 6px, com o nome a 72px continuando cortado. Valor
      absoluto, folgado o bastante para o nome mais longo. */
+  /* a esquerda também vai a valor negativo: a faixa de aproximação
+     avança para dentro da margem da página, e com `left: 0` no
+     recorte ela era decepada — só o lado direito abria. */
   @keyframes revelar-regua {
-    from { clip-path: inset(0 -320px 102% 0); }
-    to   { clip-path: inset(0 -320px -8% 0); }
+    from { clip-path: inset(0 -320px 102% -160px); }
+    to   { clip-path: inset(0 -320px -8% -160px); }
   }
 
   /* cada bloco troca de cor conforme o que está atrás DELE, não
@@ -998,6 +1044,11 @@ a { color: inherit; text-decoration: none; }
   margin: 0;
   max-width: 34ch;
   color: var(--fg-2);
+  /* o texto de apoio encosta na MESMA linha de base do título ao
+     lado. Sem isto cada par caía num lugar diferente, porque a
+     altura do título varia com o número de linhas dele e o `end`
+     do grid alinhava caixas de alturas diferentes. */
+  padding-bottom: .18em;
 }
 
 .prin--e .prin__t { grid-column: 1 / span 7; }
@@ -1541,6 +1592,11 @@ img.onde__mapa {
 
 .rolo__frase {
   margin: .8rem 0 0;
+  /* mesmo corpo do texto de Nossa visão (--fs-texto), e não o
+     --fs-lede que usava antes: os dois são texto de leitura corrida
+     e não havia razão para o de Projetos ser maior. */
+  font-size: var(--fs-texto);
+  line-height: 1.55;
   /* 62ch e não 34: com os textos longos que a Jozzi trouxe, 34ch
      dava treze linhas e a face empilhava mais alto que a distância
      entre uma face e a seguinte — o texto de trás atravessava o da
@@ -1912,6 +1968,11 @@ img.onde__mapa {
 .sobre__t {
   margin: 0;
   max-width: 18ch;
+  /* própria, e menor que --fs-display: esta frase tem 58 caracteres
+     e no corpo cheio do display ocupava 912px — mais de uma tela só
+     para o título. A Gracio ainda é caixa alta por desenho, então
+     ela pesa mais que a Switzer no mesmo corpo. */
+  font-size: clamp(2rem, 4.4vw + .5rem, 5.4rem);
 }
 .sobre__corpo {
   margin: 0;
@@ -2261,6 +2322,15 @@ html.js--sem-motor .carregando { display: none; }
   padding-top: clamp(3rem, 10vh, 6rem);
   padding-bottom: clamp(3rem, 10vh, 6rem);
   border-top: 1px solid var(--fio);
+}
+
+/* O nome do projeto vinha no corpo cheio do display (122px em 1440)
+   e dominava a página inteira — numa página de PROJETO quem tem de
+   dominar é a foto, não o rótulo dela. Mesma escala do título de
+   Sobre a Jozzi, para as duas páginas internas falarem no mesmo
+   tom. */
+#caso-titulo {
+  font-size: clamp(2rem, 4.4vw + .5rem, 5.4rem);
 }
 .caso__projeto {
   margin: -.4rem 0 clamp(1.2rem, 3.5vh, 2rem);

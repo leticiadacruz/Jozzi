@@ -421,6 +421,15 @@
     /* abaixo de 1025 o aparato é display:none — não há o que pintar */
     med.regua = !!(apEscala && apEscala.offsetParent !== null);
 
+    /* a régua atravessa quase a tela inteira: para saber o quanto
+       dela está sobre fundo escuro num dado momento é preciso a
+       faixa, não um ponto. Fixa na tela, medida uma vez. */
+    if (apEscala) {
+      var e = apEscala.getBoundingClientRect();
+      med.escTopo = e.top;
+      med.escAlt  = Math.max(1, e.height);
+    }
+
     med.secs.forEach(function (s, i) {
       if (segs[i]) segs[i].el.style.setProperty('--peso', s.alt.toFixed(0));
     });
@@ -488,6 +497,36 @@
          fundos diferentes. */
       pintarBloco(apId,   y + med.idMeio);
       pintarBloco(apHora, y + med.horaMeio);
+
+      /* A RÉGUA TAMBÉM TROCA DE COR — mas por fração, não por
+         chaveamento. Os dois rótulos são blocos pequenos: para eles
+         "estou sobre fundo escuro" é sim ou não. A régua tem 700px de
+         altura e passa metade da travessia com um pé em cada fundo;
+         um `toggle` ali pisca no meio do gesto.
+
+         Então mede-se o QUANTO: a fração da faixa da régua que está
+         dentro de seções invertidas vira o próprio fator de mistura
+         entre a ardósia e o off-white. Como a fração cresce enquanto a
+         aresta do fundo varre a régua, a cor sobe junto com a rolagem
+         em vez de saltar. */
+      var eTopo = y + med.escTopo, eBase = eTopo + med.escAlt, cob = 0;
+      for (var q = 0; q < med.inv.length; q++) {
+        var c1 = eTopo > med.inv[q].topo ? eTopo : med.inv[q].topo;
+        var c2 = eBase < med.inv[q].base ? eBase : med.inv[q].base;
+        if (c2 > c1) cob += c2 - c1;
+      }
+      var f = cob / med.escAlt;
+      if (f > 1) f = 1;
+
+      /* só escreve quando a mistura andou meio por cento: sem isso
+         seria uma escrita de estilo por quadro para nada */
+      if (Math.abs(f - reguaClaro) > 0.005) {
+        reguaClaro = f;
+        apEscala.style.setProperty('--regua-rgb',
+          Math.round(120 + 123 * f) + ' ' +
+          Math.round(134 + 106 * f) + ' ' +
+          Math.round(146 +  86 * f));
+      }
     }
 
     /* O ROLO — o tambor 3D de Projetos.
@@ -589,6 +628,7 @@
   }
 
   var ultimoY = -1;
+  var reguaClaro = -1;   /* fração da régua sobre fundo escuro */
 
   function ligarMarca() {
     montarRegua();
@@ -853,16 +893,47 @@
   var CARGA_PAUSA = 260;
   var CARGA_TETO  = 5000;
 
+  /* A cortina é a chegada AO SITE, e não a chegada a cada página.
+     Vindo de dentro — voltar de um projeto de styling para Serviços,
+     pular da grade de styling para um projeto, sair de um projeto
+     para Projetos — ela deixa de ser entrada e vira pedágio: o
+     leitor já esperou uma vez, já leu a frase, e agora só quer
+     chegar. Pior: são 1,7s antes de qualquer conteúdo aparecer, num
+     gesto que ele mesmo pediu e espera imediato.
+
+     Uma marca de sessão resolve sem cookie e sem estado no
+     servidor. Ela morre quando a aba fecha, então a próxima visita
+     de verdade tem a cortina de volta inteira — que é o ponto: a
+     entrada da marca acontece uma vez, e uma vez só.
+
+     `sessionStorage` LANÇA em navegação privada de alguns
+     navegadores e com cookies de terceiros bloqueados — daí o
+     try/catch e não um `if`. Falhar aqui devolve o comportamento
+     antigo (mostrar a cortina), que é feio mas nunca quebra a
+     página. */
+  function jaEntrou() {
+    try { return window.sessionStorage.getItem('jozzi:entrou') === '1'; }
+    catch (e) { return false; }
+  }
+
+  function marcarEntrada() {
+    try { window.sessionStorage.setItem('jozzi:entrou', '1'); } catch (e) {}
+  }
+
   function ligarCarregamento(aoTerminar) {
     var cortina = document.getElementById('carregando');
 
-    /* sem cortina no HTML, ou leitor que pediu menos movimento:
-       o site começa direto. */
-    if (!cortina || menosMovimento) {
+    /* sem cortina no HTML, leitor que pediu menos movimento, ou
+       navegação interna dentro da mesma sessão: o site começa
+       direto. O conteúdo ainda ENTRA — as máscaras do módulo 02
+       tocam normalmente — só não espera atrás de um painel opaco. */
+    if (!cortina || menosMovimento || jaEntrou()) {
       if (cortina && cortina.parentNode) cortina.parentNode.removeChild(cortina);
       aoTerminar();
       return;
     }
+
+    marcarEntrada();
 
     var raiz = document.documentElement;
     raiz.className += ' esta-carregando';
