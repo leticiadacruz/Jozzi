@@ -542,21 +542,40 @@ página lê a pasta pelo nome do arquivo, não por lista: acrescentar uma foto �
 acrescentar um `<figure class="caso__foto rv">` na página, apontando para o
 arquivo novo.
 
-**A posição de cada foto vem sozinha do CSS.** O padrão é de cinco
-(`nth-child(5n+1)` a `5n+5`) e se repete: larga à esquerda, estreita à
-direita, larga ao centro, média à esquerda, média à direita. Serve para 1 ou
-para 30 fotos — não há lista de colunas para manter, e a sexta foto volta ao
-começo do padrão.
+**Grade simétrica de três colunas** (duas em ≤768px, uma em ≤420px). Houve
+uma versão assimétrica antes, com larguras variando de 4 a 6 colunas — a
+Jozzi escolheu a simétrica porque vai entrar mais foto por projeto, e com
+volume a assimétrica vira uma página de 6000px enquanto esta fecha em 2600.
 
-**Não é uma grade de miniaturas, de propósito.** Grade regular trata dez
-fotos como dez itens de catálogo, do mesmo tamanho e do mesmo peso — o oposto
-de dar visibilidade ao projeto.
+**O recorte é o preço da simetria.** Para as colunas alinharem, a proporção é
+forçada em 2:3 com `object-fit: cover`. Fotos que já são 2:3 não perdem nada;
+uma 3:4 perde uma faixa. **É por isso que a galeria ampliada não é opcional**
+— é lá que a foto aparece inteira, sem corte.
 
-**A altura é a natural do arquivo**, sem `aspect-ratio` e sem recorte: numa
-página de projeto, cortar a foto do cliente para caber num quadrado é
-justamente o que não se pode fazer. Por isso as larguras ficam entre 4 e 6
-colunas e não sobem mais: uma vertical 2:3 em 7 colunas dá ~1160px de altura,
-mais que a tela inteira, e o leitor nunca vê a imagem completa.
+### A galeria ampliada
+
+Cada foto é um `<button data-lupa-abre="N">` que abre o `<dialog id="lupa">`
+no índice N. O `<dialog>` nativo entrega **foco preso, Esc e backdrop sem uma
+linha de JavaScript** — o módulo 10 do `main.js` só troca qual foto está no
+palco, navega e devolve o foco ao botão de origem ao fechar.
+
+**A lista de fotos da galeria é lida da própria grade**, não de um array no
+JS: acrescentar uma `<figure>` na página é acrescentar a foto na galeria.
+Nada a sincronizar.
+
+Numa página com uma foto só, o JS marca as setas com `hidden`.
+
+⚠ **Duas armadilhas já pagas, não desfazer:**
+
+1. `.lupa__nav[hidden] { display: none }` existe porque o `display: grid` dos
+   controles **vence** o `display:none` que o navegador dá ao `[hidden]`. Sem
+   essa regra as setas continuavam na tela na página de foto única, mesmo com
+   o JS marcando corretamente.
+2. `.lupa__palco` usa `grid-template-rows/columns: minmax(0, 1fr)`. Um item de
+   grid não encolhe abaixo do próprio conteúdo por padrão, então o
+   `max-height: 100%` da imagem media contra uma linha de altura automática —
+   referência circular. Medido antes da correção: a foto abria com 1400px de
+   altura numa tela de 900, com o rodapé fora da tela.
 
 ### Preparar os arquivos
 

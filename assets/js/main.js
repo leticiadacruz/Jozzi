@@ -939,6 +939,87 @@
   }
 
 
+  /* 10. GALERIA AMPLIADA ------------------------------------
+     O <dialog> nativo já entrega foco preso, Esc e backdrop. O que
+     falta é só: qual foto está no palco, e como andar entre elas.
+
+     Nada aqui é obrigatório para o conteúdo existir — sem
+     JavaScript a grade de fotos continua completa na página, e é
+     por isso que os botões de ampliar nascem no HTML mas não fazem
+     nada até este módulo ligar.
+     ----------------------------------------------------------- */
+  function ligarLupa() {
+    var lupa = document.getElementById('lupa');
+    if (!lupa || !lupa.showModal) return;
+
+    var botoes = [].slice.call(document.querySelectorAll('[data-lupa-abre]'));
+    if (!botoes.length) return;
+
+    var img    = lupa.querySelector('[data-lupa-img]');
+    var conta  = lupa.querySelector('[data-lupa-conta]');
+    var total  = lupa.querySelector('[data-lupa-total]');
+    var ant    = lupa.querySelector('[data-lupa-ant]');
+    var prox   = lupa.querySelector('[data-lupa-prox]');
+    var fechar = lupa.querySelector('[data-lupa-fechar]');
+
+    /* a fonte da verdade é a própria grade: nenhuma lista de
+       arquivos duplicada no JS. Acrescentar uma foto na página é
+       acrescentar uma foto na galeria. */
+    var fotos = botoes.map(function (b) {
+      var im = b.querySelector('img');
+      return { src: im.getAttribute('src'), alt: im.getAttribute('alt') || '' };
+    });
+
+    var atual = 0;
+    var voltarPara = null;   /* para devolver o foco ao fechar */
+
+    if (total) total.textContent = (fotos.length < 10 ? '0' : '') + fotos.length;
+
+    /* uma foto só não tem para onde navegar */
+    if (fotos.length < 2) {
+      if (ant) ant.hidden = true;
+      if (prox) prox.hidden = true;
+    }
+
+    function mostrar(i) {
+      atual = (i + fotos.length) % fotos.length;   /* dá a volta */
+      img.setAttribute('src', fotos[atual].src);
+      img.setAttribute('alt', fotos[atual].alt);
+      if (conta) conta.textContent = (atual + 1 < 10 ? '0' : '') + (atual + 1);
+    }
+
+    botoes.forEach(function (b, i) {
+      b.addEventListener('click', function () {
+        voltarPara = b;
+        mostrar(i);
+        lupa.showModal();
+      });
+    });
+
+    if (prox)   prox.addEventListener('click', function () { mostrar(atual + 1); });
+    if (ant)    ant.addEventListener('click', function () { mostrar(atual - 1); });
+    if (fechar) fechar.addEventListener('click', function () { lupa.close(); });
+
+    lupa.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight') { e.preventDefault(); mostrar(atual + 1); }
+      if (e.key === 'ArrowLeft')  { e.preventDefault(); mostrar(atual - 1); }
+    });
+
+    /* clique fora da foto fecha. O <dialog> ocupa a tela inteira,
+       então o alvo do clique É o dialog quando se clica no vazio —
+       clicar na imagem ou num botão não borbulha até aqui. */
+    lupa.addEventListener('click', function (e) {
+      if (e.target === lupa || e.target.classList.contains('lupa__palco')) lupa.close();
+    });
+
+    /* devolve o foco ao botão que abriu: sem isto o leitor de
+       teclado volta para o começo do documento */
+    lupa.addEventListener('close', function () {
+      if (voltarPara) voltarPara.focus();
+    });
+  }
+
+
   /* PARTIDA ------------------------------------------------- */
   function iniciar() {
     document.documentElement.className += ' js--pronto';
@@ -957,6 +1038,7 @@
          seria medido com o tamanho da lista empilhada e o tambor
          giraria inteiro em poucos pixels de rolagem. */
       ligarRolo();
+      ligarLupa();
       ligarMarca();
       ligarRelogio();
       ligarServicos();
