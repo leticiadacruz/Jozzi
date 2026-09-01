@@ -535,6 +535,50 @@ document.documentElement.scrollWidth - innerWidth   // tem que dar 0
 
 ---
 
+## As fotos de um projeto de styling
+
+Vivem em `assets/img/styling/<slug>/`, numeradas `01.avif`, `02.avif`… A
+página lê a pasta pelo nome do arquivo, não por lista: acrescentar uma foto é
+acrescentar um `<figure class="caso__foto rv">` na página, apontando para o
+arquivo novo.
+
+**A posição de cada foto vem sozinha do CSS.** O padrão é de cinco
+(`nth-child(5n+1)` a `5n+5`) e se repete: larga à esquerda, estreita à
+direita, larga ao centro, média à esquerda, média à direita. Serve para 1 ou
+para 30 fotos — não há lista de colunas para manter, e a sexta foto volta ao
+começo do padrão.
+
+**Não é uma grade de miniaturas, de propósito.** Grade regular trata dez
+fotos como dez itens de catálogo, do mesmo tamanho e do mesmo peso — o oposto
+de dar visibilidade ao projeto.
+
+**A altura é a natural do arquivo**, sem `aspect-ratio` e sem recorte: numa
+página de projeto, cortar a foto do cliente para caber num quadrado é
+justamente o que não se pode fazer. Por isso as larguras ficam entre 4 e 6
+colunas e não sobem mais: uma vertical 2:3 em 7 colunas dá ~1160px de altura,
+mais que a tela inteira, e o leitor nunca vê a imagem completa.
+
+### Preparar os arquivos
+
+Originais de câmera têm 4000 a 7000px e não vão para o site. O caminho usado:
+
+```bash
+sips -Z 1400 original.jpg --out /tmp/_r.jpg
+avifenc -q 62 -s 6 /tmp/_r.jpg assets/img/styling/<slug>/01.avif
+```
+
+1400px na maior dimensão, AVIF q62 — as 26 fotos atuais somam 1,4MB (~55KB
+cada). **Este ffmpeg não tem libwebp**; `avifenc` e `cwebp` estão instalados
+e são o caminho.
+
+Cada `<img>` leva `width` e `height` reais (evita o salto de layout ao
+carregar) e `loading="lazy"`.
+
+### Projeto sem foto
+
+Fica com um `.fig__campo` marcado *Fotos a fornecer* — a mesma regra do resto
+do site: campo pendente é marcado, não preenchido.
+
 ## Portfólio de Styling — `styling.html` + `styling/*.html`
 
 **Duas camadas, desde 28/08 (segunda rodada).** `styling.html` é a GRADE —
@@ -838,5 +882,6 @@ assets/css/style.css        folha única, com sumário numerado no topo
 assets/js/main.js           IIFE, nove módulos numerados
 assets/js/lenis.min.js      rolagem interpolada (não editar)
 assets/fonts/               Switzer + IBM Plex Mono + licença
-assets/img/                 imagens do site + jozzi-creative-lab.svg (mestre) + favicon.{svg,png}
+assets/img/                 imagens do site + logotipo + favicon
+assets/img/styling/<slug>/  as fotos de cada projeto de styling
 ```

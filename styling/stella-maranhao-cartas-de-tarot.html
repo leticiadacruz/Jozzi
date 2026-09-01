@@ -20,7 +20,7 @@
 
 <link rel="preload" href="../assets/fonts/Switzer-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../assets/fonts/IBMPlexMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../assets/css/style.css?v=62">
+<link rel="stylesheet" href="../assets/css/style.css?v=64">
 
 <script>
 (function () {
@@ -135,10 +135,9 @@
 
      Espaço para crescer: mais parágrafos entram direto dentro de
      .caso__corpo (é só acrescentar <p>); mais fotos entram como
-     novos <li><div class="fig__campo">…</div></li> em .caso__galeria,
-     ou substituindo os três placeholders por <img class="fig__campo">
-     — ver "Trocar a imagem da seção 01" no MANUTENCAO.md, é o mesmo
-     padrão.
+     novas <figure class="caso__foto rv"> em .caso__fotos. A posição
+     de cada uma vem sozinha do padrão de cinco no CSS — não há
+     lista de colunas para manter. Ver MANUTENCAO.md.
      ============================================================ -->
 <section class="wrap" id="caso" data-secao data-num="00" data-nome="Stella Maranhão" aria-labelledby="caso-titulo">
 
@@ -157,27 +156,17 @@
     </div>
   </div>
 
-  <ul class="caso__galeria" role="list">
+  <!-- Fotos ainda não fornecidas para este projeto. O campo fica
+       MARCADO, não preenchido: a mesma regra do resto do site. -->
+  <div class="caso__fotos">
 
-    <li>
+    <figure class="caso__foto rv">
       <div class="fig__campo">
-        <span class="ap">Foto 1</span>
+        <span class="ap">Fotos a fornecer</span>
       </div>
-    </li>
+    </figure>
 
-    <li>
-      <div class="fig__campo">
-        <span class="ap">Foto 2</span>
-      </div>
-    </li>
-
-    <li>
-      <div class="fig__campo">
-        <span class="ap">Foto 3</span>
-      </div>
-    </li>
-
-  </ul>
+  </div>
 
 </section>
 
