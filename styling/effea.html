@@ -18,9 +18,12 @@
 <meta property="og:site_name" content="Jozzi">
 <meta property="og:description" content="A Effeá é uma marca de acessórios com a qual produzimos quatro campanhas de posicionamento. Cada uma expressou detalhes que remetiam à vibe articulada">
 
-<link rel="preload" href="../assets/fonts/Switzer-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../assets/fonts/IBMPlexMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../assets/css/style.css?v=68">
+<!-- Kit Typekit da Jozzi: Nexa (texto) e Gracio (titulo).
+     ANTES do style.css, para os tokens de familia ja acharem
+     as fontes declaradas quando forem resolvidos. -->
+<link rel="stylesheet" href="https://use.typekit.net/oyj0zig.css">
+<link rel="stylesheet" href="../assets/css/style.css?v=72">
 
 <script>
 (function () {
@@ -102,16 +105,16 @@
 <!-- rótulo hardcoded direto com o nome do caso — mesma razão
      do styling.html: página de uma seção só, o main.js nunca
      reescreve o texto porque o número não muda. -->
-<div class="aparato" id="aparato" aria-hidden="true">
-  <p class="aparato__id">
+<div class="aparato" id="aparato">
+  <p class="aparato__id" aria-hidden="true">
     <span class="aparato__num" data-aparato-num>00</span>
     <span class="aparato__sec" data-aparato-sec>Effeá</span>
   </p>
   <!-- a régua é montada pelo main.js: um segmento por seção, com
        altura proporcional à altura real dela no documento. Sem
        script sobra o fio contínuo, desenhado no ::before. -->
-  <div class="aparato__escala" data-aparato-escala></div>
-  <p class="aparato__hora">CWB<span data-relogio>--:--:--</span></p>
+  <nav class="aparato__escala" data-aparato-escala aria-label="Seções desta página"></nav>
+  <p class="aparato__hora" aria-hidden="true">CWB<span data-relogio>--:--:--</span></p>
 </div>
 
 

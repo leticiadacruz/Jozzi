@@ -20,9 +20,15 @@
   /* A esteira é comportamento tipográfico, não demonstração. Os
      números abaixo foram reduzidos de propósito: o efeito tem que
      ser notado sem ser assistido. */
-  var PESO_BASE = 450;   /* precisa bater com --peso-base no CSS */
-  var PESO_PICO = 62;    /* delta do eixo wght sob o ponteiro. Meio
-                            corte de peso, não um salto de peso. */
+  /* A Switzer era variável e o peso podia cair em qualquer valor;
+     a Nexa vem em nove pesos fixos (100 a 900). Por isso a base
+     passou de 450 para 400 e o pico de 62 para 200: entre 400 e
+     600 existem pesos DE VERDADE no kit, e a esteira continua
+     acendendo a palavra sob o ponteiro. O que se perdeu foi a
+     interpolação contínua — agora o navegador arredonda para o
+     peso mais próximo, e a passagem tem degrau. */
+  var PESO_BASE = 400;   /* precisa bater com --peso-base no CSS */
+  var PESO_PICO = 200;
   var RAIO      = 280;   /* alcance — recalculado a partir do corpo
                             real da fonte, para se comportar igual a
                             1440 e a 390. Curto: pega a palavra e
@@ -205,7 +211,7 @@
       pesos[i] += (destino - pesos[i]) * APROX;
 
       if (Math.abs(pesos[i] - PESO_BASE) > 0.6) seguir = true;
-      palavras[i].style.fontVariationSettings = "'wght' " + pesos[i].toFixed(0);
+      palavras[i].style.fontWeight = pesos[i].toFixed(0);
     }
 
     quadro = seguir ? window.requestAnimationFrame(laco) : null;
@@ -349,12 +355,32 @@
   function montarRegua() {
     if (!apEscala || !secoes.length) return;
     apEscala.textContent = '';
-    segs = secoes.map(function () {
-      var seg  = document.createElement('span');
+
+    /* Cada segmento é um LINK, não um <span>: ao passar o ponteiro
+       a régua abre e vira o índice do site. Continua medindo a
+       rolagem como antes — o que mudou é que agora também leva.
+
+       Só vira link quem tem id: numa página de projeto a régua tem
+       uma seção só e não há para onde navegar. */
+    segs = secoes.map(function (secao) {
+      var id   = secao.getAttribute('id');
+      var nome = secao.getAttribute('data-nome') || '';
+      var seg  = document.createElement(id ? 'a' : 'span');
       var fill = document.createElement('i');
+      var rot  = document.createElement('span');
+
       seg.className  = 'aparato__seg';
       fill.className = 'aparato__seg-feito';
+      rot.className  = 'aparato__seg-nome';
+      rot.textContent = nome;
+
+      if (id) {
+        seg.setAttribute('href', '#' + id);
+        /* o nome já é o texto do link: nada de aria-label duplicando */
+      }
+
       seg.appendChild(fill);
+      seg.appendChild(rot);
       apEscala.appendChild(seg);
       return { el: seg, fill: fill, ativo: false, feito: false, altura: -1 };
     });

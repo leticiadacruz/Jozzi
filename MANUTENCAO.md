@@ -859,6 +859,70 @@ de toque.
 
 ---
 
+## As fontes
+
+Título e texto vêm do **kit Typekit da Jozzi**
+(`https://use.typekit.net/oyj0zig.css`), carregado por um `<link>` no `<head>`
+de cada página, **antes** do `style.css`. Três tokens em `:root`:
+
+| | |
+| --- | --- |
+| `--fonte-titulo` | `"gracio", "nexa", …` |
+| `--fonte-texto` | `"nexa", …` |
+| `--fonte-aparato` | IBM Plex Mono, local |
+
+⚠ **A Gracio ainda não está no kit.** Conferido no CSS servido pelo Typekit:
+só a família `nexa` é entregue, em nove pesos. Enquanto a Gracio não for
+adicionada ao kit no Adobe Fonts, o título cai na Nexa sozinho — **nada
+precisa mudar aqui depois**, o token já a pede em primeiro lugar.
+
+**A Switzer saiu do projeto** e com ela o eixo variável. A Nexa tem nove pesos
+FIXOS (100 a 900), então `font-variation-settings` deixou de funcionar e foi
+trocado por `font-weight` em dois lugares:
+
+- a esteira da abertura (`PESO_BASE` 450→400, `PESO_PICO` 62→200 no `main.js`,
+  e `--peso-base` no CSS — os dois têm de bater);
+- o estado ativo dos cards de Serviços (430/560 viraram 400/600).
+
+**O que se perdeu:** a esteira era um gradiente contínuo de peso e virou uma
+troca com degrau, porque o navegador arredonda para o peso mais próximo do
+kit. Se a fluidez fizer falta, o caminho é uma família variável — não há como
+interpolar entre pesos estáticos.
+
+O aparato segue em IBM Plex Mono local: é o registro de instrumento do site, e
+nenhuma das duas famílias novas tem desenho monoespaçado.
+
+## A régua que vira índice
+
+A barra lateral de progresso abre ao receber o ponteiro (ou foco pelo teclado)
+e vira o índice da página: cada segmento mostra o nome da seção e leva até
+ela. Continua medindo a rolagem como antes.
+
+Os segmentos são montados pelo `main.js` (`montarRegua`) como `<a href="#id">`
+quando a seção tem `id`; sem `id`, viram `<span>` — é o caso das páginas de
+projeto, que têm uma seção só e nada a navegar.
+
+**A largura do aparato não muda ao abrir.** Os nomes cabem no vão que o
+`--recuo` já reserva à esquerda do conteúdo (88 a 136px, e o nome mais longo
+mede ~90px em 11px). Sem empurrar layout e sem precisar de fundo próprio numa
+faixa que atravessa seções de cores diferentes.
+
+⚠ **Duas armadilhas pagas, não desfazer:**
+
+1. A régua tem máscara de entrada **própria** (`revelar-regua`), e não a
+   `revelar` compartilhada. Aquela usa `inset(… 0 …)` à direita, o que corta
+   tudo além da borda do elemento — e a régua tem 3px. Os nomes, que abrem a
+   72px, sumiam por completo.
+2. O afastamento à direita é `-320px` e **não** uma porcentagem. Em `inset()`
+   a porcentagem é relativa à largura do próprio elemento: `-200%` de 3px
+   liberava 6px, e o nome continuava cortado. Foi o meu primeiro conserto, e
+   estava errado.
+
+O `.aparato` continua com `pointer-events: none`; só `.aparato__escala`
+recebe ponteiro. Assim o número e o relógio seguem sendo instrumento passivo
+e não roubam clique do conteúdo. O `aria-hidden` saiu do aparato (agora há
+navegação real dentro dele) e ficou só nos dois blocos de texto redundantes.
+
 ## O que NÃO fazer
 
 - **Não rodar subsetter na Switzer.** A licença da ITF proíbe. O arquivo em

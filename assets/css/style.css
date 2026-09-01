@@ -19,18 +19,13 @@
 
 
 /* 01. FONTES ------------------------------------------------
-   Switzer: arquivo oficial da Fontshare, servido como veio.
-   A licença ITF FFL proíbe subset e conversão de formato — o
-   .woff2 abaixo é o distribuído pela fundição, sem alteração.
-   IBM Plex Mono: OFL, recortes latinos.
+   Título e texto vêm do kit Typekit da Jozzi, carregado pelo
+   <link> no <head> de cada página — não há @font-face deles aqui.
+   A Switzer, que servia os dois até 01/09, saiu do projeto.
+
+   IBM Plex Mono continua local (OFL): é o registro de aparato, e
+   nenhuma das duas famílias novas tem desenho monoespaçado.
    ----------------------------------------------------------- */
-@font-face {
-  font-family: 'Switzer';
-  src: url('../fonts/Switzer-Variable.woff2') format('woff2');
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
 @font-face {
   font-family: 'IBM Plex Mono';
   src: url('../fonts/IBMPlexMono-Regular.woff2') format('woff2');
@@ -109,6 +104,17 @@
   --aparato-l: clamp(5.5rem, 7vw, 8.5rem);
   --recuo:   var(--margem);
 
+  /* ---- FAMÍLIAS ----
+     Título e texto vêm do kit Typekit da Jozzi (o <link> está no
+     <head> de cada página). A Nexa está no kit; a GRACIO ainda não
+     — enquanto ela não for adicionada lá, o título cai na Nexa
+     sozinho, sem nada a mudar aqui depois. */
+  --fonte-titulo: "gracio", "nexa", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --fonte-texto:  "nexa", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /* o aparato continua em mono: ele é o registro de instrumento do
+     site, e nenhuma das duas famílias novas tem desenho monoespaçado */
+  --fonte-aparato: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
   /* movimento — uma curva só */
   --curva: cubic-bezier(.16, 1, .3, 1);
   --t-micro: 200ms;
@@ -118,7 +124,7 @@
   --t-cortina: 900ms;
 
   /* eixo de peso do elemento vivo */
-  --peso-base: 450;
+  --peso-base: 400;   /* bate com PESO_BASE no main.js */
 
 }
 
@@ -175,7 +181,7 @@ body {
   margin: 0;
   background: var(--papel);
   color: var(--fg);
-  font-family: 'Switzer', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: var(--fonte-texto);
   font-size: var(--fs-texto);
   font-weight: 400;
   line-height: 1.55;
@@ -206,7 +212,7 @@ a { color: inherit; text-decoration: none; }
   padding: .85rem .9rem;
   background: var(--tinta);
   color: var(--papel);
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-family: var(--fonte-aparato);
   font-size: var(--fs-aparato);
   letter-spacing: .12em;
   text-transform: uppercase;
@@ -221,6 +227,7 @@ a { color: inherit; text-decoration: none; }
 
 /* display */
 .d {
+  font-family: var(--fonte-titulo);
   font-size: var(--fs-display);
   font-weight: 500;
   letter-spacing: -.045em;
@@ -235,7 +242,7 @@ a { color: inherit; text-decoration: none; }
 
 /* aparato */
 .ap {
-  font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: var(--fonte-aparato);
   font-size: var(--fs-aparato);
   font-weight: 400;
   letter-spacing: .145em;
@@ -274,7 +281,7 @@ a { color: inherit; text-decoration: none; }
     /* o aparato É o registro de aparato: mono, 11px, 40% de tinta.
        Sem isto ele herda o texto corrido e vira protagonista, que
        é exatamente o que não pode acontecer. */
-    font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-family: var(--fonte-aparato);
     font-size: var(--fs-aparato);
     font-weight: 400;
     letter-spacing: .145em;
@@ -291,6 +298,9 @@ a { color: inherit; text-decoration: none; }
     display: flex;
     flex-direction: column;
     width: var(--aparato-l);
+    /* o aparato inteiro não recebe ponteiro — só a régua, mais
+       abaixo. Assim o resto dele (número, relógio) continua sendo
+       instrumento passivo e não rouba clique do conteúdo. */
     pointer-events: none;
   }
 
@@ -357,6 +367,18 @@ a { color: inherit; text-decoration: none; }
   }
   .js--regua .aparato__escala::before { content: none; }
 
+  /* ---- a régua também navega ----
+     Em repouso é o fio de sempre. Ao passar o ponteiro (ou ao
+     receber foco pelo teclado) ela abre e vira o índice da página:
+     cada segmento mostra o nome da seção e leva até ela.
+
+     A largura do aparato NÃO muda ao abrir — os nomes cabem no vão
+     que o --recuo já reserva à esquerda do conteúdo (88 a 136px, e
+     o mais longo mede ~90px em 11px). Sem empurrar nada, sem
+     precisar de fundo próprio numa faixa que atravessa seções de
+     cores diferentes. */
+  .aparato__escala { pointer-events: auto; }
+
   .aparato__seg {
     position: relative;
     /* o peso é a altura da seção no documento: a régua mede o
@@ -369,6 +391,56 @@ a { color: inherit; text-decoration: none; }
       width var(--t-micro) var(--curva),
       background-color var(--t-micro) var(--curva);
   }
+
+  /* o nome, escondido até a régua abrir. `visibility` junto da
+     opacidade: sem ela o link continuaria clicável e narrável
+     enquanto invisível. */
+  .aparato__seg-nome {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%) translateX(-6px);
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    color: var(--fg-3);
+    transition:
+      opacity var(--t-micro) var(--curva),
+      transform var(--t-micro) var(--curva),
+      visibility var(--t-micro);
+  }
+
+  .aparato__escala:hover .aparato__seg-nome,
+  .aparato__escala:focus-within .aparato__seg-nome {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) translateX(0);
+  }
+
+  /* com a régua aberta o fio engrossa: o alvo do ponteiro deixa de
+     ser 1px e passa a ser a faixa inteira do segmento */
+  .aparato__escala:hover .aparato__seg,
+  .aparato__escala:focus-within .aparato__seg { width: 3px; }
+
+  a.aparato__seg { display: block; }
+  a.aparato__seg::after {
+    /* área de clique invisível cobrindo o nome: o fio tem 3px, o
+       texto está fora dele, e sem isto só o fio seria clicável */
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: var(--aparato-l);
+    pointer-events: none;
+  }
+  .aparato__escala:hover a.aparato__seg::after,
+  .aparato__escala:focus-within a.aparato__seg::after { pointer-events: auto; }
+
+  a.aparato__seg:hover .aparato__seg-nome,
+  a.aparato__seg:focus-visible .aparato__seg-nome { color: var(--fg); }
+  a.aparato__seg:hover,
+  a.aparato__seg:focus-visible { background: rgb(var(--azul-rgb) / .85); }
   .aparato__seg.is-feito { background: rgb(var(--azul-rgb) / .52); }
   .aparato__seg.is-ativo {
     width: 3px;
@@ -390,6 +462,8 @@ a { color: inherit; text-decoration: none; }
   /* a agulha: um fio de 9px na borda do preenchimento, só no
      segmento corrente. É o que faz a régua ser lida como
      instrumento e não como barra de progresso. */
+  .aparato__seg.is-ativo .aparato__seg-nome { color: var(--fg); }
+
   .aparato__seg.is-ativo .aparato__seg-feito::after {
     content: "";
     position: absolute;
@@ -401,9 +475,23 @@ a { color: inherit; text-decoration: none; }
   }
 
   /* na carga, a escala se desenha de cima para baixo */
-  .js .aparato__escala { clip-path: inset(0 0 100% 0); }
+  /* Máscara PRÓPRIA, e não a `revelar` compartilhada: aquela usa
+     `inset(... 0 ...)` à direita, o que basta para os blocos de
+     texto do site mas corta tudo além da borda do elemento — e a
+     régua tem 3px de largura. Os nomes das seções, que abrem a
+     72px, sumiam por completo. O -200% à direita libera a
+     horizontal e mantém a revelação vertical igual. */
+  .js .aparato__escala { clip-path: inset(0 -320px 100% 0); }
   .js .aparato.is-ligado .aparato__escala {
-    animation: revelar var(--t-entra) var(--curva) both;
+    animation: revelar-regua var(--t-entra) var(--curva) both;
+  }
+  /* -320px e NÃO -200%: a porcentagem em inset() é relativa à
+     largura do próprio elemento, e a régua tem 3px — os "200%"
+     liberavam 6px, com o nome a 72px continuando cortado. Valor
+     absoluto, folgado o bastante para o nome mais longo. */
+  @keyframes revelar-regua {
+    from { clip-path: inset(0 -320px 102% 0); }
+    to   { clip-path: inset(0 -320px -8% 0); }
   }
 
   /* cada bloco troca de cor conforme o que está atrás DELE, não
@@ -610,13 +698,20 @@ a { color: inherit; text-decoration: none; }
 
 /* palavras do elemento vivo: largura travada na medida do peso
    base, para que a variação do eixo não empurre a linha */
+/* A esteira mudou de mecanismo em 01/09. A Switzer era VARIÁVEL e
+   o peso podia ser interpolado em qualquer valor entre 450 e 512;
+   a Nexa vem em nove pesos fixos (100 a 900), então
+   `font-variation-settings` não faz mais nada e o que resta é
+   `font-weight`, que o navegador arredonda para o peso mais
+   próximo do kit. Na prática a esteira deixou de ser um gradiente
+   contínuo e virou uma troca 400 → 500 sob o ponteiro. */
 [data-peso] .pal {
   display: inline-block;
-  font-variation-settings: 'wght' var(--peso-base);
+  font-weight: var(--peso-base);
   transition:
     clip-path var(--t-entra) var(--curva),
     transform var(--t-entra) var(--curva);
-  will-change: font-variation-settings;
+  will-change: font-weight;
 }
 
 
@@ -1087,12 +1182,13 @@ a { color: inherit; text-decoration: none; }
   letter-spacing: -.035em;
   line-height: 1.06;
   color: var(--fg-3);
-  /* NÍVEL 4 — o estado ativo responde no eixo variável da Switzer.
-     O nome não muda de tamanho nem de posição: muda de peso. */
-  font-variation-settings: 'wght' 430;
+  /* NÍVEL 4 — o estado ativo responde no peso. Eram 430 e 560 no
+     eixo variável da Switzer; com a Nexa estática viram 400 e 600,
+     que são pesos que o kit realmente entrega. */
+  font-weight: 400;
   transition:
     color var(--t-micro) var(--curva),
-    font-variation-settings var(--t-micro) var(--curva);
+    font-weight var(--t-micro) var(--curva);
 }
 .serv__num {
   display: block;
@@ -1103,7 +1199,7 @@ a { color: inherit; text-decoration: none; }
 
 .serv__card.is-ativo .serv__nome,
 .serv__card.is-ativo .serv__num { color: var(--fg); }
-.serv__card.is-ativo .serv__nome { font-variation-settings: 'wght' 560; }
+.serv__card.is-ativo .serv__nome { font-weight: 600; }
 
 /* Corpo ÚNICO para os cinco, ao contrário do índice que existia
    aqui antes. Lá a variação de corpo por comprimento de palavra era

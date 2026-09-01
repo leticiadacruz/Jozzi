@@ -18,9 +18,12 @@
 <meta property="og:site_name" content="Jozzi">
 <meta property="og:description" content="O lab de marketing que transforma a sua marca para o mundo real.">
 
-<link rel="preload" href="assets/fonts/Switzer-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/IBMPlexMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/style.css?v=68">
+<!-- Kit Typekit da Jozzi: Nexa (texto) e Gracio (titulo).
+     ANTES do style.css, para os tokens de familia ja acharem
+     as fontes declaradas quando forem resolvidos. -->
+<link rel="stylesheet" href="https://use.typekit.net/oyj0zig.css">
+<link rel="stylesheet" href="assets/css/style.css?v=72">
 
 <script>
 (function () {
@@ -120,16 +123,16 @@
 <!-- ============================================================
      APARATO — instrumentação silenciosa (desktop ≥1025px)
      ============================================================ -->
-<div class="aparato" id="aparato" aria-hidden="true">
-  <p class="aparato__id">
+<div class="aparato" id="aparato">
+  <p class="aparato__id" aria-hidden="true">
     <span class="aparato__num" data-aparato-num>00</span>
     <span class="aparato__sec" data-aparato-sec>Abertura</span>
   </p>
   <!-- a régua é montada pelo main.js: um segmento por seção, com
        altura proporcional à altura real dela no documento. Sem
        script sobra o fio contínuo, desenhado no ::before. -->
-  <div class="aparato__escala" data-aparato-escala></div>
-  <p class="aparato__hora">CWB<span data-relogio>--:--:--</span></p>
+  <nav class="aparato__escala" data-aparato-escala aria-label="Seções desta página"></nav>
+  <p class="aparato__hora" aria-hidden="true">CWB<span data-relogio>--:--:--</span></p>
 </div>
 
 
@@ -607,12 +610,18 @@
   <div class="sobre__decl">
     <p class="sobre__t d rv" data-linhas>A primeira agência de marketing com foco em moda de Curitiba.</p>
 
-    <p class="sobre__corpo rv">Desde 2025, nos estabelecemos como uma agência de marketing com um
+    <p class="sobre__corpo rv">Jozzi nasceu com sonoridade de marca de moda &mdash; curta, fácil de lembrar,
+      com o mesmo peso dos nomes que a gente reconhece de longe numa vitrine. Não é coincidência:
+      tratamos cada cliente com o mesmo critério que uma boa grife trata uma coleção. Nada entra
+      sem motivo, e o que fica carrega a assinatura de quem fez.
+      Desde 2025, nos estabelecemos como uma agência de marketing com um
     objetivo que vai muito além do significado ao pé da letra. Através da conexão entre estratégias
     e criatividade, construímos projetos pensando exatamente no que o cliente quer, e não no que nós
     queremos. Acreditamos que autenticidade só existe quando há fidelidade ao propósito. Ao
     acumularmos uma gama de experiências com marcas no mercado da moda, nos posicionamos a partir
-    da objetividade em cada etapa.</p>
+    da objetividade em cada etapa.
+  </p>
+
   </div>
 
   <!-- 2 · a virada -->
@@ -641,10 +650,7 @@
     <div class="sobre__bio">
       <h3 class="sobre__nome d d--2 rv">Letícia Cruz</h3>
       <p class="sobre__papel ap rv">Fundadora e diretora criativa</p>
-      <p class="rv">Jozzi nasceu com sonoridade de marca de moda &mdash; curta, fácil de lembrar,
-      com o mesmo peso dos nomes que a gente reconhece de longe numa vitrine. Não é coincidência:
-      tratamos cada cliente com o mesmo critério que uma boa grife trata uma coleção. Nada entra
-      sem motivo, e o que fica carrega a assinatura de quem fez.</p>
+      <p class="rv">Letícia Cruz é formada em Design de Moda pela Universidade Positivo (UP) e tem uma trajetória rica de experiências como stylist e produtora de moda. Ao passar a maior parte do tempo imersa na criação de campanhas, editoriais e conteúdos, Letícia sempre teve o desejo de unir o lado criativo com a entrega de estratégias para marcas em uma só direção. Foi assim que nasceu a Jozzi: o lugar que cria para você e com a maior qualidade possível dentro da sua proposta, buscando um olhar de 360 graus em cada etapa, para não sermos só mais uma agência. A mensagem principal de sua criação também carrega memória, porque Letícia passou metade de sua vida em Joanesburgo, na África do Sul, cidade dona do apelido carinhoso “Jozi”. Com uma conexão entre história e propósito, o seu pilar é que grandes marcas também são as que geram memória.</p>
     </div>
   </div>
 
