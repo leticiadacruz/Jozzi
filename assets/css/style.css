@@ -2684,6 +2684,65 @@ html.js--sem-motor .carregando { display: none; }
 }
 
 
+/* 11z. IMAGENS PROVISÓRIAS — TEMPORÁRIO ---------------------
+   Bloco de vida curta, para a Jozzi ver o layout com imagem no
+   lugar dos campos vazios. As fotos são as que JÁ estão no
+   repositório (projetos de styling), e não banco de imagens: nada
+   novo entrou no projeto e nada precisa de licença nova.
+
+   ⚠ NENHUMA delas é a imagem certa daquele lugar. A foto no
+   retrato da fundadora é de uma modelo de um projeto de styling.
+   Isto NÃO pode ir ao ar.
+
+   Para arrancar todas de uma vez, quando as imagens reais
+   chegarem — some o bloco inteiro sem deixar resto:
+
+     sed -i '' '/data-provisorio/,+1d' index.html
+     e apagar esta seção do CSS
+
+   O rótulo do campo ("Imagem 16:9", "Retrato 3:4") continua no
+   HTML por baixo: some só enquanto há foto na frente, e volta
+   sozinho quando a foto sair. É o que torna a remoção segura.
+   ----------------------------------------------------------- */
+.prov {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+}
+
+.fig__campo:has(.prov) > .ap,
+.serv__plate:has(.prov) > .ap { display: none; }
+
+/* o numeral da chapa é `mix-blend-mode: multiply`: desenhado para
+   bege claro, sobre foto ele some — no escuro por ser escuro, no
+   claro por não ter contra o que contrastar. Com imagem ele vira
+   tinta clara sobre um véu curto no pé da chapa. Isto NÃO é só
+   para as provisórias: é o que as fotos reais também vão precisar,
+   e por isso está resolvido agora e medido. */
+.serv__plate:has(.prov) .serv__plate-num {
+  mix-blend-mode: normal;
+  color: var(--papel);
+  text-shadow: 0 1px 10px rgb(var(--marrom-rgb) / .45);
+}
+
+/* o véu: só onde o numeral mora, e só quando há foto atrás dele.
+   55% da altura, terminando em transparente — a foto continua
+   legível, o numeral ganha piso. */
+.serv__plate:has(.prov)::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 55%;
+  background: linear-gradient(to top,
+              rgb(var(--marrom-rgb) / .55), rgb(var(--marrom-rgb) / 0));
+  pointer-events: none;
+}
+
+
 /* 12. RECOMPOSIÇÃO ------------------------------------------
    Cada faixa muda estrutura, não escala.
    ----------------------------------------------------------- */

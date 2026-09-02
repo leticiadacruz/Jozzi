@@ -1056,6 +1056,52 @@ toque para 24px no telefone. O `padding: .55em 0` no bloco ≤900 devolve a
 área sem mexer no corpo — medido em 45px a 375 e 48px a 390. **Quem mexer
 neste corpo tem de re-rodar a auditoria de alvos de toque.**
 
+## ⚠ IMAGENS PROVISÓRIAS NA HOME — REMOVER ANTES DE PUBLICAR
+
+Os dez campos de imagem da home estão preenchidos com **fotos provisórias**,
+a pedido da Jozzi (02/09), só para avaliar o layout com imagem no lugar dos
+campos vazios.
+
+**Nenhuma delas é a imagem certa daquele lugar.** As fotos são as que já
+estavam no repositório, de projetos de styling. Em particular:
+
+- o retrato da fundadora é de uma **modelo de um projeto de styling**;
+- o retrato do Murilo Ribeiro também — e é de uma mulher, porque não há
+  retrato masculino no repositório;
+- a imagem de "Estúdio, Curitiba" é uma foto de campanha, não do estúdio.
+
+**Isto não pode ir ao ar.** As legendas continuam dizendo "imagem a definir"
+de propósito, e as imagens são `aria-hidden` com `alt` vazio: para leitor de
+tela elas não existem, então nada é dito de errado a ninguém.
+
+Para arrancar todas de uma vez, quando as reais chegarem:
+
+```
+sed -i '' '/data-provisorio/,+1d' index.html
+```
+
+Depois apagar a seção **11z. IMAGENS PROVISÓRIAS** do `style.css`. O rótulo do
+campo ("Imagem 16:9", "Retrato 3:4") continua no HTML por baixo da foto e
+volta a aparecer sozinho quando ela sair — é isso que torna a remoção segura
+e verificável.
+
+Escolha deliberada: **não entrou nenhuma imagem nova no projeto.** Nada de
+banco de imagens, nada baixado, nenhuma licença nova a rastrear. As 10 fotos
+somam 476 KB, todas `loading="lazy"`.
+
+### Duas coisas daqui que valem ficar
+
+1. **O véu no pé da chapa de Serviços** (`.serv__plate:has(.prov)::after`) não
+   é enfeite da provisória: o numeral usa `mix-blend-mode: multiply`, desenhado
+   para bege liso, e sobre foto ele some — no escuro por ser escuro, no claro
+   por não ter contra o que contrastar. As fotos reais vão precisar do mesmo
+   tratamento. Quando elas entrarem, mover essas regras de `:has(.prov)` para
+   `.serv__plate` puro.
+2. **`:has()` entrou no projeto aqui, e é a primeira vez.** Se as provisórias
+   saírem inteiras, ele sai junto. Se o véu ficar (item 1), o projeto passa a
+   depender de `:has()` — suportado em todos os navegadores atuais, mas é uma
+   dependência nova que não existia antes.
+
 ## O que NÃO fazer
 
 - **Não subsetar a Gracio.** É a fonte desenhada da marca (`assets/fonts/
