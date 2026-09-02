@@ -24,7 +24,7 @@
      ANTES do style.css, para os tokens de familia ja acharem
      as fontes declaradas quando forem resolvidos. -->
 <link rel="stylesheet" href="https://use.typekit.net/oyj0zig.css">
-<link rel="stylesheet" href="assets/css/style.css?v=75">
+<link rel="stylesheet" href="assets/css/style.css?v=81">
 
 <script>
 (function () {
@@ -199,7 +199,7 @@
   <div class="quem__txt">
     <h2 class="secao__ap ap rv" id="quem-titulo">Quem somos</h2>
 
-    <p class="quem__t d d--2 rv">Mais que estética, somos estratégia.</p>
+    <p class="quem__t d d--2 rv">Mais que estética,<br>somos estratégia.</p>
 
     <div class="quem__corpo">
       <p class="rv">A Jozzi se diferencia por operar na autenticidade e no posicionamento real
@@ -214,15 +214,22 @@
 
 
 <!-- ============================================================
-     02 — NOSSO OLHAR
+     02 — NOSSA VISÃO
      Primeira inversão do site: papel vira tinta. A troca de fundo
      é a pontuação entre capítulos.
 
-     Regra de composição: cada princípio ocupa METADE da largura, e
-     a metade alterna. O texto de sustentação mora sempre na metade
-     que a afirmação deixou vazia, alinhado pela base. Nenhum
-     princípio repete a posição do anterior — não é uma lista de
-     quatro blocos iguais.
+     Composição em CARDS, por decisão da Jozzi (01/09). Antes cada
+     princípio ocupava metade da largura numa metade que alternava,
+     e a seção era alta: quatro movimentos de 25vh que empurravam
+     Serviços para muito longe da abertura. Em cards os quatro
+     princípios cabem em duas fileiras e se leem como um conjunto —
+     que é o que eles são, quatro faces de uma mesma postura, e não
+     quatro declarações sucessivas.
+
+     O card aqui é um campo delimitado por fio, não uma caixa com
+     fundo próprio: sobre tinta, um fundo mais claro viraria um
+     segundo plano e a seção perderia a inversão. O numeral é o
+     mesmo aparato que numera as seções e os serviços.
 
      Os quatro princípios foram aprovados. Não alterar a lógica
      verbal sem aprovação. Os textos de sustentação são os rascunhos
@@ -232,35 +239,41 @@
          data-num="02" data-nome="Nossa visão" aria-labelledby="olhar-titulo">
   <h2 class="secao__ap ap rv" id="olhar-titulo">Nossa visão</h2>
 
-  <div class="olhar__lista">
+  <p class="olhar__t d d--2 rv">Quatro princípios,<br>uma postura.</p>
 
-    <article class="prin prin--e">
-      <h3 class="prin__t rv" data-linhas>O planejamento é valioso.</h3>
-      <p class="prin__p rv">Ter um passo a passo parece um princípio clichê, mas não é.
+  <ul class="olhar__lista" role="list">
+
+    <li class="prin rv">
+      <p class="prin__n ap" aria-hidden="true">01</p>
+      <h3 class="prin__t">O planejamento é valioso.</h3>
+      <p class="prin__p">Ter um passo a passo parece um princípio clichê, mas não é.
       Aqui na Jozzi, a organização vem desde entender o que você precisa até a
       entrega de resultados.</p>
-    </article>
+    </li>
 
-    <article class="prin prin--d">
-      <h3 class="prin__t rv" data-linhas>Volume não é presença.</h3>
-      <p class="prin__p rv">Trabalhamos com uma imersão real na sua marca para que o seu
+    <li class="prin rv">
+      <p class="prin__n ap" aria-hidden="true">02</p>
+      <h3 class="prin__t">Volume não é presença.</h3>
+      <p class="prin__p">Trabalhamos com uma imersão real na sua marca para que o seu
       diferencial seja a qualidade e não a quantidade. Ter presença é comunicar-se de
       forma autêntica.</p>
-    </article>
+    </li>
 
-    <article class="prin prin--e">
-      <h3 class="prin__t rv" data-linhas>Ser criativo é decisão.</h3>
-      <p class="prin__p rv">Estamos sempre investigando tendências, aprendendo,
+    <li class="prin rv">
+      <p class="prin__n ap" aria-hidden="true">03</p>
+      <h3 class="prin__t">Ser criativo é decisão.</h3>
+      <p class="prin__p">Estamos sempre investigando tendências, aprendendo,
       explorando e se atualizando. A criatividade não vem do além, ela é construída.</p>
-    </article>
+    </li>
 
-    <article class="prin prin--d">
-      <h3 class="prin__t rv" data-linhas>Nada substitui o olhar humano.</h3>
-      <p class="prin__p rv">Do processo criativo ao relacionamento com o público,
+    <li class="prin rv">
+      <p class="prin__n ap" aria-hidden="true">04</p>
+      <h3 class="prin__t">Nada substitui o olhar humano.</h3>
+      <p class="prin__p">Do processo criativo ao relacionamento com o público,
       valorizamos uma comunicação próxima que só o contato humano pode proporcionar.</p>
-    </article>
+    </li>
 
-  </div>
+  </ul>
 </section>
 
 
@@ -292,6 +305,8 @@
 <section class="serv wrap" id="servicos" data-secao
          data-num="03" data-nome="Serviços" aria-labelledby="serv-titulo">
   <h2 class="secao__ap ap rv" id="serv-titulo">Serviços</h2>
+
+  <p class="serv__t d d--2 rv">Como criamos para você.</p>
 
   <ul class="serv__lista" role="list">
 
@@ -607,9 +622,20 @@
          data-num="05" data-nome="Sobre a Jozzi" aria-labelledby="sobre-titulo">
   <h2 class="secao__ap ap rv" id="sobre-titulo">Sobre a Jozzi</h2>
 
-  <!-- 1 · a declaração -->
+  <!-- 1 · a declaração
+       O degrau (título em cima à esquerda, corpo embaixo à direita)
+       deixava um vão morto embaixo à esquerda desde que o título
+       encolheu para caber em tela. A imagem mora nesse vão: não é
+       ilustração acrescentada, é o que faz o degrau fechar. -->
   <div class="sobre__decl">
     <p class="sobre__t d rv" data-linhas>A primeira agência de marketing com foco em moda de Curitiba.</p>
+
+    <figure class="sobre__fig-decl fig rv">
+      <div class="fig__campo fig__campo--45" data-figura>
+        <span class="ap">Imagem 4:5</span>
+      </div>
+      <figcaption class="ap">A Jozzi &mdash; imagem a definir</figcaption>
+    </figure>
 
     <p class="sobre__corpo rv">Jozzi nasceu com sonoridade de marca de moda &mdash; curta, fácil de lembrar,
       com o mesmo peso dos nomes que a gente reconhece de longe numa vitrine. Não é coincidência:
@@ -639,20 +665,47 @@
     </div>
   </div>
 
-  <!-- 3 · a pessoa -->
-  <div class="sobre__pessoa">
-    <figure class="sobre__fig fig rv">
-      <div class="fig__campo" data-figura>
-        <span class="ap">Retrato 3:4</span>
-      </div>
-      <figcaption class="ap">Letícia Cruz &mdash; imagem a definir</figcaption>
-    </figure>
+  <!-- 3 · as pessoas
+       Duas fichas na mesma formatação, empilhadas. A bio ocupa da
+       coluna 5 à 12 — antes parava na 9, e o texto justificado numa
+       medida curta abria rios entre as palavras.
 
-    <div class="sobre__bio">
-      <h3 class="sobre__nome d d--2 rv">Letícia Cruz</h3>
-      <p class="sobre__papel ap rv">Fundadora e diretora criativa</p>
-      <p class="rv">Letícia Cruz é formada em Design de Moda pela Universidade Positivo (UP) e tem uma trajetória rica de experiências como stylist e produtora de moda. Ao passar a maior parte do tempo imersa na criação de campanhas, editoriais e conteúdos, Letícia sempre teve o desejo de unir o lado criativo com a entrega de estratégias para marcas em uma só direção. Foi assim que nasceu a Jozzi: o lugar que cria para você e com a maior qualidade possível dentro da sua proposta, buscando um olhar de 360 graus em cada etapa, para não sermos só mais uma agência. A mensagem principal de sua criação também carrega memória, porque Letícia passou metade de sua vida em Joanesburgo, na África do Sul, cidade dona do apelido carinhoso “Jozi”. Com uma conexão entre história e propósito, o seu pilar é que grandes marcas também são as que geram memória.</p>
-    </div>
+       PENDENTE: o texto do Murilo Ribeiro. Cargo e biografia não
+       foram fornecidos e não podem ser inferidos — a ficha está
+       montada e marcada, esperando a copy real. -->
+  <div class="sobre__pessoa">
+
+    <article class="sobre__ficha">
+      <figure class="sobre__fig fig rv">
+        <div class="fig__campo" data-figura>
+          <span class="ap">Retrato 3:4</span>
+        </div>
+        <figcaption class="ap">Letícia Cruz &mdash; imagem a definir</figcaption>
+      </figure>
+
+      <div class="sobre__bio">
+        <h3 class="sobre__nome d d--2 rv">Letícia Cruz</h3>
+        <p class="sobre__papel ap rv">Fundadora e diretora criativa</p>
+        <p class="rv">Letícia Cruz é formada em Design de Moda pela Universidade Positivo (UP) e tem uma trajetória rica de experiências como stylist e produtora de moda. Ao passar a maior parte do tempo imersa na criação de campanhas, editoriais e conteúdos, Letícia sempre teve o desejo de unir o lado criativo com a entrega de estratégias para marcas em uma só direção. Foi assim que nasceu a Jozzi: o lugar que cria para você e com a maior qualidade possível dentro da sua proposta, buscando um olhar de 360 graus em cada etapa, para não sermos só mais uma agência. A mensagem principal de sua criação também carrega memória, porque Letícia passou metade de sua vida em Joanesburgo, na África do Sul, cidade dona do apelido carinhoso “Jozi”. Com uma conexão entre história e propósito, o seu pilar é que grandes marcas também são as que geram memória.</p>
+      </div>
+    </article>
+
+    <article class="sobre__ficha">
+      <figure class="sobre__fig fig rv">
+        <div class="fig__campo" data-figura>
+          <span class="ap">Retrato 3:4</span>
+        </div>
+        <figcaption class="ap">Murilo Ribeiro &mdash; imagem a definir</figcaption>
+      </figure>
+
+      <div class="sobre__bio">
+        <h3 class="sobre__nome d d--2 rv">Murilo Ribeiro</h3>
+        <p class="sobre__papel ap rv">Cargo a definir</p>
+        <p class="sobre__bio__pendente rv" data-pendente>Biografia a definir &mdash; mesma extensão
+        e mesmo tom da anterior. Este campo não foi preenchido por inferência.</p>
+      </div>
+    </article>
+
   </div>
 
 </section>
@@ -681,6 +734,8 @@
 <section class="contato wrap inv inv--bordo" id="contato" data-secao data-inv
          data-num="06" data-nome="Contato" aria-labelledby="contato-titulo">
   <h2 class="secao__ap ap rv" id="contato-titulo">Contato</h2>
+
+  <p class="contato__convite d d--2 rv">Venha criar com a gente.</p>
 
   <div class="contato__campo">
 

@@ -985,9 +985,16 @@ a { color: inherit; text-decoration: none; }
   }
 }
 
+/* Duas linhas, e exatamente duas: a frase quebra num <br>
+   declarado ("somos estratégia" embaixo, a pedido). Escala
+   própria porque no corpo cheio do display-2 cada metade ainda
+   estourava a coluna de 6 de 12 e virava quatro linhas — a
+   quebra pedida sumia no meio de outras três. Sem max-width em
+   ch: quem define a medida aqui é a coluna, e um teto em
+   caracteres por cima dela só reintroduz a quebra. */
 .quem__t {
-  max-width: 17ch;
   margin-bottom: clamp(1.8rem, 4.5vh, 3rem);
+  font-size: clamp(1.8rem, 2.5vw + .5rem, 3.5rem);
 }
 
 .quem__corpo {
@@ -997,36 +1004,58 @@ a { color: inherit; text-decoration: none; }
   color: var(--fg-2);
 }
 
-/* 10b. SEÇÃO 02 — NOSSO OLHAR -------------------------------
-   Cada princípio ocupa metade da largura, e a metade alterna. O
-   texto de sustentação mora na metade vazia, alinhado pela base da
-   afirmação. É o que impede a seção de virar quatro blocos iguais
-   sem depender de fio, cartão ou número grande.
+/* 10b. SEÇÃO 02 — NOSSA VISÃO ------------------------------
+   Quatro cards, duas fileiras. A composição anterior dava a cada
+   princípio metade da largura numa metade que alternava; era
+   bonita e era ALTA — 25vh de intervalo entre quatro movimentos
+   empurravam Serviços para longe demais da abertura. Em card os
+   quatro se leem como conjunto, que é o que eles são.
+
+   O card é um campo delimitado por FIO, sem fundo próprio: sobre
+   tinta, uma superfície mais clara viraria segundo plano e a
+   seção perderia a inversão que ela existe para fazer.
    ----------------------------------------------------------- */
 .olhar {
-  padding-top: clamp(6rem, 22vh, 15rem);
-  padding-bottom: clamp(6rem, 20vh, 15rem);
+  padding-top: clamp(5rem, 16vh, 11rem);
+  padding-bottom: clamp(5rem, 16vh, 11rem);
+}
+
+.olhar__t {
+  margin: 0 0 clamp(2.2rem, 6vh, 3.6rem);
+  max-width: 20ch;
 }
 
 .olhar__lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
   display: grid;
-  /* espaçamento calibrado para caberem dois princípios por tela.
-     Com três, cada afirmação deixa de ser declaração e vira item. */
-  gap: clamp(6rem, 25vh, 16rem);
-  margin-top: clamp(2rem, 7vh, 5rem);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1rem, 1.8vw, 1.6rem);
 }
 
 .prin {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 0 var(--calha);
+  align-content: start;
+  gap: clamp(.7rem, 1.6vh, 1rem);
+  padding: clamp(1.5rem, 2.6vw, 2.4rem);
+  border: 1px solid var(--fio);
 }
 
+.prin__n {
+  margin: 0 0 clamp(.6rem, 2vh, 1.2rem);
+  color: var(--fg-3);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Escala própria, menor que --fs-display-2 cru: o display-2 vale
+   4,5rem no topo da escala e dentro de um card de meia largura
+   isso quebra em quatro linhas. Continua acima da faixa proibida
+   de 24–44px na sua ponta de baixo. */
 .prin__t {
-  grid-row: 1;
-  align-self: end;
   margin: 0;
-  font-size: var(--fs-display-2);
+  font-family: var(--fonte-titulo);
+  font-size: clamp(1.5rem, 1.5vw + .85rem, 2.5rem);
   /* 460 e não 500: tipo claro sobre fundo escuro engorda
      opticamente. É compensação, não capricho. */
   font-weight: 460;
@@ -1034,28 +1063,15 @@ a { color: inherit; text-decoration: none; }
   /* versais pedem menos aperto que caixa baixa: a -.035em do resto
      do display fecharia os contracontornos aqui */
   letter-spacing: -.012em;
-  line-height: 1.0;
+  line-height: 1.04;
   text-wrap: balance;
 }
 
 .prin__p {
-  grid-row: 1;
-  align-self: end;
   margin: 0;
-  max-width: 34ch;
+  max-width: 42ch;
   color: var(--fg-2);
-  /* o texto de apoio encosta na MESMA linha de base do título ao
-     lado. Sem isto cada par caía num lugar diferente, porque a
-     altura do título varia com o número de linhas dele e o `end`
-     do grid alinhava caixas de alturas diferentes. */
-  padding-bottom: .18em;
 }
-
-.prin--e .prin__t { grid-column: 1 / span 7; }
-.prin--e .prin__p { grid-column: 9 / span 4; }
-
-.prin--d .prin__t { grid-column: 6 / span 7; }
-.prin--d .prin__p { grid-column: 1 / span 4; }
 
 
 /* 10c. SEÇÃO 03 — SERVIÇOS · CARDS --------------------------
@@ -1077,6 +1093,14 @@ a { color: inherit; text-decoration: none; }
    abertas sobre a chapa. O `.js--serv` é que as FECHA — nunca o
    contrário. Nada depende do script para existir.
    ----------------------------------------------------------- */
+/* O título que a seção não tinha: o rótulo "Serviços" é aparato
+   escondido acima de 1025px, então até aqui a seção abria direto
+   nos cards, sem uma frase que a apresentasse. */
+.serv__t {
+  margin: 0 0 clamp(2rem, 5.5vh, 3.4rem);
+  max-width: 22ch;
+}
+
 .serv {
   padding-top: clamp(5rem, 16vh, 11rem);
   padding-bottom: clamp(5rem, 16vh, 11rem);
@@ -1734,6 +1758,14 @@ img.onde__mapa {
   padding-bottom: clamp(2.5rem, 9vh, 6rem);
 }
 
+/* O convite entra onde a seção só tinha o endereço: "Contato" é
+   aparato escondido acima de 1025px, então a seção abria fria,
+   num e-mail gigante e sem uma frase que chamasse. */
+.contato__convite {
+  margin: 0 0 clamp(2.2rem, 6vh, 3.6rem);
+  max-width: 18ch;
+}
+
 .contato__campo {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -1743,9 +1775,11 @@ img.onde__mapa {
 .contato__email {
   grid-column: 1 / span 11;
   grid-row: 1;
-  /* registro de display, ajustado para o endereço caber em duas
-     linhas — mesma técnica do índice de Serviços, não um corpo novo */
-  font-size: calc(var(--fs-display) * .82);
+  /* .82 → .52 do display: o endereço era o maior elemento da
+     composição e agora divide a faixa com o convite, que é quem
+     fala primeiro. Ainda é o segundo maior corpo da seção, e
+     continua acima do display-2 — não virou texto. */
+  font-size: calc(var(--fs-display) * .52);
   font-weight: 500;
   letter-spacing: -.045em;
   line-height: .95;
@@ -1810,6 +1844,11 @@ img.onde__mapa {
   .contato__zap,
   .contato__ap--email,
   .contato__ap--zap { grid-column: 1; grid-row: auto; align-self: start; }
+  /* alvo de toque: o e-mail encolheu de .82 para .52 do display e
+     com isso a caixa dele caiu para 24px de altura no telefone —
+     abaixo dos 44px mínimos. O padding devolve a área sem mexer no
+     corpo da letra. Medido: 45px em 375, 48px em 390. */
+  .contato__email { padding: .55em 0; }
   .contato__zap {
     margin-top: clamp(2.5rem, 8vh, 4rem);
     /* alvo de toque: com .12em o link ficava em 39px */
@@ -1978,6 +2017,8 @@ img.onde__mapa {
   margin: 0;
   color: var(--fg-2);
 }
+.sobre__fig-decl { margin: 0; }
+.fig__campo--45 { aspect-ratio: 4 / 5; }
 
 /* ---- 2 · a virada ---- */
 .sobre__virada {
@@ -1985,9 +2026,14 @@ img.onde__mapa {
   padding-top: clamp(2.5rem, 8vh, 4.5rem);
   border-top: 1px solid var(--fio);
 }
+/* Escala própria e menor que --fs-display: em corpo cheio esta
+   frase competia com a declaração de abertura da seção, e ela é
+   a VIRADA, não o clímax. Fica acima do display-2 e abaixo do
+   display — é a única frase do site nessa posição, de propósito. */
 .sobre__linha {
   margin: 0;
-  max-width: 11ch;
+  max-width: 13ch;
+  font-size: clamp(1.8rem, 3.2vw + .5rem, 3.6rem);
 }
 .sobre__exp p {
   margin: 0;
@@ -2017,7 +2063,23 @@ img.onde__mapa {
 .sobre__bio > p:last-of-type {
   margin: 0;
   color: var(--fg-2);
+  /* `hyphens: auto` não é enfeite: sem separação silábica o
+     português justificado abre rios brancos, e palavras longas
+     como "Joanesburgo" são exatamente o caso ruim. Vale nas duas
+     larguras — também melhora o alinhamento à esquerda. */
+  hyphens: auto;
+  -webkit-hyphens: auto;
 }
+
+/* o campo pendente se identifica: não é texto de bio em tom baixo,
+   é um lugar vazio marcado como vazio */
+.sobre__bio__pendente {
+  margin: 0;
+  color: var(--fg-3);
+  font-style: italic;
+}
+
+.sobre__ficha { display: grid; }
 
 /* ---- ≥1025: as três grades ---- */
 @media (min-width: 1025px) {
@@ -2030,8 +2092,9 @@ img.onde__mapa {
     grid-template-columns: repeat(12, minmax(0, 1fr));
     gap: clamp(2.5rem, 7vh, 4.5rem) var(--calha);
   }
-  .sobre__t     { grid-column: 1 / span 8;  grid-row: 1; }
-  .sobre__corpo { grid-column: 7 / span 6;  grid-row: 2; }
+  .sobre__t         { grid-column: 1 / span 8;  grid-row: 1; }
+  .sobre__fig-decl  { grid-column: 1 / span 5;  grid-row: 2; }
+  .sobre__corpo     { grid-column: 7 / span 6;  grid-row: 2; }
 
   /* a frase grande e o texto de 11px na MESMA faixa, alinhados
      pela base: a diferença de corpo vira composição em vez de
@@ -2048,14 +2111,41 @@ img.onde__mapa {
   /* a seção contrai: o retrato é pequeno de propósito — 3 de 12
      colunas. Depois de dois movimentos de volume, o fecho é
      íntimo, e é ele que prepara a inversão do bordô. */
+  /* duas fichas empilhadas: a grade de 12 colunas desce um nível,
+     para dentro de cada ficha, senão a segunda pessoa cairia nas
+     colunas seguintes da MESMA fileira em vez de numa fileira
+     nova. */
   .sobre__pessoa {
     display: grid;
+    gap: clamp(3rem, 9vh, 5.5rem);
+  }
+  /* start, e não o `end` que a seção usava quando havia UMA
+     pessoa. Ali o retrato e a bio tinham altura parecida e a base
+     comum era composição. Com duas fichas de extensões diferentes
+     o `end` empurra o nome da ficha curta para o pé do retrato e
+     abre um vazio acima dele. Pelo topo, as duas leem igual
+     independentemente do tamanho do texto. */
+  .sobre__ficha {
     grid-template-columns: repeat(12, minmax(0, 1fr));
     gap: var(--calha);
-    align-items: end;
+    align-items: start;
   }
   .sobre__fig { grid-column: 1 / span 3; }
-  .sobre__bio { grid-column: 5 / span 5; }
+  /* até a coluna 12, e não até a 9: a caixa cresce para a direita
+     porque é a medida que torna a justificação possível. */
+  .sobre__bio { grid-column: 5 / span 8; }
+
+
+}
+
+/* A justificação depende da MEDIDA, não do layout — por isso vive
+   na própria faixa e não junto das grades. Medido nesta bio: 31
+   caracteres por linha a 390px, 48 a 600, 55 a 700, 67 a 1440.
+   Justificar abaixo de ~55 é o pior caso do alinhamento: o espaço
+   entre palavras vira buraco visível em quase toda linha. Abaixo
+   de 700 o texto fica à esquerda, que é o certo para medida curta. */
+@media (min-width: 700px) {
+  .sobre__bio > p:last-of-type { text-align: justify; }
 }
 
 /* ---- <1025: empilha, e o retrato não come a tela ---- */
@@ -2064,6 +2154,8 @@ img.onde__mapa {
   .sobre__exp    { margin-top: clamp(1.8rem, 5vh, 2.6rem); }
   .sobre__bio    { margin-top: clamp(1.8rem, 5vh, 2.6rem); }
   .sobre__fig    { max-width: 15rem; }
+  .sobre__fig-decl { margin-top: clamp(1.8rem, 5vh, 2.6rem); max-width: 22rem; }
+  .sobre__pessoa { display: grid; gap: clamp(2.5rem, 8vh, 4rem); }
   .sobre__t      { max-width: 100%; }
   .sobre__linha  { max-width: 100%; }
 }
@@ -2602,28 +2694,12 @@ html.js--sem-motor .carregando { display: none; }
   .quem__txt { grid-column: 7 / span 6; }
 }
 
-/* ≤1024 — as metades ficam apertadas para uma afirmação em display;
-   o texto desce para baixo da afirmação, mantendo o recuo alternado
-   como resto do gesto. */
-@media (max-width: 1024px) {
-  .prin__p { grid-row: 2; align-self: start; margin-top: 1.4rem; }
-  .prin--e .prin__t { grid-column: 1 / span 10; }
-  .prin--e .prin__p { grid-column: 1 / span 6; }
-  .prin--d .prin__t { grid-column: 3 / span 10; }
-  .prin--d .prin__p { grid-column: 3 / span 6; }
-}
-
 /* ≤768 — uma coluna. A imagem entra entre o título e o texto,
    para o mobile ter ritmo editorial e não empilhamento. */
 @media (max-width: 768px) {
-  /* a alternância era um gesto de largura: sem largura, ela sai.
-     No telefone o ritmo vem do vazio entre os princípios. */
-  .prin { grid-template-columns: 1fr; }
-  .prin__t,
-  .prin--e .prin__t, .prin--d .prin__t,
-  .prin__p,
-  .prin--e .prin__p, .prin--d .prin__p { grid-column: 1; }
-  .prin__p { max-width: none; margin-top: 1.2rem; }
+  /* dois cards lado a lado não cabem no telefone: viram fila. */
+  .olhar__lista { grid-template-columns: 1fr; }
+  .prin__p { max-width: none; }
 
   .quem {
     grid-template-columns: 1fr;

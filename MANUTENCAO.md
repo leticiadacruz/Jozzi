@@ -977,6 +977,85 @@ recebe ponteiro. Assim o número e o relógio seguem sendo instrumento passivo
 e não roubam clique do conteúdo. O `aria-hidden` saiu do aparato (agora há
 navegação real dentro dele) e ficou só nos dois blocos de texto redundantes.
 
+## Nossa visão em cards (01/09)
+
+A seção 02 deixou de ser a composição alternada — cada princípio ocupando
+metade da largura numa metade que alternava — e virou **quatro cards em duas
+fileiras**, por decisão da Jozzi.
+
+O que a troca resolveu: a composição anterior era bonita e era ALTA. Quatro
+movimentos separados por `gap: clamp(6rem, 25vh, 16rem)` empurravam Serviços
+para muito longe da abertura. Em card os quatro princípios se leem como
+conjunto — que é o que eles são, quatro faces de uma mesma postura, e não
+quatro declarações sucessivas.
+
+⚠ **O card é um campo delimitado por FIO, sem fundo próprio.** Sobre tinta,
+uma superfície mais clara viraria segundo plano e a seção perderia a inversão
+que ela existe para fazer. Não dar `background` ao `.prin`.
+
+⚠ **Os títulos dos cards NÃO levam `data-linhas`, e isso é deliberado.**
+`revelar()` só distribui `is-dentro` nas `.pal` quando o elemento revelado é
+ele mesmo o `[data-linhas]`. Com `.rv` no card e `data-linhas` no `<h3>` de
+dentro, as palavras nunca receberiam a classe e **o título ficaria invisível
+para sempre — sem erro nenhum no console.** O card entra como uma peça só,
+igual aos cards de Serviços. Se um dia alguém quiser a revelação linha a
+linha de volta, o `.rv` tem de ir para o `<h3>`, não para o `<li>`.
+
+`.prin__t` tem escala própria (`clamp(1.5rem, 1.5vw + .85rem, 2.5rem)`) e não
+`--fs-display-2` cru: o display-2 chega a 4,5rem e dentro de um card de meia
+largura isso quebra em quatro linhas.
+
+## Justificação depende da medida, não do layout
+
+A bio das fichas de pessoa é justificada — mas só a partir de **700px**, e o
+número não é arbitrário. Medido nessa bio: 31 caracteres por linha a 390px,
+48 a 600, **55 a 700**, 67 a 1440. Justificar abaixo de ~55 caracteres é o
+pior caso do alinhamento: o espaço entre palavras vira buraco visível em
+quase toda linha. Abaixo de 700 o texto fica à esquerda.
+
+`hyphens: auto` acompanha em TODAS as larguras, e não é enfeite: sem
+separação silábica o português justificado abre rios, e palavras como
+"Joanesburgo" são exatamente o caso ruim.
+
+## Duas fichas de pessoa, alinhadas pelo TOPO
+
+`.sobre__ficha` usa `align-items: start`. A seção usava `end` quando havia uma
+pessoa só — ali retrato e bio tinham altura parecida e a base comum era
+composição. Com duas fichas de extensões diferentes o `end` empurra o nome da
+ficha curta para o pé do retrato e abre um vazio acima dele. Pelo topo as duas
+leem igual independentemente do tamanho do texto.
+
+A grade de 12 colunas desceu um nível, para dentro de cada ficha: no
+`.sobre__pessoa` ela faria a segunda pessoa cair nas colunas seguintes da
+MESMA fileira em vez de numa fileira nova.
+
+⚠ **PENDENTE: o texto do Murilo Ribeiro.** Cargo e biografia não foram
+fornecidos e não podem ser inferidos. A ficha está montada, na mesma
+formatação da Letícia, com os dois campos marcados como a definir.
+
+## Corpos com escala própria, e por quê
+
+Três frases de display fugiram de `--fs-display` / `--fs-display-2` crus.
+Nenhuma delas é capricho — todas resolvem um problema medido:
+
+| Elemento | Escala | Motivo |
+| --- | --- | --- |
+| `.quem__t` | `clamp(1.8rem, 2.5vw + .5rem, 3.5rem)` | A frase quebra num `<br>` declarado ("somos estratégia" embaixo). No corpo cheio cada metade ainda estourava a coluna de 6 de 12 e virava quatro linhas — a quebra pedida sumia no meio de outras três. |
+| `.sobre__t` | `clamp(2rem, 4.4vw + .5rem, 5.4rem)` | 58 caracteres em corpo cheio ocupavam 912px, mais de uma tela só de título. |
+| `.sobre__linha` | `clamp(1.8rem, 3.2vw + .5rem, 3.6rem)` | Competia com a declaração de abertura da seção, e ela é a VIRADA, não o clímax. |
+
+O piso de `.quem__t` é **1,8rem e não menos**: a 360px isso dá 29px contra 16px
+de texto, exatamente o **1,8×** que o sistema exige entre o menor display e o
+corpo. Baixar para caber em duas linhas a 320/360 quebraria a regra da escala
+— e a quebra que a Jozzi pediu continua garantida pelo `<br>` em toda largura,
+mesmo quando cada metade ocupa duas linhas.
+
+⚠ **`.contato__email` caiu de `.82` para `.52` do display** (o convite "Venha
+criar com a gente" passou a ser quem fala primeiro). Isso derrubou o alvo de
+toque para 24px no telefone. O `padding: .55em 0` no bloco ≤900 devolve a
+área sem mexer no corpo — medido em 45px a 375 e 48px a 390. **Quem mexer
+neste corpo tem de re-rodar a auditoria de alvos de toque.**
+
 ## O que NÃO fazer
 
 - **Não subsetar a Gracio.** É a fonte desenhada da marca (`assets/fonts/
