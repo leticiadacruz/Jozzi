@@ -24,7 +24,7 @@
      ANTES do style.css, para os tokens de familia ja acharem
      as fontes declaradas quando forem resolvidos. -->
 <link rel="stylesheet" href="https://use.typekit.net/oyj0zig.css">
-<link rel="stylesheet" href="assets/css/style.css?v=84">
+<link rel="stylesheet" href="assets/css/style.css?v=88">
 
 <script>
 (function () {
@@ -245,34 +245,42 @@
 
   <ul class="olhar__lista" role="list">
 
-    <li class="prin rv">
-      <p class="prin__n ap" aria-hidden="true">01</p>
-      <h3 class="prin__t">O planejamento é valioso.</h3>
-      <p class="prin__p">Ter um passo a passo parece um princípio clichê, mas não é.
-      Aqui na Jozzi, a organização vem desde entender o que você precisa até a
-      entrega de resultados.</p>
+    <li class="prin__w rv">
+      <article class="prin">
+        <p class="prin__n ap" aria-hidden="true">01</p>
+        <h3 class="prin__t">O planejamento é valioso.</h3>
+        <p class="prin__p">Ter um passo a passo parece um princípio clichê, mas não é.
+        Aqui na Jozzi, a organização vem desde entender o que você precisa até a
+        entrega de resultados.</p>
+      </article>
     </li>
 
-    <li class="prin rv">
-      <p class="prin__n ap" aria-hidden="true">02</p>
-      <h3 class="prin__t">Volume não é presença.</h3>
-      <p class="prin__p">Trabalhamos com uma imersão real na sua marca para que o seu
-      diferencial seja a qualidade e não a quantidade. Ter presença é comunicar-se de
-      forma autêntica.</p>
+    <li class="prin__w rv">
+      <article class="prin">
+        <p class="prin__n ap" aria-hidden="true">02</p>
+        <h3 class="prin__t">Volume não é presença.</h3>
+        <p class="prin__p">Trabalhamos com uma imersão real na sua marca para que o seu
+        diferencial seja a qualidade e não a quantidade. Ter presença é comunicar-se de
+        forma autêntica.</p>
+      </article>
     </li>
 
-    <li class="prin rv">
-      <p class="prin__n ap" aria-hidden="true">03</p>
-      <h3 class="prin__t">Ser criativo é decisão.</h3>
-      <p class="prin__p">Estamos sempre investigando tendências, aprendendo,
-      explorando e se atualizando. A criatividade não vem do além, ela é construída.</p>
+    <li class="prin__w rv">
+      <article class="prin">
+        <p class="prin__n ap" aria-hidden="true">03</p>
+        <h3 class="prin__t">Ser criativo é decisão.</h3>
+        <p class="prin__p">Estamos sempre investigando tendências, aprendendo,
+        explorando e se atualizando. A criatividade não vem do além, ela é construída.</p>
+      </article>
     </li>
 
-    <li class="prin rv">
-      <p class="prin__n ap" aria-hidden="true">04</p>
-      <h3 class="prin__t">Nada substitui o olhar humano.</h3>
-      <p class="prin__p">Do processo criativo ao relacionamento com o público,
-      valorizamos uma comunicação próxima que só o contato humano pode proporcionar.</p>
+    <li class="prin__w rv">
+      <article class="prin">
+        <p class="prin__n ap" aria-hidden="true">04</p>
+        <h3 class="prin__t">Nada substitui o olhar humano.</h3>
+        <p class="prin__p">Do processo criativo ao relacionamento com o público,
+        valorizamos uma comunicação próxima que só o contato humano pode proporcionar.</p>
+      </article>
     </li>
 
   </ul>
@@ -691,6 +699,8 @@
        montada e marcada, esperando a copy real. -->
   <div class="sobre__pessoa">
 
+    <h3 class="sobre__pessoa__t d rv" data-linhas>Quem está por trás da Jozzi.</h3>
+
     <article class="sobre__ficha">
       <figure class="sobre__fig fig rv">
         <div class="fig__campo" data-figura>
@@ -702,7 +712,7 @@
       </figure>
 
       <div class="sobre__bio">
-        <h3 class="sobre__nome d d--2 rv">Letícia Cruz</h3>
+        <h4 class="sobre__nome d d--2 rv">Letícia Cruz</h4>
         <p class="sobre__papel ap rv">Fundadora e diretora criativa</p>
         <p class="rv">Letícia Cruz é formada em Design de Moda pela Universidade Positivo (UP) e tem uma trajetória rica de experiências como stylist e produtora de moda. Ao passar a maior parte do tempo imersa na criação de campanhas, editoriais e conteúdos, Letícia sempre teve o desejo de unir o lado criativo com a entrega de estratégias para marcas em uma só direção. Foi assim que nasceu a Jozzi: o lugar que cria para você e com a maior qualidade possível dentro da sua proposta, buscando um olhar de 360 graus em cada etapa, para não sermos só mais uma agência. A mensagem principal de sua criação também carrega memória, porque Letícia passou metade de sua vida em Joanesburgo, na África do Sul, cidade dona do apelido carinhoso “Jozi”. Com uma conexão entre história e propósito, o seu pilar é que grandes marcas também são as que geram memória.</p>
       </div>
@@ -719,12 +729,63 @@
       </figure>
 
       <div class="sobre__bio">
-        <h3 class="sobre__nome d d--2 rv">Murilo Ribeiro</h3>
+        <h4 class="sobre__nome d d--2 rv">Murilo Ribeiro</h4>
         <p class="sobre__papel ap rv">Cargo a definir</p>
         <p class="sobre__bio__pendente rv" data-pendente>Biografia a definir &mdash; mesma extensão
         e mesmo tom da anterior. Este campo não foi preenchido por inferência.</p>
       </div>
     </article>
+
+    <!-- 4 · a equipe
+         Três retratos. O nome e a função vivem SEMPRE no HTML: em
+         telas sem ponteiro eles ficam visíveis por baixo do
+         retrato, e só onde há hover é que se escondem para subir
+         por cima da foto. Conteúdo que só existe no hover não
+         existe no telefone nem para quem navega por teclado.
+
+         PENDENTE: a função de cada um. Os três nomes foram
+         fornecidos; o que cada pessoa faz, não. -->
+    <div class="equipe">
+      <h4 class="equipe__ap ap rv">Equipe</h4>
+
+      <ul class="equipe__lista" role="list">
+      <li class="equipe__m rv">
+        <div class="equipe__foto fig__campo" data-figura>
+          <span class="ap">Retrato 3:4</span>
+          <img class="prov" data-provisorio src="assets/img/styling/leandra-klisievicz/03.avif"
+               alt="" aria-hidden="true" width="933" height="1400" loading="lazy" decoding="async">
+        </div>
+        <div class="equipe__info">
+          <p class="equipe__nome">Guilherme Bernardino</p>
+          <p class="equipe__papel ap">Função a definir</p>
+        </div>
+      </li>
+
+      <li class="equipe__m rv">
+        <div class="equipe__foto fig__campo" data-figura>
+          <span class="ap">Retrato 3:4</span>
+          <img class="prov" data-provisorio src="assets/img/styling/solstice-magazine/04.avif"
+               alt="" aria-hidden="true" width="1050" height="1400" loading="lazy" decoding="async">
+        </div>
+        <div class="equipe__info">
+          <p class="equipe__nome">Giovanna Gobbi</p>
+          <p class="equipe__papel ap">Função a definir</p>
+        </div>
+      </li>
+
+      <li class="equipe__m rv">
+        <div class="equipe__foto fig__campo" data-figura>
+          <span class="ap">Retrato 3:4</span>
+          <img class="prov" data-provisorio src="assets/img/styling/carol-andrade/09.avif"
+               alt="" aria-hidden="true" width="931" height="1400" loading="lazy" decoding="async">
+        </div>
+        <div class="equipe__info">
+          <p class="equipe__nome">Loize Antiacomi</p>
+          <p class="equipe__papel ap">Função a definir</p>
+        </div>
+      </li>
+      </ul>
+    </div>
 
   </div>
 

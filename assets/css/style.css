@@ -1042,6 +1042,58 @@ a { color: inherit; text-decoration: none; }
   border: 1px solid var(--fio);
 }
 
+/* ---- o card responde ao ponteiro ----
+   Cresce por `transform` e não por largura: mudar a largura real
+   re-fluiria a fileira inteira e os outros três saltariam — é a
+   mesma razão pela qual as etiquetas de Serviços sobem por cima da
+   chapa em vez de empurrá-la.
+
+   3% sobre um card de ~590px são 18px, 9 de cada lado, contra um
+   gap de ~26px: cresce sem encostar no vizinho.
+
+   ⚠ POR QUE EXISTE O `.prin__w`. A máscara de entrada é uma
+   ANIMAÇÃO (`animation: revelar ... both`), e o último keyframe
+   dela declara `transform: none`. Com `fill-mode: both` esse valor
+   fica valendo para sempre — e, na cascata, animação vence
+   declaração normal. Resultado: `transform: scale()` num elemento
+   que tem `.rv` simplesmente NÃO APLICA, sem erro nenhum e sem
+   nada de estranho na lista de regras. A máscara mora no `<li>
+   .prin__w`, o card que escala é o `<article> .prin` de dentro, e
+   os dois deixam de disputar a mesma propriedade. Não juntar de
+   volta num elemento só.
+
+   `@media (hover: hover)`: no telefone o hover fica grudado no
+   último card tocado e o leitor não tem como desfazer. */
+.prin__w { display: grid; }
+.prin { height: 100%; }
+
+@media (hover: hover) and (pointer: fine) {
+  .prin {
+    position: relative;
+    transition:
+      transform var(--t-entra) var(--curva),
+      border-color var(--t-entra) var(--curva),
+      background-color var(--t-entra) var(--curva);
+  }
+  .prin:hover,
+  .prin:focus-within {
+    transform: scale(1.03);
+    border-color: rgb(var(--off-white-rgb) / .55);
+    background: rgb(var(--off-white-rgb) / .05);
+  }
+  /* o z-index tem de subir no ITEM DA GRADE, não no card: o card
+     cresce, mas quem se empilha contra os vizinhos é o <li> */
+  .prin__w:hover,
+  .prin__w:focus-within { z-index: 2; }
+
+  .prin__n,
+  .prin__p { transition: color var(--t-entra) var(--curva); }
+  .prin:hover .prin__n,
+  .prin:focus-within .prin__n { color: var(--fg-2); }
+  .prin:hover .prin__p,
+  .prin:focus-within .prin__p { color: var(--fg); }
+}
+
 .prin__n {
   margin: 0 0 clamp(.6rem, 2vh, 1.2rem);
   color: var(--fg-3);
@@ -1247,16 +1299,31 @@ a { color: inherit; text-decoration: none; }
   /* Escala própria, e não `--fs-display-2` cru.
      Medido: `--fs-display-2` vale 41px em 1025 e 44px em 1100 —
      dentro da faixa proibida de 24 a 44, que é justamente onde a
-     regra em pixels vale (acima de 1025). Esta clamp começa em
-     46,5px em 1025 e termina em 57,6px: nunca entra na faixa.
-     Abaixo de 1025 vale a regra geral, a razão: o menor corpo aqui
-     é 35px contra 16px de texto — 2,2 vezes, acima do mínimo de
-     1,8. Medido em 390, 769, 900, 1025, 1280 e 1440. */
-  font-size: clamp(2.2rem, 3.6vw + .6rem, 3.6rem);
+     regra em pixels vale (acima de 1025).
+
+     A JOZZI PEDIU (02/09) os seis rótulos em UMA linha, e isso
+     custa a escala. Medido: o espaço útil dentro do card é de
+     298px em 1280 — a largura mais apertada de todas, porque ali
+     já são três colunas e a calha ainda não cedeu. O rótulo mais
+     longo ("Captação de Conteúdos") só cabe numa linha até 26,5px
+     nessa largura, e é ele que manda na clamp inteira.
+
+     Duas consequências assumidas:
+       · o corpo ENTRA na faixa proibida de 24 a 44px acima de 1025;
+       · a razão para o texto cai de 2,2x para ~1,4x, abaixo do
+         mínimo de 1,8x que o resto do sistema respeita.
+     O rótulo deixa de ser display e vira um registro intermediário
+     que só existe aqui. Se a decisão voltar atrás, o que volta é
+     esta clamp e o `min-height` do rótulo. */
+  font-size: clamp(1.4rem, .55vw + 1.05rem, 1.6rem);
   font-weight: 500;
   letter-spacing: -.035em;
   line-height: 1.06;
-  color: var(--fg-3);
+  /* --fg-2 e não --fg-3: com o rótulo em 22–25px o corpo deixou de
+     carregar a hierarquia contra a descrição logo abaixo. O tom
+     devolve parte dela sem mexer no tamanho. O estado ativo
+     continua distinguível — vai para --fg e peso 600. */
+  color: var(--fg-2);
   /* NÍVEL 4 — o estado ativo responde no peso. Eram 430 e 560 no
      eixo variável da Switzer; com a Nexa estática viram 400 e 600,
      que são pesos que o kit realmente entrega. */
@@ -1279,9 +1346,9 @@ a { color: inherit; text-decoration: none; }
 /* Corpo ÚNICO para os cinco, ao contrário do índice que existia
    aqui antes. Lá a variação de corpo por comprimento de palavra era
    composição; entre cards de mesma largura ela seria lida como
-   ranking comercial. Os nomes longos QUEBRAM em duas linhas em
-   corpo cheio — encolher para caber numa linha os jogaria dentro da
-   faixa proibida.
+   ranking comercial. Os nomes longos cabem agora em uma
+   linha só, a pedido da Jozzi — ver na clamp de `.serv__nome` o
+   que isso custou.
 
    O que sobrevive por card é só a correção óptica de primeira
    letra: alinha o glifo, não a caixa. */
@@ -1343,7 +1410,9 @@ a { color: inherit; text-decoration: none; }
   .serv__card { grid-column: span 6; }
   /* duas linhas de rótulo reservadas: é o que alinha o texto dos
      cinco cards mesmo com nomes de uma e de duas linhas */
-  .serv__rotulo { min-height: 2.12em; }
+  /* as duas linhas reservadas saíram junto com a quebra: com
+     todos os rótulos em uma linha, reservar a segunda só abria um
+     vão morto entre o nome e a descrição. */
 }
 
 /* Três por fila só a partir de 1280. Entre 1025 e 1279 o aparato já
@@ -2080,6 +2149,117 @@ img.onde__mapa {
 }
 
 .sobre__ficha { display: grid; }
+
+/* ---- 3 · o título que abre o bloco das pessoas ----
+   Hierarquia acima dos nomes: os nomes são display-2, este é
+   display com escala própria. Mesma família de corpo da declaração
+   que abre a seção, para os dois títulos da seção conversarem. */
+.sobre__pessoa__t {
+  margin: 0 0 clamp(2.5rem, 7vh, 4rem);
+  max-width: 16ch;
+  font-size: clamp(1.8rem, 3.2vw + .5rem, 3.6rem);
+}
+
+/* ---- 4 · EQUIPE ----
+   Três retratos. O nome e a função existem SEMPRE no HTML; o que
+   muda é onde eles aparecem.
+
+   Em tela sem ponteiro ficam abaixo do retrato, visíveis, porque
+   conteúdo que só existe no hover não existe no telefone nem para
+   quem navega por teclado. Onde há ponteiro eles saem do fluxo e
+   sobem por cima da foto — que é o mesmo gesto das etiquetas de
+   Serviços, e não um comportamento novo no site. */
+.equipe {
+  margin-top: clamp(3.5rem, 11vh, 6.5rem);
+  padding-top: clamp(2.5rem, 8vh, 4rem);
+  border-top: 1px solid var(--fio);
+}
+
+.equipe__ap {
+  margin: 0 0 clamp(1.4rem, 4vh, 2.2rem);
+  color: var(--fg-3);
+}
+
+/* auto-fit e não `repeat(3, ...)`: com três colunas fixas cada
+   retrato ficava com 110px num telefone, e um 3:4 desse tamanho
+   não é retrato, é miniatura. O piso de 150px faz a grade cair
+   para duas colunas sozinha por volta de 500px. */
+.equipe__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: var(--calha);
+}
+
+.equipe__m { position: relative; }
+
+.equipe__foto { overflow: hidden; }
+
+.equipe__nome {
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-size: clamp(1.05rem, .5vw + .9rem, 1.4rem);
+  font-weight: 500;
+  letter-spacing: -.025em;
+  line-height: 1.12;
+}
+
+.equipe__papel {
+  margin: .35rem 0 0;
+  color: var(--fg-3);
+}
+
+/* sem ponteiro: a ficha é um bloco comum, legenda embaixo da foto */
+.equipe__info { margin-top: .8rem; }
+
+@media (hover: hover) and (pointer: fine) {
+  /* Aqui a expansão é da FOTO dentro do quadro, e não do quadro:
+     o `<li>` carrega `.rv`, e pelo mesmo motivo do `.prin__w` ele
+     não pode receber transform. Ampliar por dentro também é o
+     gesto melhor — a moldura fica firme e a imagem se aproxima. */
+  .equipe__foto .prov {
+    transition: transform var(--t-entra) var(--curva);
+  }
+  .equipe__m:hover .prov,
+  .equipe__m:focus-within .prov { transform: scale(1.06); }
+
+  /* a legenda sai do fluxo e vira painel sobre a foto */
+  .equipe__info {
+    position: absolute;
+    inset: auto 0 0 0;
+    margin: 0;
+    padding: clamp(1rem, 2.2vw, 1.6rem);
+    /* o véu é o que torna o nome legível sobre QUALQUER foto —
+       sem ele o texto depende do que estiver atrás dele */
+    background: linear-gradient(to top,
+                rgb(var(--marrom-rgb) / .88), rgb(var(--marrom-rgb) / 0));
+    color: var(--off-white);
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+      opacity var(--t-entra) var(--curva),
+      transform var(--t-entra) var(--curva);
+    pointer-events: none;
+  }
+  .equipe__m:hover .equipe__info,
+  .equipe__m:focus-within .equipe__info { opacity: 1; transform: translateY(0); }
+
+  /* o painel traz o próprio contraste, então os dois tons do
+     texto saem do off-white e não dos tokens da seção */
+  .equipe__info .equipe__papel { color: rgb(var(--off-white-rgb) / .72); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prin,
+  .equipe__info,
+  .equipe__foto .prov { transition: none; }
+  .prin:hover,
+  .prin:focus-within { transform: none; }
+  .equipe__m:hover .prov,
+  .equipe__m:focus-within .prov { transform: none; }
+}
 
 /* ---- ≥1025: as três grades ---- */
 @media (min-width: 1025px) {

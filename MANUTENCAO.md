@@ -1102,6 +1102,76 @@ somam 476 KB, todas `loading="lazy"`.
    depender de `:has()` — suportado em todos os navegadores atuais, mas é uma
    dependência nova que não existia antes.
 
+## ⚠ A ARMADILHA DO `transform` DENTRO DE UM `.rv`
+
+**`transform` não aplica em nenhum elemento que tenha `.rv`.** Não falha, não
+avisa, não aparece nada errado na lista de regras — simplesmente não acontece.
+
+A causa: a máscara de entrada é uma **animação**
+(`.js .rv.is-dentro { animation: revelar ... both }`), o último keyframe dela
+declara `transform: none`, e `animation-fill-mode: both` mantém esse valor
+valendo para sempre. Na cascata do CSS, **animação vence declaração normal** —
+só perde para `!important`. Então `.prin:hover { transform: scale(1.03) }`
+nunca teve chance.
+
+Custou uma rodada de depuração: a cor da borda no mesmo bloco de regra mudava
+normalmente, o que fazia parecer que a media query batia e o seletor casava —
+e batia e casava. Só o `transform` morria.
+
+**Como o projeto resolve, e é assim que deve continuar:** separar os dois
+elementos, em vez de brigar por `!important`.
+
+| Onde | Quem tem `.rv` | Quem recebe `transform` |
+| --- | --- | --- |
+| Nossa visão | `<li class="prin__w rv">` | `<article class="prin">` dentro |
+| Equipe | `<li class="equipe__m rv">` | a `<img class="prov">` dentro do quadro |
+
+Não juntar de volta num elemento só. Se um dia precisar de `transform` num
+elemento que já tem `.rv`, a saída é a mesma: um envoltório.
+
+## Os rótulos de Serviços em uma linha (02/09)
+
+A Jozzi pediu os seis rótulos padronizados em uma linha. Foi feito, e **custou
+a escala tipográfica** — vale registrar o número para a decisão poder ser
+revista com informação.
+
+A largura que manda é **1280px**: ali já são três colunas e a calha ainda não
+cedeu, então o espaço útil dentro do card é de 298px. O rótulo mais longo,
+"Captação de Conteúdos", só cabe numa linha até **26,5px** nessa largura.
+
+O que a clamp `clamp(1.4rem, .55vw + 1.05rem, 1.6rem)` produz: 22 a 25px,
+uma linha em todas as larguras medidas (320 a 1440). O que isso quebra:
+
+- o corpo **entra na faixa proibida de 24 a 44px** acima de 1025;
+- a razão para o texto cai de **2,2x para ~1,4x**, abaixo do mínimo de 1,8x
+  que o resto do sistema respeita.
+
+O rótulo deixou de ser display e virou um registro intermediário que só existe
+nesta seção. Para compensar em parte, a cor de repouso subiu de `--fg-3` para
+`--fg-2`: como o corpo não carrega mais a hierarquia contra a descrição logo
+abaixo, o tom carrega. Se a decisão voltar atrás, o que volta é essa clamp, o
+`min-height: 2.12em` do rótulo e a cor.
+
+## Equipe: o conteúdo não pode morar só no hover
+
+O nome e a função de cada pessoa estão **sempre** no HTML. Onde não há
+ponteiro (`@media (hover: hover) and (pointer: fine)` não bate) eles ficam
+visíveis embaixo do retrato, em texto normal. Só onde há ponteiro é que saem
+do fluxo e sobem por cima da foto, sobre um véu.
+
+Conteúdo que só existe no `:hover` não existe no telefone nem para quem
+navega por teclado. O `:focus-within` acompanha o `:hover` em todas as regras
+pela mesma razão.
+
+A grade usa `auto-fit` com piso de 150px, e não `repeat(3, ...)`: com três
+colunas fixas cada retrato ficava com 110px num telefone, e um 3:4 desse
+tamanho não é retrato, é miniatura. Cai para 2 colunas por volta de 500px e
+para 1 em 320.
+
+⚠ **PENDENTE: a função de cada um dos três.** Os nomes foram fornecidos
+(Guilherme Bernardino, Giovanna Gobbi, Loize Antiacomi); o que cada pessoa faz,
+não. Os três campos estão marcados como "Função a definir".
+
 ## O que NÃO fazer
 
 - **Não subsetar a Gracio.** É a fonte desenhada da marca (`assets/fonts/
