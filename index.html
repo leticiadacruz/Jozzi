@@ -24,7 +24,7 @@
      ANTES do style.css, para os tokens de familia ja acharem
      as fontes declaradas quando forem resolvidos. -->
 <link rel="stylesheet" href="https://use.typekit.net/oyj0zig.css">
-<link rel="stylesheet" href="assets/css/style.css?v=88">
+<link rel="stylesheet" href="assets/css/style.css?v=95">
 
 <script>
 (function () {
@@ -322,7 +322,6 @@
 
     <li class="serv__card rv" role="listitem" data-cursor="Ver">
       <div class="serv__plate">
-        <span class="serv__plate-num" aria-hidden="true">01</span>
         <span class="ap">Imagem 16:9</span>
         <img class="prov" data-provisorio src="assets/img/styling/carol-andrade/02.avif"
              alt="" aria-hidden="true" width="931" height="1400" loading="lazy" decoding="async">
@@ -339,7 +338,6 @@
 
       <button class="serv__nome" type="button"
               id="serv-bt-branding" aria-controls="serv-rev-branding" aria-expanded="false">
-        <span class="serv__num ap" aria-hidden="true">01</span>
         <span class="serv__rotulo">Branding</span>
       </button>
 
@@ -348,7 +346,6 @@
 
     <li class="serv__card rv" role="listitem" data-cursor="Ver">
       <div class="serv__plate">
-        <span class="serv__plate-num" aria-hidden="true">02</span>
         <span class="ap">Imagem 16:9</span>
         <img class="prov" data-provisorio src="assets/img/styling/leandra-klisievicz/01.avif"
              alt="" aria-hidden="true" width="933" height="1400" loading="lazy" decoding="async">
@@ -370,7 +367,6 @@
 
       <button class="serv__nome" type="button"
               id="serv-bt-social-media" aria-controls="serv-rev-social-media" aria-expanded="false">
-        <span class="serv__num ap" aria-hidden="true">02</span>
         <span class="serv__rotulo">Social Media</span>
       </button>
 
@@ -379,7 +375,6 @@
 
     <li class="serv__card rv" role="listitem" data-cursor="Ver">
       <div class="serv__plate">
-        <span class="serv__plate-num" aria-hidden="true">03</span>
         <span class="ap">Imagem 16:9</span>
         <img class="prov" data-provisorio src="assets/img/styling/solstice-magazine/03.avif"
              alt="" aria-hidden="true" width="1050" height="1400" loading="lazy" decoding="async">
@@ -401,7 +396,6 @@
            no <li>, não neste elemento), então o gesto de "ver as
            etiquetas" não muda; só o clique passa a navegar. -->
       <a class="serv__nome" href="styling.html" id="serv-bt-styling">
-        <span class="serv__num ap" aria-hidden="true">03</span>
         <span class="serv__rotulo">Styling</span>
       </a>
 
@@ -410,7 +404,6 @@
 
     <li class="serv__card rv" role="listitem" data-cursor="Ver">
       <div class="serv__plate">
-        <span class="serv__plate-num" aria-hidden="true">04</span>
         <span class="ap">Imagem 16:9</span>
         <img class="prov" data-provisorio src="assets/img/styling/carol-andrade/05.avif"
              alt="" aria-hidden="true" width="931" height="1400" loading="lazy" decoding="async">
@@ -430,7 +423,6 @@
 
       <button class="serv__nome" type="button"
               id="serv-bt-trafego-pago" aria-controls="serv-rev-trafego-pago" aria-expanded="false">
-        <span class="serv__num ap" aria-hidden="true">04</span>
         <span class="serv__rotulo">Tráfego Pago</span>
       </button>
 
@@ -439,7 +431,6 @@
 
     <li class="serv__card rv" role="listitem" data-cursor="Ver">
       <div class="serv__plate">
-        <span class="serv__plate-num" aria-hidden="true">05</span>
         <span class="ap">Imagem 16:9</span>
         <img class="prov" data-provisorio src="assets/img/styling/leandra-klisievicz/04.avif"
              alt="" aria-hidden="true" width="933" height="1400" loading="lazy" decoding="async">
@@ -460,7 +451,6 @@
 
       <button class="serv__nome" type="button"
               id="serv-bt-web-development" aria-controls="serv-rev-web-development" aria-expanded="false">
-        <span class="serv__num ap" aria-hidden="true">05</span>
         <span class="serv__rotulo">Web Development</span>
       </button>
 
@@ -470,7 +460,6 @@
     <!-- 06 · CAPTAÇÃO DE CONTEÚDOS — copy definitiva recebida em 28/08. -->
     <li class="serv__card rv" role="listitem" data-cursor="Ver">
       <div class="serv__plate">
-        <span class="serv__plate-num" aria-hidden="true">06</span>
         <span class="ap">Imagem 16:9</span>
         <img class="prov" data-provisorio src="assets/img/styling/solstice-magazine/06.avif"
              alt="" aria-hidden="true" width="1050" height="1400" loading="lazy" decoding="async">
@@ -487,7 +476,6 @@
 
       <button class="serv__nome" type="button"
               id="serv-bt-captacao-de-conteudo" aria-controls="serv-rev-captacao-de-conteudo" aria-expanded="false">
-        <span class="serv__num ap" aria-hidden="true">06</span>
         <span class="serv__rotulo">Captação de Conteúdos</span>
       </button>
 
@@ -601,12 +589,28 @@
         <a class="rolo__saiba ap" href="projetos/shop-carol.html">Saiba mais<span class="rolo__saiba__seta" aria-hidden="true"></span></a>
       </li>
 
+      <!-- A SEXTA FACE não é um projeto: é a saída do tambor.
+           Vem no mesmo `data-rolo-item` porque tem de girar junto —
+           é isso que a faz chegar como "o próximo", e não como um
+           bloco colado embaixo. O `data-rolo-cta` existe só para o
+           contador saber que aqui não há o que contar: são cinco
+           projetos, e esta face é a sexta. -->
+      <li class="rolo__item rolo__item--cta" data-rolo-item data-rolo-cta>
+        <p class="rolo__cta__ap ap"></p>
+        <h3 class="rolo__nome d d--2">Clientes / Styling.</h3>
+        <a class="rolo__cta__botao" href="projetos.html">
+          Ver todos os projetos<span class="rolo__cta__seta" aria-hidden="true"></span>
+        </a>
+      </li>
+
     </ul>
 
     <p class="rolo__conta ap" aria-hidden="true"><span data-rolo-conta>01</span> / 05</p>
 
   </div>
 </section>
+
+
 
 
 <!-- ============================================================
@@ -746,7 +750,7 @@
          PENDENTE: a função de cada um. Os três nomes foram
          fornecidos; o que cada pessoa faz, não. -->
     <div class="equipe">
-      <h4 class="equipe__ap ap rv">Equipe</h4>
+      <h4 class="equipe__t d d--2 rv">Conheça a equipe por trás da Jozzi.</h4>
 
       <ul class="equipe__lista" role="list">
       <li class="equipe__m rv">

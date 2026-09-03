@@ -1172,6 +1172,149 @@ para 1 em 320.
 (Guilherme Bernardino, Giovanna Gobbi, Loize Antiacomi); o que cada pessoa faz,
 não. Os três campos estão marcados como "Função a definir".
 
+## A sexta face do rolo, e a página que ela abre
+
+O tambor tem **seis faces e cinco projetos**. A última não é um caso: é o
+botão "Ver todos os projetos", que abre `projetos.html`.
+
+Ela leva `data-rolo-item` como as outras — é isso que a faz **girar junto** e
+chegar como "o próximo", em vez de ser um bloco colado embaixo da seção. E
+leva `data-rolo-cta` para o contador saber que ali não há o que contar.
+
+O trilho se alonga sozinho: `ligarRolo()` escreve `--rolo-n` a partir de
+`roloItens.length`, e o CSS deriva a altura dali. Não há número de faces
+escrito em lugar nenhum.
+
+**O contador.** `roloProjetos` conta as faces que não são CTA. Enquanto a
+face de saída está de frente, `.rolo__conta` recebe `is-fora` e some — senão
+mostraria "06 / 05". O texto "/ 05" continua fixo no HTML porque cinco é o
+número de projetos, não de faces.
+
+⚠ **NÃO pôr `max-width` num `.rolo__item`.** As faces têm `width: 100%` e um
+`scale(--rolo-fator)` que compensa a ampliação do `translateZ`. Uma face mais
+estreita que a lista tira o próprio centro do ponto de fuga e desliza para
+fora, encostando na borda da tela — o mesmo bug de perspectiva já pago numa
+rodada anterior, que eu reintroduzi aqui ao limitar a face da CTA. A medida
+vai no CONTEÚDO (`.rolo__item--cta .rolo__nome`), nunca no item. Medido depois
+do conserto: a face fica dentro da margem em 320, 390, 768, 1024 e 1440.
+
+**Por que a página existe em vez de um bloco na home.** A altura da seção do
+rolo *é* o curso do tambor:
+
+```js
+var alt = rolo.offsetHeight;
+med.rolo = { topo: t, base: t + alt, curso: Math.max(1, alt - med.vh) };
+```
+
+Conteúdo acrescentado dentro de `#marcas` alonga `offsetHeight`, o curso
+cresce junto e o tambor deixa de terminar onde a seção termina. Uma página
+separada resolve isso sem tocar na medição.
+
+### projetos.html
+
+**Cards, não lista** — mesmo tratamento visual da grade de Styling, a pedido
+da Jozzi (03/09). A página reaproveita a classe `.styling-grid` inteira
+(grade responsiva, véu no pé, título ancorado embaixo, hover que amplia a
+foto) em vez de duplicar as regras: uma grade só para manter, dois lugares
+que a usam. A versão de lista simples que existiu antes foi substituída
+inteira — nenhuma das classes `.indice__lista`/`.indice__l`/`.indice__seta`
+sobrou no CSS.
+
+Cinco clientes de marca e dezenove de styling, com o **mesmo peso visual**: a
+Jozzi foi explícita em que os projetos de styling são clientes iguais aos
+outros. Os seis casos de styling que já têm foto real em `styling.html`
+usam a mesma imagem aqui — mesmo `src`, mesmo `alt`, mesma dimensão. Os
+outros treze e os cinco clientes de marca mostram o placeholder "Foto 1:1",
+porque não há foto real para eles ainda; nenhuma foi inventada.
+
+O problema dos nomes longos quebrando em três linhas (documentado aqui numa
+rodada anterior) foi resolvido de vez em 03/09 — ver a seção abaixo,
+"Títulos em uma linha via container query".
+
+A página foi feita a partir de `styling.html` (mesma casca: cabeça, sprite do
+logotipo, cortina, aparato, topo). Quatro coisas herdadas precisaram de
+troca, e vale conferir se um dia outra página nascer do mesmo molde:
+
+1. `<title>` e as metas `og:`;
+2. o rótulo inicial do aparato (`data-aparato-sec`) — o `main.js` só troca o
+   texto quando o NÚMERO da seção muda, e uma página de seção única nunca
+   muda, então o que está escrito no HTML é o único que existe;
+3. o destino do `.topo__voltar` (aqui: `index.html#marcas`);
+4. o alvo do "Pular para o conteúdo" e o crédito do rodapé.
+
+## Serviços sem numerais (02/09)
+
+Saíram os dois numerais de cada card — o grande na chapa (`.serv__plate-num`)
+e o pequeno acima do rótulo (`.serv__num`), a pedido da Jozzi. Com eles foram
+embora três coisas que só existiam por causa deles:
+
+- o `mix-blend-mode: multiply` do numeral grande;
+- o véu no pé da chapa (`.serv__plate:has(.prov)::after`), que existia só para
+  dar piso ao numeral sobre foto;
+- a regra que trocava a cor do numeral quando havia imagem atrás.
+
+O `isolation: isolate` da chapa **fica**: o comentário original o atribuía ao
+multiply, mas ele também contém o painel de etiquetas, que continua existindo.
+
+As correções ópticas por card (`--optico`) ficam: elas alinham o primeiro
+glifo do nome, e isso não tinha nada a ver com numeral.
+
+## Títulos em uma linha, via container query (03/09)
+
+A Jozzi pediu que todos os títulos da grade de cards (`.styling-grid__titulo`,
+usada em `styling.html` e `projetos.html`) coubessem em **uma linha só**. Os
+24 nomes únicos das duas páginas — o pior é "Descomplica Perícias", 20
+caracteres — precisavam caber do card mais estreito (mobile, ~150px) ao mais
+largo (desktop 3 colunas, ~450px).
+
+**Por que não dava para usar `vw` como o resto do site.** A grade pula de 1
+para 2 colunas em 481px e de 2 para 3 em 1025px. Nesses saltos a largura do
+CARD despenca (de ~408px de conteúdo disponível para ~180px, com a largura da
+TELA quase igual) porque o mesmo espaço passa a ser dividido por mais
+colunas. Uma fonte em `vw` só conhece a tela, então não tem como caber nos
+dois lados do salto ao mesmo tempo — teria de ser pequena o bastante para o
+pior caso (180px), o que a deixaria minúscula em todo o resto da faixa.
+
+**A solução: `container-type: inline-size` no `.styling-grid__item`, e o
+título mede a si mesmo em `cqw`.** `cqw` é para o container o que `vw` é
+para a tela — 1cqw = 1% da largura do container mais próximo com
+`container-type`. Como o item É o que encolhe no salto, o título encolhe
+junto, no mesmo instante, proporcionalmente.
+
+⚠ **A armadilha: o padding também precisa ser `cqw`, não `vw`.** Na primeira
+tentativa o padding do `.styling-grid__base` continuou em `vw` (herdado, não
+tocado de propósito) enquanto o título passou a `cqw`. As duas escalas
+pareciam a mesma coisa — cresciam juntas na maior parte da faixa — mas nos
+saltos de coluna elas se descolavam: a margem (medida pela tela) ficava
+grande demais ou pequena demais para o texto (medido pelo card), e a régua de
+segurança que eu tinha calibrado por cálculo — não por medição — deixava o
+texto avançar por cima da margem. Resultado: "PERÍCIAS" perdia o S, cortado
+pelo `overflow: hidden` do card, em pelo menos uma largura real
+testada (1440px, terceira coluna). **Nenhum teste de contagem de linhas
+pega isto** — com `white-space: nowrap` a altura do elemento é sempre uma
+linha, quebrado ou não; só comparar `scrollWidth` contra `clientWidth`
+revela o estouro.
+
+Os dois valores finais **vieram de varredura, não de cálculo**:
+
+```
+padding: clamp(.9rem, 6cqw, 1.5rem);   /* .styling-grid__base */
+font-size: clamp(.85rem, 6.2cqw, 2.6rem);   /* .styling-grid__titulo */
+```
+
+Testado com `scrollWidth > clientWidth` nos 24 títulos, em 230 amostras (115
+larguras de tela × 2 páginas, de 300 a 1440px, passo de 10px): **0px de
+estouro em todas**. 6.4cqw de fonte já estourava 2px numa amostra — 6.2cqw é
+o maior valor seguro medido, não um valor redondo escolhido a olho. Não subir
+o fator sem repetir a varredura (o script de calibração ficou fora do
+repositório, em `/tmp` — refazer é simples: sobrepor os dois valores via
+`page.addStyleTag` e medir `scrollWidth - clientWidth` em cada card, em
+várias larguras de viewport).
+
+`white-space: nowrap` substituiu o antigo `overflow-wrap: break-word`:
+quebrar por palavra deixou de ser a estratégia — agora é caber numa linha, e
+um nome que não coubesse teria de encolher mais a fonte, nunca quebrar.
+
 ## O que NÃO fazer
 
 - **Não subsetar a Gracio.** É a fonte desenhada da marca (`assets/fonts/

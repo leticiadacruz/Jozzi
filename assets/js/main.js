@@ -314,6 +314,7 @@
   var roloLista = document.querySelector('[data-rolo-lista]');
   var roloItens = [].slice.call(document.querySelectorAll('[data-rolo-item]'));
   var roloConta = document.querySelector('[data-rolo-conta]');
+  var roloContaCaixa = roloConta ? roloConta.closest('.rolo__conta') : null;
   var roloVideos = [].slice.call(document.querySelectorAll('[data-rolo-video]'));
   var roloTocando = -1;   /* qual vídeo está tocando agora */
   /* 60° e não os 30° da referência: lá cada face é um nome e uma
@@ -341,6 +342,10 @@
     return t * t * (3 - 2 * t);
   }
   var roloUltimo = -1;
+  /* quantas faces são projeto de verdade: a face de saída (o botão
+     "ver todos os projetos") gira junto, mas não entra na conta */
+  var roloProjetos = [].slice.call(document.querySelectorAll('[data-rolo-item]'))
+                       .filter(function (e) { return !e.hasAttribute('data-rolo-cta'); }).length;
 
   var med = { vh: 0, secs: [], inv: [], rolo: null, idMeio: 0, horaMeio: 0, regua: false };
   var segs = [];
@@ -587,10 +592,18 @@
         roloVideos[v].style.setProperty('--opv', (ov < 0 ? 0 : ov).toFixed(3));
       }
 
+      /* O contador conta PROJETOS, e a última face não é um: é o
+         botão de saída. Em vez de mostrar "06 / 05", o contador
+         inteiro sai de cena enquanto essa face está de frente. */
       var atual = Math.round(k) + 1;
       if (atual !== roloUltimo) {
         roloUltimo = atual;
-        if (roloConta) roloConta.textContent = (atual < 10 ? '0' : '') + atual;
+        if (roloConta && atual <= roloProjetos) {
+          roloConta.textContent = (atual < 10 ? '0' : '') + atual;
+        }
+        if (roloContaCaixa) {
+          roloContaCaixa.classList.toggle('is-fora', atual > roloProjetos);
+        }
       }
 
       /* Só UM vídeo toca, e só enquanto a seção está em cena. Quatro
