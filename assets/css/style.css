@@ -238,23 +238,52 @@ a { color: inherit; text-decoration: none; }
    única ponte, e são quase do mesmo tamanho.
    ----------------------------------------------------------- */
 
-/* display */
+/* display
+   ⚠ FONTE DO BUG QUE JÁ ACONTECEU DUAS VEZES: `--lh-titulo` é a
+   ÚNICA linha de entrelinha para toda a família `.d` / `.d--2` /
+   qualquer modificador futuro. Ela existe porque, da primeira vez,
+   o número certo (1.02) foi escrito só em `.d`, e `.d--2` — criado
+   no MESMO commit, antes da correção existir — ficou com o valor
+   antigo (1.0). As duas regras têm a mesma especificidade e `.d--2`
+   vem depois no arquivo, então ela sempre vencia: todo título que
+   leva as duas classes juntas (`.serv__t`, `.sobre__nome`,
+   `.rolo__nome`, `.styling-grid__titulo`, `.equipe__t`, `.olhar__t`,
+   `.quem__t`, `.contato__convite` — oito famílias, TODAS afetadas)
+   ficou anos com o Ê/Ã/Õ cortado sem que ninguém tivesse tocado no
+   valor "errado" diretamente. Ninguém quebrou nada de propósito: a
+   correção só chegou até quem ela estava escrita em cima.
+
+   Por isso o valor mora aqui, uma vez, e as duas classes REFERENCIAM
+   a mesma variável em vez de escrever o número de novo. Se um dia
+   nascer um `.d--3` ou qualquer outro modificador de display, ele
+   herda esta linha de graça — a única forma de reintroduzir o bug é
+   declarar `line-height` de novo nesse modificador, e este comentário
+   existe para que isso nunca pareça uma linha inocente.
+
+   Por que 1.02 e não 1.0: com a Gracio, o circunflexo de AGÊNCIA
+   subia acima da caixa da linha e era comido pela linha de cima — o
+   entrelinha menor que 1 só funcionava com a métrica da Switzer, a
+   fonte antiga do projeto. Ainda é apertado para um registro de
+   display; deixou de cortar diacrítico. NÃO baixar este número sem
+   testar "AGÊNCIA", "VOCÊ", "PERÍCIAS" e "MARANHÃO" — as quatro
+   palavras do site com o diacrítico mais alto (circunflexo e til) —
+   em pelo menos uma família de UMA linha e uma de VÁRIAS linhas. */
+:root { --lh-titulo: 1.02; }
+
 .d {
   font-family: var(--fonte-titulo);
   font-size: var(--fs-display);
   font-weight: 500;
   letter-spacing: -.045em;
-  /* 1.02 e não .93: com a Gracio o circunflexo de AGÊNCIA subia
-     acima da caixa da linha e era comido pela linha de cima — o
-     entrelinha menor que 1 só funcionava com a métrica da Switzer.
-     Ainda é apertado para display; deixou de cortar diacrítico. */
-  line-height: 1.02;
+  line-height: var(--lh-titulo);
   text-wrap: balance;
 }
 .d--2 {
   font-size: var(--fs-display-2);
   letter-spacing: -.035em;
-  line-height: 1.0;
+  /* SEM line-height aqui — de propósito. Ver o comentário acima
+     de `.d`. Herdar `--lh-titulo` é o que garante que os dois
+     registros nunca mais se descolem. */
 }
 
 /* aparato */

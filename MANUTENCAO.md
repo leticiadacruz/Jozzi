@@ -1315,14 +1315,60 @@ várias larguras de viewport).
 quebrar por palavra deixou de ser a estratégia — agora é caber numa linha, e
 um nome que não coubesse teria de encolher mais a fonte, nunca quebrar.
 
+## O bug do Ê cortado, pela segunda vez — e por que não haverá terceira
+
+Em 03/09 o "Ê" voltou a ser cortado em "A primeira agência de marketing
+com foco em moda de Curitiba." e em "Como criamos para você." — os dois
+títulos citados pela Jozzi, mas na verdade **oito famílias de título no
+site inteiro** estavam com o mesmo problema: `sobre__nome`, `rolo__nome`,
+`styling-grid__titulo`, `equipe__t`, `olhar__t`, `quem__t`,
+`contato__convite`, além dos dois citados.
+
+**A causa não era um valor errado — era dois valores certos, escritos em
+lugares diferentes, que pararam de concordar.** `.d--2` tinha
+`line-height: 1.0` desde o commit em que nasceu, no MESMO commit em que
+`.d` tinha `line-height: .93` (a métrica da Switzer, a fonte antiga).
+Quando a troca para a Gracio exigiu subir `.d` para `1.02` — a correção
+documentada há semanas nesta seção —, ninguém tocou em `.d--2`, porque
+nada ali parecia relacionado: são duas classes, dois blocos de CSS, a
+poucas linhas de distância um do outro, mas ninguém reabre uma regra que
+não mudou para conferir se ela ainda concorda com uma que mudou.
+
+Como as duas têm a MESMA especificidade (uma classe cada) e `.d--2` vem
+depois no arquivo, ela sempre venceu na cascata para qualquer elemento
+com as duas classes juntas — que é o padrão usado em TODO título do
+site (`class="... d d--2"`). O `.sobre__t`, que só leva `.d` sozinha,
+nunca teve o problema; foi por isso que a correção de semanas atrás
+pareceu completa na hora — o teste manual caiu, por acaso, no único
+lugar que não tinha `.d--2`.
+
+**A correção, desta vez, elimina a possibilidade de as duas se
+descolarem de novo:** o valor agora mora numa única variável,
+`--lh-titulo`, declarada uma vez junto de `.d`. `.d--2` não declara
+`line-height` — herda. Não há mais um segundo lugar para esquecer de
+atualizar, porque não existe segundo lugar.
+
+⚠ **Antes de mexer na tipografia de display de novo:** se algum dia
+parecer necessário dar a `.d--2` (ou a um futuro `.d--3`) um
+entrelinha diferente do de `.d`, isso é possível — mas precisa ser uma
+decisão CONSCIENTE, com uma linha `line-height` nova e um comentário
+explicando por quê, nunca um valor esquecido de uma versão anterior da
+fonte. Depois de qualquer mudança, testar visualmente "AGÊNCIA",
+"VOCÊ", "PERÍCIAS" e "MARANHÃO" — as quatro palavras do site com o
+diacrítico mais alto — no mínimo numa família de título de uma linha e
+numa de várias linhas (o comportamento não é o mesmo nas duas).
+
 ## O que NÃO fazer
 
 - **Não subsetar a Gracio.** É a fonte desenhada da marca (`assets/fonts/
   Gracio.woff2`, convertida do `.otf` do Fontself). Um subsetter tira os
   acentos e a página é em português — o "Ê" de AGÊNCIA é a primeira vítima.
-- **Não devolver `line-height` abaixo de 1 ao `.d`.** Com a Switzer isso
-  funcionava; com a Gracio o circunflexo escapa da caixa de linha e o "Ê"
-  aparece decepado. `1.02` é o piso.
+- **Não declarar `line-height` numa classe da família `.d`/`.d--2` (nem
+  numa futura `.d--3`).** O valor mora numa variável só, `--lh-titulo`,
+  definida junto de `.d` — ver o comentário grande em cima dela na seção
+  04 do CSS. `1.02` é o piso; abaixo disso o circunflexo da Gracio escapa
+  da caixa de linha e o "Ê" aparece decepado (funcionava com a Switzer,
+  a fonte antiga — não funciona com esta).
 - **Não adicionar biblioteca de animação.** Os gestos do sistema são CSS. Uma
   biblioteca traria dezenas de curvas novas e o movimento deixaria de parecer
   da Jozzi.
