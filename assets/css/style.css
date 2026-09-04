@@ -288,15 +288,22 @@ a { color: inherit; text-decoration: none; }
    declarar `line-height` de novo nesse modificador, e este comentário
    existe para que isso nunca pareça uma linha inocente.
 
-   Por que 1.02 e não 1.0: com a Gracio, o circunflexo de AGÊNCIA
-   subia acima da caixa da linha e era comido pela linha de cima — o
-   entrelinha menor que 1 só funcionava com a métrica da Switzer, a
-   fonte antiga do projeto. Ainda é apertado para um registro de
-   display; deixou de cortar diacrítico. NÃO baixar este número sem
-   testar "AGÊNCIA", "VOCÊ", "PERÍCIAS" e "MARANHÃO" — as quatro
-   palavras do site com o diacrítico mais alto (circunflexo e til) —
-   em pelo menos uma família de UMA linha e uma de VÁRIAS linhas. */
-:root { --lh-titulo: 1.02; }
+   POR QUE 1.2. O número sai das métricas da própria Gracio,
+   medidas no navegador: ascendente 0,95em + descendente 0,24em =
+   caixa de conteúdo de 1,19em. O `line-height` define a caixa de
+   LINHA; quando ela é MENOR que o conteúdo, a diferença vira
+   meio-espaço NEGATIVO e o conteúdo sobra para fora. Com 1.02:
+   (1,02 − 1,19)/2 = −0,085em de cada lado.
+
+   E o Ê usa a ascendente inteira — o ápice do circunflexo fica a
+   0,95em da base, encostado no topo da caixa de conteúdo, logo
+   0,085em ACIMA da caixa de linha: 4,6px num título de 54px. Onde
+   houvesse `overflow: hidden` ou uma máscara recortando na borda,
+   esses 4,6px eram cortados.
+
+   1.2 é a caixa de conteúdo com folga mínima. ABAIXO DISSO O
+   ACENTO VOLTA A SOBRAR — é geometria, não gosto. */
+:root { --lh-titulo: 1.2; }
 
 .d {
   font-family: var(--fonte-titulo);
@@ -714,13 +721,11 @@ a { color: inherit; text-decoration: none; }
 [id] { scroll-margin-top: calc(var(--topo-h) + 1rem); }
 
 /* 07. TOPO -------------------------------------------------- */
-.topo {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1.5rem;
-  padding-top: clamp(1.25rem, 3.2vh, 2.25rem);
-}
+/* ⚠ Aqui morava uma SEGUNDA regra `.topo`, restante do cabeçalho
+   estático. Vindo depois da regra do cabeçalho dinâmico (bloco 06),
+   ela reescrevia `align-items` e `padding-top` em silêncio — mesmo
+   padrão do `.d`/`.d--2` e do `.marca` duplicado. O cabeçalho tem
+   UMA regra, no bloco 06. Não recriar outra aqui. */
 
 /* o sprite precisa existir no layout para o <use> resolver em
    todos os navegadores — display:none quebra a referência em
@@ -811,8 +816,16 @@ a { color: inherit; text-decoration: none; }
     clip-path var(--t-entra) var(--curva),
     transform var(--t-entra) var(--curva);
 }
+/* ⚠ O TOPO DAS MÁSCARAS É NEGATIVO, E ESSA É METADE DA CORREÇÃO
+   DO "Ê". Elas terminavam em `inset(0 0 -8% 0)`: soltas embaixo e
+   nos lados, ZERO em cima — recortando na borda superior da caixa.
+   Mas o acento da Gracio renderiza ACIMA dessa borda (ver a conta
+   em --lh-titulo), então a máscara cortava justamente o traço de
+   cima do Ê, do Ã, do Õ. O entrelinha resolve a geometria; o -14%
+   resolve o recorte. Os dois são necessários. O gesto não muda: a
+   máscara continua subindo de baixo para cima. */
 .js [data-linhas] .pal.is-dentro {
-  clip-path: inset(0 0 -8% 0);
+  clip-path: inset(-14% 0 -8% 0);
   transform: none;
 }
 
@@ -844,7 +857,7 @@ a { color: inherit; text-decoration: none; }
   transform: translateY(10px);
 }
 .js [data-peso] .pal.is-dentro {
-  clip-path: inset(0 0 -8% 0);
+  clip-path: inset(-14% 0 -8% 0);
   transform: none;
 }
 
@@ -852,8 +865,8 @@ a { color: inherit; text-decoration: none; }
    deslocamento. Serve à entrada de qualquer elemento e à abertura
    do serviço ativo no fluxo do mobile. */
 @keyframes revelar {
-  from { clip-path: inset(0 0 102% 0); transform: translateY(10px); }
-  to   { clip-path: inset(0 0 -8% 0);  transform: none; }
+  from { clip-path: inset(-14% 0 102% 0); transform: translateY(10px); }
+  to   { clip-path: inset(-14% 0 -8% 0);  transform: none; }
 }
 
 .js [data-peso] { clip-path: inset(0 0 102% 0); }
@@ -1139,13 +1152,16 @@ a { color: inherit; text-decoration: none; }
   border-top: 1px solid var(--fio);
 }
 
-.quem__fig {
-  grid-column: 1 / span 4;
-  align-self: end;
-}
-.quem__txt {
-  grid-column: 7 / span 6;
-}
+/* (.quem__fig saiu com a figura de Quem somos — 04/09) */
+/* A figura saiu (04/09) e o texto começa na MARGEM, não na coluna
+   7 — senão a metade esquerda da seção fica vazia, que era
+   exatamente o vão que a imagem preenchia.
+
+   ⚠ É a regra BASE que manda no desktop. Eu tinha mexido só na
+   media query de ≤1024 e achado que estava feito. */
+.quem__txt { grid-column: 1 / span 5; }
+/* a coluna da direita, alinhada pela base com o texto */
+.quem__par { grid-column: 7 / span 6; align-self: end; }
 
 .fig { display: block; }
 .fig__campo {
@@ -1190,20 +1206,28 @@ a { color: inherit; text-decoration: none; }
   font-size: clamp(1.8rem, 2.5vw + .5rem, 3.5rem);
 }
 
-/* O par de fotos que substituiu o lema (03/09). Duas colunas
-   iguais e proporção igual: é um par, não uma foto principal com
-   uma auxiliar. Empilha no telefone, onde duas 4:3 lado a lado
-   ficariam com 150px de largura cada. */
+/* O par de fotos: duas colunas iguais e proporção igual — é um
+   par, não uma foto principal com uma auxiliar.
+
+   Em 04/09 elas saíram de dentro do bloco de texto e passaram a
+   ocupar a COLUNA DA DIREITA da seção, com o texto parado à
+   esquerda. Antes moravam no meio do texto e empurravam a leitura
+   para baixo em vez de acompanhá-la. */
 .quem__par {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--calha);
-  margin-bottom: clamp(1.8rem, 5vh, 2.8rem);
 }
 .quem__par__f { margin: 0; }
 .fig__campo--43 { aspect-ratio: 4 / 3; }
 
+@media (max-width: 1024px) {
+  /* abaixo do desktop as duas colunas viram uma só: as fotos
+     descem para depois do texto, ainda lado a lado. */
+  .quem__par { grid-column: 1 / -1; margin-top: clamp(1.8rem, 5vh, 2.8rem); }
+}
 @media (max-width: 560px) {
+  /* duas 4:3 lado a lado num telefone dariam 150px cada */
   .quem__par { grid-template-columns: 1fr; }
 }
 
@@ -1230,9 +1254,19 @@ a { color: inherit; text-decoration: none; }
    respiro caiu de 16vh para 9vh e os cards apertaram o próprio
    padding — a seção encolheu ~40% de altura sem perder nenhuma
    palavra. */
+/* UMA TELA, exatamente (04/09). A seção é de passagem: separa
+   "quem somos" de "o que fazemos" e não deve pedir rolagem própria.
+   `100svh` e não `100vh` — no celular o `vh` conta a barra de
+   endereço que some ao rolar, e a seção passava da tela justamente
+   onde o espaço é menor. `justify-content: center` faz a sobra
+   virar respiro em cima e embaixo, em vez de acumular no pé. */
 .olhar {
-  padding-top: clamp(3rem, 9vh, 6rem);
-  padding-bottom: clamp(3rem, 9vh, 6rem);
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: clamp(2rem, 6vh, 4rem);
+  padding-bottom: clamp(2rem, 6vh, 4rem);
 }
 
 .olhar__t {
@@ -1332,7 +1366,7 @@ a { color: inherit; text-decoration: none; }
   /* versais pedem menos aperto que caixa baixa: a -.035em do resto
      do display fecharia os contracontornos aqui */
   letter-spacing: -.012em;
-  line-height: 1.04;
+  line-height: var(--lh-titulo);
   text-wrap: balance;
 }
 
@@ -1374,10 +1408,13 @@ a { color: inherit; text-decoration: none; }
    composição em degrau que ela tinha lá: a frase grande à
    esquerda, o texto de sustentação na metade que ela deixou
    vazia, alinhados pela base. */
+/* o fio e a margem viraram de lado (04/09): quando ela ABRIA a
+   seção, separava-se dos cards por baixo; agora que os FECHA, o
+   fio vem por cima e o respiro é no topo. */
 .serv__virada {
-  margin: 0 0 clamp(2.5rem, 8vh, 4.5rem);
-  padding-bottom: clamp(2rem, 6vh, 3.5rem);
-  border-bottom: 1px solid var(--fio);
+  margin: clamp(2.5rem, 8vh, 4.5rem) 0 0;
+  padding-top: clamp(2rem, 6vh, 3.5rem);
+  border-top: 1px solid var(--fio);
 }
 .serv__virada__t {
   margin: 0;
@@ -1562,7 +1599,7 @@ a { color: inherit; text-decoration: none; }
   font-size: clamp(1.4rem, .55vw + 1.05rem, 1.6rem);
   font-weight: 500;
   letter-spacing: -.035em;
-  line-height: 1.06;
+  line-height: var(--lh-titulo);
   /* --fg-2 e não --fg-3: com o rótulo em 22–25px o corpo deixou de
      carregar a hierarquia contra a descrição logo abaixo. O tom
      devolve parte dela sem mexer no tamanho. O estado ativo
@@ -2046,133 +2083,138 @@ img.onde__mapa {
 }
 
 
-/* 10f. SEÇÃO 05 — CONTATO ----------------------------------
-   Segunda inversão. A troca de fundo é a transição: nenhuma
-   animação própria desta seção.
-
-   O endereço é o maior elemento. A linha de apoio dele e o
-   WhatsApp dividem a MESMA faixa horizontal — as duas portas são
-   uma composição só, não duas colunas e não dois cartões. O
-   WhatsApp encaixa no vão que a linha de apoio deixa à direita, e
-   a posição não depende do comprimento do endereço.
+/* 10f. SEÇÃO 06 — CONTATO -----------------------------------
+   Composição na estrutura da referência que a Jozzi mandou
+   (04/09): título grande com a seta no canto oposto, imagem alta à
+   esquerda e, ao lado, as linhas de dado — rótulo à esquerda,
+   valor à direita, fio entre elas. Embaixo as redes; no pé, o ano.
    ----------------------------------------------------------- */
 .contato {
   min-height: 100svh;
   display: flex;
   flex-direction: column;
+  padding-top: clamp(4rem, 12vh, 8rem);
+  padding-bottom: clamp(2rem, 6vh, 3.5rem);
+}
+
+.contato__topo {
+  display: flex;
+  align-items: flex-start;
   justify-content: space-between;
-  padding-top: clamp(6rem, 22vh, 15rem);
-  padding-bottom: clamp(2.5rem, 9vh, 6rem);
+  gap: var(--calha);
+  margin-bottom: clamp(2.5rem, 8vh, 5rem);
 }
-
-/* O convite entra onde a seção só tinha o endereço: "Contato" é
-   aparato escondido acima de 1025px, então a seção abria fria,
-   num e-mail gigante e sem uma frase que chamasse. */
 .contato__convite {
-  margin: 0 0 clamp(2.2rem, 6vh, 3.6rem);
-  max-width: 18ch;
+  margin: 0;
+  font-size: clamp(2.6rem, 9vw, 8rem);
+  line-height: var(--lh-titulo);
 }
+/* a seta tem o peso da tipografia, não de um ícone — é assim na
+   referência: ela é do mesmo tamanho de uma linha do título */
+.contato__seta {
+  flex: none;
+  display: block;
+  width: clamp(2.6rem, 8vw, 6.5rem);
+  color: var(--fg);
+}
+.contato__seta svg { display: block; width: 100%; height: auto; }
 
-.contato__campo {
+.contato__corpo {
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: clamp(.8rem, 2.5vh, 1.6rem) var(--calha);
+  gap: clamp(1.5rem, 4vh, 2.5rem) var(--calha);
+  align-items: start;
 }
-
-.contato__email {
-  grid-column: 1 / span 11;
-  grid-row: 1;
-  /* .82 → .52 do display: o endereço era o maior elemento da
-     composição e agora divide a faixa com o convite, que é quem
-     fala primeiro. Ainda é o segundo maior corpo da seção, e
-     continua acima do display-2 — não virou texto. */
-  font-size: calc(var(--fs-display) * .52);
-  font-weight: 500;
-  letter-spacing: -.045em;
-  line-height: .95;
-  color: var(--fg);
-  text-decoration: none;
-  padding: .06em 0;
-  transition: color var(--t-micro) var(--curva);
+@media (min-width: 769px) {
+  /* imagem estreita e alta: ancora a coluna esquerda sem competir
+     com a tabela de dados */
+  .contato__corpo { grid-template-columns: minmax(0, 3fr) minmax(0, 9fr); }
 }
+.contato__fig { margin: 0; }
+/* min-width:0 — sem isto o item de grid não encolhe abaixo do
+   min-content e o endereço empurraria a coluna para fora */
+.contato__dados { min-width: 0; }
 
-/* O WhatsApp deixou de ter botão flutuante (04/09) e passou a ser
-   só ISTO: a segunda porta da seção de contato. Por isso ele
-   cresceu — era o corpo do display-2 e agora acompanha o e-mail,
-   que é a primeira porta. As duas portas em pesos parecidos, e
-   nenhuma delas seguindo o leitor pela página. */
-.contato__zap {
-  grid-column: 9 / span 4;
-  grid-row: 2;
-  align-self: start;
-  font-size: calc(var(--fs-display) * .40);
-  font-weight: 500;
-  letter-spacing: -.035em;
-  line-height: 1;
-  color: var(--fg);
-  text-decoration: none;
-  /* alvo de toque por min-height, não por padding: o corpo aqui é
-     uma fração do display e no telefone cai para ~25px. Padding em
-     `em` encolhe junto com a letra — exatamente o que não pode
-     acontecer num alvo. Mesma correção da marca e do serv__nome. */
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding: .12em 0;
-  transition: color var(--t-micro) var(--curva);
-}
-
-/* :active fecha a lacuna do toque — no telefone não existe hover,
-   e sem ele o toque não devolve nada antes de a página trocar */
-.contato__email:hover,
-.contato__email:focus-visible,
-.contato__email:active,
-.contato__zap:hover,
-.contato__zap:focus-visible,
-.contato__zap:active { color: var(--sinal); }
-
-/* a legenda encosta no endereço, e o WhatsApp começa na mesma
-   altura: as duas portas dividem a faixa pelo topo, não pela base.
-   Preso ao fundo, o "para uma proposta" ficava órfão do endereço. */
-/* o amarelo finalmente existe em repouso, e existe com função:
-   ele nomeia as duas portas. Sobre bordô dá 10,9:1. */
-.contato__ap--email,
-.contato__ap--zap { color: var(--sinal); }
-
-.contato__ap--email { grid-column: 1 / span 5; grid-row: 2; align-self: start; }
-.contato__ap--zap   { grid-column: 9 / span 4; grid-row: 3; }
-
-/* confirmação de cópia: troca no lugar, sem toast e sem elemento
-   novo. Vazia não ocupa espaço. */
-.contato__estado:not(:empty) {
-  margin-left: .9em;
-  color: var(--sinal);
-}
-
-.contato__pe {
-  margin-top: clamp(3rem, 12vh, 8rem);
-  padding-top: 1.1rem;
+.contato__linhas {
+  margin: 0;
+  display: grid;
   border-top: 1px solid var(--fio);
 }
+.contato__linha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .3rem 1.5rem;
+  /* min-height mantém a linha como alvo de toque onde o valor é
+     link — sem depender do corpo da letra, que aqui é 11px */
+  min-height: 44px;
+  padding: .9rem 0;
+  border-bottom: 1px solid var(--fio);
+}
+.contato__linha dt { color: var(--fg-3); flex: none; }
+.contato__linha dd {
+  margin: 0;
+  color: var(--fg);
+  text-align: right;
+  min-width: 0;
+}
+.contato__l {
+  /* o ALVO é o link, não a linha: a linha tem 44px, mas quem
+     recebe o toque é o <a> dentro dela, e ele ficava com 15px.
+     Padding vertical + margin negativa dão a área sem afastar o
+     fio da borda inferior do texto. Mesma receita dos outros
+     alvos do site — quinta vez que ela aparece. */
+  display: inline-block;
+  padding: 14px 0;
+  margin: -14px 0;
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--fio);
+  transition: color var(--t-micro) var(--curva),
+              border-color var(--t-micro) var(--curva);
+}
+.contato__l:hover,
+.contato__l:focus-visible { color: var(--sinal); border-color: var(--sinal); }
 
+/* o que ainda não existe se identifica: não é dado em tom baixo,
+   é um lugar vazio marcado como vazio */
+[data-pendente] { color: var(--fg-3); font-style: italic; }
 
-/* ---- ≤900: o vão à direita some, as portas empilham ---- */
-@media (max-width: 900px) {
-  .contato__campo { grid-template-columns: 1fr; }
-  .contato__email,
-  .contato__zap,
-  .contato__ap--email,
-  .contato__ap--zap { grid-column: 1; grid-row: auto; align-self: start; }
-  /* alvo de toque: o e-mail encolheu de .82 para .52 do display e
-     com isso a caixa dele caiu para 24px de altura no telefone —
-     abaixo dos 44px mínimos. O padding devolve a área sem mexer no
-     corpo da letra. Medido: 45px em 375, 48px em 390. */
-  .contato__email { padding: .55em 0; }
-  .contato__zap {
-    margin-top: clamp(2.5rem, 8vh, 4rem);
-    /* alvo de toque: com .12em o link ficava em 39px */
-    padding: .25em 0;
-  }
+.contato__estado:not(:empty) { margin-left: .8em; color: var(--sinal); }
+
+.contato__redes {
+  margin: clamp(2rem, 6vh, 3.5rem) 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .2rem clamp(1.2rem, 3vw, 2.2rem);
+}
+.contato__redes li { display: flex; }
+.contato__redes .contato__l { display: inline-flex; align-items: center; gap: .6em; }
+/* a seta é o mesmo gesto do resto do site: um fio que anda */
+.contato__rede__seta {
+  width: 1.3em;
+  height: 1px;
+  background: currentColor;
+  flex: none;
+  opacity: .5;
+  transition: transform var(--t-micro) var(--curva),
+              opacity var(--t-micro) var(--curva);
+}
+.contato__l:hover .contato__rede__seta,
+.contato__l:focus-visible .contato__rede__seta { transform: translateX(4px); opacity: 1; }
+/* o TikTok ainda não é link: alinha com os outros mesmo assim */
+.contato__redes [data-pendente] { display: inline-flex; align-items: center; min-height: 44px; }
+
+.contato__pe {
+  margin: auto 0 0;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--fio);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: .5rem 1.5rem;
 }
 
 
@@ -2545,7 +2587,7 @@ img.onde__mapa {
   font-size: clamp(1.05rem, .5vw + .9rem, 1.4rem);
   font-weight: 500;
   letter-spacing: -.025em;
-  line-height: 1.12;
+  line-height: var(--lh-titulo);
 }
 
 .equipe__papel {
@@ -3366,7 +3408,6 @@ html.js--sem-motor .carregando { display: none; }
 
 /* ≤1024 — o aparato sai da lateral e vira linha estática de seção */
 @media (max-width: 1024px) {
-  .quem__fig { grid-column: 1 / span 5; }
   .quem__txt { grid-column: 7 / span 6; }
 }
 
@@ -3381,7 +3422,6 @@ html.js--sem-motor .carregando { display: none; }
     grid-template-columns: 1fr;
     align-items: start;
   }
-  .quem__fig,
   .quem__txt { grid-column: 1; }
 
   .quem__txt { display: contents; }
@@ -3391,7 +3431,6 @@ html.js--sem-motor .carregando { display: none; }
      o fim da composição */
   .quem .secao__ap { order: 1; }
   .quem__t     { order: 2; }
-  .quem__fig   { order: 3; margin: 0 0 clamp(1.8rem, 5vh, 2.6rem); max-width: 26rem; }
   .quem__corpo { order: 4; }
 
   /* sem trava de medida: a coluna já é estreita, e 12ch aqui
@@ -3420,7 +3459,6 @@ html.js--sem-motor .carregando { display: none; }
 @media (max-width: 480px) {
   /* no telefone a imagem ocupa a largura toda: é o único lugar do
      site onde o mobile é mais generoso que o desktop */
-  .quem__fig { max-width: none; }
 
   .fim { flex-direction: column; gap: .35rem; }
 }

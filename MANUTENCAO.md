@@ -1553,6 +1553,102 @@ era em `em` — encolhe junto com a letra, que é exatamente o que não pode
 acontecer num alvo. `min-height: 44px`, como já está na marca, no `serv__nome`
 e no CTA. **Onde o alvo importa, ele não pode depender do corpo da fonte.**
 
+## O "Ê" cortado, terceira vez — e a causa que faltava
+
+Duas correções anteriores mexeram no entrelinha e não resolveram. O motivo é
+que havia **duas causas**, e as duas precisavam ser corrigidas:
+
+**1 · A geometria.** As métricas da Gracio, medidas no navegador com
+`TextMetrics`: ascendente 0,95em, descendente 0,24em → **caixa de conteúdo de
+1,19em**. O `line-height` define a caixa de LINHA; quando ela é menor que o
+conteúdo, a diferença vira meio-espaço negativo e o conteúdo sobra para fora.
+Com 1.02: (1,02 − 1,19)/2 = −0,085em de cada lado. E o Ê usa a ascendente
+inteira — o ápice fica a 0,95em da base, encostado no topo da caixa de
+conteúdo, ou seja **0,085em acima da caixa de linha**: 4,6px num título de
+54px. `--lh-titulo` passou de 1.02 para **1.2** (a caixa de conteúdo com folga
+mínima). Abaixo disso o acento volta a sobrar — é geometria, não gosto.
+
+**2 · O recorte.** As três máscaras de entrada terminavam em
+`inset(0 0 -8% 0)`: soltas embaixo e nos lados, **zero em cima**, recortando
+exatamente na borda superior da caixa — bem onde o acento sobra. Passaram a
+`-14%` no topo. O gesto não mudou: a máscara continua subindo de baixo para
+cima; ela só deixou de cortar o que passa do teto.
+
+Cinco regras fugiam do token com valores próprios (`.prin__t` 1.04,
+`.serv__nome` 1.06, `.equipe__nome` 1.12, `.contato__email` .95,
+`.contato__zap` 1) — todas passaram a usar `var(--lh-titulo)`.
+
+## ⚠ APAGAR CSS POR INTERVALO DE POSIÇÃO: NÃO FAZER
+
+Aconteceu **duas vezes** nesta refatoração, e as duas custaram caro:
+
+1. Ao remover o aparato, recortei `s[i:j]` por número de linha e levei junto
+   `.inv` e `.campo` — as seções invertidas passaram a renderizar com fundo
+   transparente.
+2. Ao reescrever o contato, recortei de `.contato {` até `/* 11. RODAPÉ */` e
+   apaguei **1031 linhas**: Onde ficamos, Sobre a Jozzi, a equipe, o
+   carregamento, a grade de Styling, as páginas de caso e a lupa. O sintoma
+   foi estouro horizontal em styling.html e projetos.html; o CSS não acusou
+   nada.
+
+**A regra:** recortar por posição só é seguro quando os dois extremos
+delimitam o MESMO bloco. `.contato {` é o começo de uma seção; o rodapé é o
+começo de OUTRA, seis seções depois. Use os comentários de seção
+(`/* 10f. */` → `/* 10g. */`) como delimitadores, e confira o que sai antes de
+gravar.
+
+E a recuperação: tentei restaurar "só o que faltava" comparando blocos, e a
+comparação casou `@media (...)` genéricos entre si, deixando duplicatas e
+chaves desbalanceadas. **O caminho certo foi `git checkout HEAD -- style.css`
+e refazer as mudanças recentes uma a uma**, verificando as chaves a cada
+passo. O HEAD tinha 40 minutos.
+
+## Regras duplicadas da mesma classe — o padrão que se repete
+
+Já foram quatro: `.d`/`.d--2` (entrelinha), `.marca` (alinhamento e largura),
+`.topo` (o cabeçalho estático anulando o dinâmico) e as regras órfãs de
+`.onde__dados`. O padrão é sempre o mesmo: duas regras da mesma classe, a de
+baixo vencendo em silêncio. Depois de renomear ou reescrever qualquer bloco,
+rodar:
+
+```
+grep -oE '^\.[a-z][a-zA-Z0-9_-]*(__[a-zA-Z0-9_-]+)* \{' assets/css/style.css | sort | uniq -d
+```
+
+Nem toda duplicata é erro (há pares base+refinamento de propósito), mas toda
+duplicata merece uma olhada.
+
+## Alvos de toque: `min-height`, sempre
+
+Sexta ocorrência. `contato__l` reprovou em 15px porque o alvo era o `<a>`
+dentro da linha, não a linha. Onde o alvo importa, ele não pode depender do
+corpo da fonte nem de padding em `em`.
+
+## Links reais chegaram (04/09) — e um parâmetro removido
+
+| Onde | Link |
+| --- | --- |
+| WhatsApp | `https://wa.me/message/A5HZRIZWCMH3O1` |
+| Instagram | `https://www.instagram.com/jozzicreative` |
+
+O WhatsApp está em **dois lugares** e só dois: a linha "WhatsApp" da tabela de
+contato e a lista de redes. Se o link mudar, é nesses dois.
+
+⚠ **O link do Instagram veio com rastreio e eu removi.** O original era
+`instagram.com/jozzicreative?igsi=NDg5d3lkdThmYXZp&utm_source=qr` — parâmetros
+que o Instagram anexa quando o endereço é copiado da tela de QR code. Num link
+de site eles fariam o Instagram contar cada visita vinda do site como se
+tivesse sido um QR escaneado, sujando a métrica da própria Jozzi. O endereço
+limpo leva ao mesmo perfil.
+
+**TikTok:** vai existir, o link ainda não. Está na lista como texto marcado,
+não como link — um `<a>` sem destino é pior que texto: promete um clique que
+não acontece. Quando o endereço chegar, é trocar o `<span data-pendente>` por
+um `<a class="contato__l">` igual aos outros.
+
+Continua pendente: **telefone** (a Jozzi nunca forneceu) e o **e-mail**
+definitivo (só o domínio está confirmado).
+
 ## O que NÃO fazer
 
 - **Não subsetar a Gracio.** É a fonte desenhada da marca (`assets/fonts/

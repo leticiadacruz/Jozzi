@@ -24,7 +24,7 @@
      ANTES do style.css, para os tokens de familia ja acharem
      as fontes declaradas quando forem resolvidos. -->
 <link rel="stylesheet" href="https://use.typekit.net/oyj0zig.css">
-<link rel="stylesheet" href="assets/css/style.css?v=115">
+<link rel="stylesheet" href="assets/css/style.css?v=123">
 
 <script>
 (function () {
@@ -241,40 +241,11 @@
      esquerda. É aqui que a primeira imagem do site entra.
      ============================================================ -->
 <section class="quem wrap" id="quem-somos" data-secao data-num="01" data-nome="Quem somos" aria-labelledby="quem-titulo">
-  <figure class="quem__fig fig rv">
-    <div class="fig__campo" data-figura>
-      <span class="ap">Imagem 3:4</span>
-      <img class="prov" data-provisorio src="assets/img/MOCKquemsomos.jpg"
-           alt="" aria-hidden="true" width="931" height="1400" loading="lazy" decoding="async">
-    </div>
-    <figcaption class="ap">Estúdio, Curitiba &mdash; imagem a definir</figcaption>
-  </figure>
 
   <div class="quem__txt">
     <h2 class="secao__ap ap rv" id="quem-titulo">Quem somos</h2>
 
     <p class="quem__t d d--2 rv">Mais que estética,<br>somos estratégia.</p>
-
-    <!-- as duas fotos entram DENTRO da seção, sem deslocar o lema
-         (04/09): ele voltou ao lugar de origem e elas passaram a
-         acompanhá-lo, entre a frase e o corpo do texto.
-         IMAGENS PROVISÓRIAS. -->
-    <div class="quem__par">
-      <figure class="quem__par__f fig rv">
-        <div class="fig__campo fig__campo--43" data-figura>
-          <span class="ap">Imagem 4:3</span>
-          <img class="prov" data-provisorio src="assets/img/styling/carol-andrade/05.avif"
-               alt="" aria-hidden="true" width="931" height="1400" loading="lazy" decoding="async">
-        </div>
-      </figure>
-      <figure class="quem__par__f fig rv">
-        <div class="fig__campo fig__campo--43" data-figura>
-          <span class="ap">Imagem 4:3</span>
-          <img class="prov" data-provisorio src="assets/img/styling/leandra-klisievicz/03.avif"
-               alt="" aria-hidden="true" width="933" height="1400" loading="lazy" decoding="async">
-        </div>
-      </figure>
-    </div>
 
     <div class="quem__corpo">
       <p class="rv">A Jozzi se diferencia por operar na autenticidade e no posicionamento real
@@ -284,6 +255,30 @@
       create for you.</p>
     </div>
   </div>
+
+  <!-- As duas fotos saíram de dentro do bloco de texto e viraram
+     IRMÃS dele (04/09): o texto fica onde estava, à esquerda, e
+     elas ocupam a coluna da direita. Antes moravam no meio do
+     texto, entre a frase e o corpo — o que empurrava a leitura
+     para baixo em vez de acompanhá-la.
+     IMAGENS PROVISÓRIAS. -->
+  <div class="quem__par">
+    <figure class="quem__par__f fig rv">
+      <div class="fig__campo fig__campo--43" data-figura>
+        <span class="ap">Imagem 4:3</span>
+        <img class="prov" data-provisorio src="assets/img/styling/carol-andrade/05.avif"
+             alt="" aria-hidden="true" width="931" height="1400" loading="lazy" decoding="async">
+      </div>
+    </figure>
+    <figure class="quem__par__f fig rv">
+      <div class="fig__campo fig__campo--43" data-figura>
+        <span class="ap">Imagem 4:3</span>
+        <img class="prov" data-provisorio src="assets/img/styling/leandra-klisievicz/03.avif"
+             alt="" aria-hidden="true" width="933" height="1400" loading="lazy" decoding="async">
+      </div>
+    </figure>
+  </div>
+
 
 </section>
 
@@ -390,23 +385,6 @@
   <h2 class="secao__ap ap rv" id="serv-titulo">Serviços</h2>
 
   <p class="serv__t d d--2 rv">Como criamos para você.</p>
-
-  <!-- "Cada marca é singular" veio da seção 05 a pedido da Jozzi
-       (03/09). Faz sentido onde está agora: era a virada de uma
-       seção sobre a agência, e aqui é a premissa dos seis serviços
-       — cada um deles existe porque cada marca precisa de um
-       recorte diferente. -->
-  <div class="serv__virada">
-    <p class="serv__virada__t d rv" data-linhas>Cada marca é singular.</p>
-    <div class="serv__virada__c">
-      <h3 class="serv__virada__ap ap rv">Nossas expertises</h3>
-      <p class="rv">Como o nosso próprio lema já diz, somos experts em criar para você. Como
-      marketing lab, enxergamos que cada projeto requer profundidade e, por causa disso, somos
-      pequenos, priorizando que a atenção ao detalhe seja personalizada. Com ênfase no mercado da
-      moda, desenvolvemos processos criativos e comunicação do zero a partir de um diagnóstico do
-      seu objetivo. Juntos, buscamos respostas para os resultados que você quer alcançar.</p>
-    </div>
-  </div>
 
   <ul class="serv__lista" role="list">
 
@@ -573,6 +551,23 @@
     </li>
 
   </ul>
+
+  <!-- "Cada marca é singular" veio da seção 05 (03/09) e desceu para
+       DEPOIS dos cards (04/09). A ordem importa: antes ela era a
+       premissa que abria os seis serviços; agora é a conclusão que
+       eles sustentam — você lê o que a Jozzi faz e só então por que
+       cada marca precisa de um recorte diferente. -->
+  <div class="serv__virada">
+    <p class="serv__virada__t d rv" data-linhas>Cada marca é singular.</p>
+    <div class="serv__virada__c">
+      <h3 class="serv__virada__ap ap rv">Nossas expertises</h3>
+      <p class="rv">Como o nosso próprio lema já diz, somos experts em criar para você. Como
+      marketing lab, enxergamos que cada projeto requer profundidade e, por causa disso, somos
+      pequenos, priorizando que a atenção ao detalhe seja personalizada. Com ênfase no mercado da
+      moda, desenvolvemos processos criativos e comunicação do zero a partir de um diagnóstico do
+      seu objetivo. Juntos, buscamos respostas para os resultados que você quer alcançar.</p>
+    </div>
+  </div>
 </section>
 
 
@@ -901,30 +896,97 @@
          data-num="06" data-nome="Contato" aria-labelledby="contato-titulo">
   <h2 class="secao__ap ap rv" id="contato-titulo">Contato</h2>
 
-  <p class="contato__convite d d--2 rv">Venha criar com a gente.</p>
+  <!-- Composição pedida pela Jozzi (04/09), na estrutura da
+       referência: título grande à esquerda com a seta no canto
+       oposto, imagem alta à esquerda e, ao lado dela, as linhas de
+       dado com rótulo à esquerda e valor à direita, separadas por
+       fio. Embaixo, as redes; no pé, o ano.
 
-  <div class="contato__campo">
-
-    <a class="contato__email rv" href="mailto:a-definir@jozzicreative.com.br"
-       data-copiar="a-definir@jozzicreative.com.br" data-cursor="Copiar"
-       aria-describedby="contato-email-ap">a-definir@<wbr>jozzicreative.<wbr>com.br</a>
-
-    <p class="contato__ap contato__ap--email ap rv" id="contato-email-ap">
-      Para uma proposta
-      <span class="contato__estado" role="status"></span>
-    </p>
-
-    <a class="contato__zap rv" href="https://wa.me/"
-       target="_blank" rel="noopener noreferrer"
-       aria-describedby="contato-zap-ap">WhatsApp</a>
-
-    <p class="contato__ap contato__ap--zap ap rv" id="contato-zap-ap">
-      Para uma conversa &mdash; número a confirmar
-    </p>
-
+       O WhatsApp e o Instagram chegaram em 04/09 e estão ligados.
+       ⚠ O QUE AINDA NÃO EXISTE:
+         · telefone — a Jozzi nunca forneceu um
+         · TikTok — vai existir, o link ainda não
+         · e-mail — só o domínio está confirmado
+       As linhas estão montadas e marcadas. Quando os dados
+       chegarem, é preencher o valor e tirar o `data-pendente`. -->
+  <div class="contato__topo">
+    <p class="contato__convite d rv">Venha criar<br>com a gente.</p>
+    <span class="contato__seta" aria-hidden="true">
+      <svg viewBox="0 0 100 100" focusable="false">
+        <path d="M22 22 L78 78 M78 34 L78 78 L34 78" fill="none"
+              stroke="currentColor" stroke-width="7"
+              stroke-linecap="square" stroke-linejoin="miter"/>
+      </svg>
+    </span>
   </div>
 
-  <p class="contato__pe ap rv">Expectativa de resposta &mdash; a confirmar</p>
+  <div class="contato__corpo">
+
+    <figure class="contato__fig fig rv">
+      <div class="fig__campo fig__campo--45" data-figura>
+        <span class="ap">Imagem 4:5</span>
+        <img class="prov" data-provisorio src="assets/img/styling/carol-andrade/07.avif"
+             alt="" aria-hidden="true" width="931" height="1400" loading="lazy" decoding="async">
+      </div>
+    </figure>
+
+    <div class="contato__dados">
+
+      <dl class="contato__linhas ap rv">
+        <div class="contato__linha">
+          <dt>Telefone</dt>
+          <dd data-pendente>A definir</dd>
+        </div>
+        <div class="contato__linha">
+          <dt>Endereço</dt>
+          <dd>Av. João Gualberto, 1342 / Urban Office, sala 1912 / Curitiba &mdash; PR</dd>
+        </div>
+        <div class="contato__linha">
+          <dt>E-mail</dt>
+          <dd>
+            <a class="contato__l" href="mailto:a-definir@jozzicreative.com.br"
+               data-copiar="a-definir@jozzicreative.com.br" data-cursor="Copiar">a-definir@jozzicreative.com.br</a>
+            <span class="contato__estado" role="status"></span>
+          </dd>
+        </div>
+        <div class="contato__linha">
+          <dt>WhatsApp</dt>
+          <dd>
+            <a class="contato__l" href="https://wa.me/message/A5HZRIZWCMH3O1"
+               target="_blank" rel="noopener noreferrer">Falar no WhatsApp</a>
+          </dd>
+        </div>
+      </dl>
+
+      <!-- O link do Instagram veio com os parâmetros de rastreio do
+           QR (`igsi` e `utm_source=qr`). Eles foram removidos: num
+           link de site eles fariam o Instagram contar cada visita
+           como se tivesse vindo de um QR escaneado, o que sujaria a
+           métrica da própria Jozzi. O endereço limpo leva ao mesmo
+           perfil. -->
+      <ul class="contato__redes ap rv" role="list">
+        <li>
+          <a class="contato__l" href="https://www.instagram.com/jozzicreative"
+             target="_blank" rel="noopener noreferrer">
+            Instagram<span class="contato__rede__seta" aria-hidden="true"></span>
+          </a>
+        </li>
+        <li>
+          <a class="contato__l" href="https://wa.me/message/A5HZRIZWCMH3O1"
+             target="_blank" rel="noopener noreferrer">
+            WhatsApp<span class="contato__rede__seta" aria-hidden="true"></span>
+          </a>
+        </li>
+        <li><span data-pendente>TikTok &mdash; link a definir</span></li>
+      </ul>
+
+    </div>
+  </div>
+
+  <p class="contato__pe ap rv">
+    <span>Expectativa de resposta &mdash; a confirmar</span>
+    <span>&copy;2026</span>
+  </p>
 
 </section>
 
