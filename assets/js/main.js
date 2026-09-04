@@ -296,9 +296,16 @@
   var apNum     = document.querySelector('[data-aparato-num]');
   var apSec     = document.querySelector('[data-aparato-sec]');
   var apEscala  = document.querySelector('[data-aparato-escala]');
+  var navLinks  = [].slice.call(document.querySelectorAll('[data-nav-secao] a[href^="#"]'));
+  var segEls    = [];   /* os segmentos da barra lateral, na ordem das seções */
+  var topo      = document.querySelector('.topo');
   var apId      = document.querySelector('.aparato__id');
   var apHora    = document.querySelector('.aparato__hora');
-  var relogio   = document.querySelector('[data-relogio]');
+  /* querySelectorAll e não querySelector: a hora aparece em DOIS
+     lugares — na barra lateral, abreviada como "CWB", e em "Onde
+     ficamos", com o rótulo inteiro. É a segunda que explica a
+     primeira, e as duas têm de bater no segundo. */
+  var relogios  = [].slice.call(document.querySelectorAll('[data-relogio]'));
   var rolar     = document.querySelector('.abertura__rolar');
 
   var secoes   = [].slice.call(document.querySelectorAll('[data-secao]'));
@@ -357,39 +364,60 @@
   /* ---- a régua ----
      Um segmento por seção, com peso igual à altura real dela no
      documento: a régua mede o documento, não conta seções. */
+  /* A régua lateral saiu (03/09) e a navegação de seções subiu para
+     o cabeçalho. Esta função deixou de CRIAR os links e passou a
+     ENCONTRÁ-LOS: eles agora moram no HTML, escritos à mão.
+
+     A diferença não é estilística. Construídos por JS, os links não
+     existiam sem script — e este site tem como princípio funcionar
+     com o motor morto. Escritos no HTML, a navegação inteira
+     funciona sem uma linha de JavaScript; o script só acrescenta o
+     realce da seção corrente, que é enfeite e pode faltar.
+
+     O `segs` continua com a mesma forma de antes ({el, fill, ...})
+     porque o laço do `pintar()` não mudou — ele só não tem mais
+     barra de preenchimento para escrever, e `fill` vem nulo. */
+  /* Duas coisas ao mesmo tempo, e por isso `segs` tem dois campos:
+
+     · `el` é o LINK do cabeçalho, escrito à mão no HTML. O script
+       não o cria — só marca qual está ativo. A navegação inteira
+       funciona com o motor morto; o realce é que é enfeite.
+     · `fill` é o segmento da barra de progresso lateral, esse sim
+       montado aqui: são um por seção, com altura proporcional à
+       altura real dela no documento, e não dá para escrever isso à
+       mão sem medir a página.
+
+     A barra MEDE, não navega — os segmentos são <span>, não <a>.
+     Um índice clicável aqui seria a mesma navegação do cabeçalho
+     repetida na mesma tela. */
   function montarRegua() {
-    if (!apEscala || !secoes.length) return;
-    apEscala.textContent = '';
+    if (!secoes.length) return;
 
-    /* Cada segmento é um LINK, não um <span>: ao passar o ponteiro
-       a régua abre e vira o índice do site. Continua medindo a
-       rolagem como antes — o que mudou é que agora também leva.
+    if (apEscala) {
+      apEscala.textContent = '';
+      document.documentElement.classList.add('js--regua');
+    }
 
-       Só vira link quem tem id: numa página de projeto a régua tem
-       uma seção só e não há para onde navegar. */
     segs = secoes.map(function (secao) {
-      var id   = secao.getAttribute('id');
-      var nome = secao.getAttribute('data-nome') || '';
-      var seg  = document.createElement(id ? 'a' : 'span');
-      var fill = document.createElement('i');
-      var rot  = document.createElement('span');
-
-      seg.className  = 'aparato__seg';
-      fill.className = 'aparato__seg-feito';
-      rot.className  = 'aparato__seg-nome';
-      rot.textContent = nome;
-
-      if (id) {
-        seg.setAttribute('href', '#' + id);
-        /* o nome já é o texto do link: nada de aria-label duplicando */
+      var id = secao.getAttribute('id');
+      var el = null;
+      for (var i = 0; i < navLinks.length; i++) {
+        if (navLinks[i].getAttribute('href') === '#' + id) { el = navLinks[i]; break; }
       }
 
-      seg.appendChild(fill);
-      seg.appendChild(rot);
-      apEscala.appendChild(seg);
-      return { el: seg, fill: fill, ativo: false, feito: false, altura: -1 };
+      var fill = null;
+      if (apEscala) {
+        var seg = document.createElement('span');
+        fill = document.createElement('i');
+        seg.className  = 'aparato__seg';
+        fill.className = 'aparato__seg-feito';
+        seg.appendChild(fill);
+        apEscala.appendChild(seg);
+        segEls.push(seg);
+      }
+
+      return { el: el, fill: fill, ativo: false, feito: false, altura: -1 };
     });
-    document.documentElement.classList.add('js--regua');
   }
 
   function medir() {
@@ -423,8 +451,12 @@
     if (apId)   { var a = apId.getBoundingClientRect();   med.idMeio   = a.top + a.height / 2; }
     if (apHora) { var b = apHora.getBoundingClientRect(); med.horaMeio = b.top + b.height / 2; }
 
-    /* abaixo de 1025 o aparato é display:none — não há o que pintar */
-    med.regua = !!(apEscala && apEscala.offsetParent !== null);
+    /* Há o que pintar se QUALQUER um dos dois estiver em cena: a
+       barra lateral (acima de 1025) ou os links do cabeçalho
+       (acima de 900). No telefone nenhum dos dois existe e o laço
+       inteiro é pulado. */
+    med.regua = !!((apEscala && apEscala.offsetParent !== null) ||
+                   (navLinks.length && navLinks[0].offsetParent !== null));
 
     /* a régua atravessa quase a tela inteira: para saber o quanto
        dela está sobre fundo escuro num dado momento é preciso a
@@ -435,8 +467,18 @@
       med.escAlt  = Math.max(1, e.height);
     }
 
+    /* a faixa que o cabeçalho ocupa na tela — usada para decidir se
+       ele está sobre uma seção de tinta */
+    med.topoAlt = topo ? topo.getBoundingClientRect().height : 0;
+
     med.secs.forEach(function (s, i) {
-      if (segs[i]) segs[i].el.style.setProperty('--peso', s.alt.toFixed(0));
+      /* `--peso` era a altura do segmento na régua, proporcional à
+         altura real da seção. A régua não existe mais; o link do
+         cabeçalho tem largura de texto, não de peso. A linha fica
+         só porque `segs` continua sendo a ponte entre seção e
+         elemento — e `el` pode ser NULO agora: "Abertura" é uma
+         seção sem link na nav (a marca já leva ao topo). */
+      if (segs[i] && segs[i].el) segs[i].el.style.setProperty('--peso', s.alt.toFixed(0));
     });
 
     ultimoY = -1;   /* força o próximo quadro a redesenhar */
@@ -449,8 +491,18 @@
   var secaoAtual = '00';
   var trocaAtual = 0;
 
+  /* A barra lateral virou SÓ a barra (04/09): o rótulo de número e
+     nome saiu dela, porque era texto largo dentro de um contêiner
+     de 3px e transbordava para dentro da coluna de conteúdo. Esta
+     função sobrevive porque o rótulo pode voltar; enquanto ele não
+     existe, ela sai cedo.
+
+     ⚠ Os dois `if` são necessários, não redundantes: `aparato`
+     continua existindo (é a barra), mas `apNum`/`apSec` não. Sem o
+     segundo, isto lançava quatro vezes por carga. */
   function trocarSecao(num, nome) {
     if (!aparato || num === secaoAtual) return;
+    if (!apNum || !apSec) { secaoAtual = num; return; }
     secaoAtual = num;
 
     var meu = ++trocaAtual;
@@ -481,18 +533,26 @@
         p = p < 0 ? 0 : (p > 1 ? 1 : p);
 
         var h = Math.round(p * 1000) / 10;
-        if (h !== seg.altura) { seg.altura = h; seg.fill.style.height = h + '%'; }
+        if (seg.fill && h !== seg.altura) { seg.altura = h; seg.fill.style.height = h + '%'; }
 
         var ativo = (i === corrente);
         if (ativo !== seg.ativo) {
           seg.ativo = ativo;
-          seg.el.classList.toggle('is-ativo', ativo);
+          if (segEls[i]) segEls[i].classList.toggle('is-ativo', ativo);
+          if (seg.el) {
+            seg.el.classList.toggle('is-ativo', ativo);
+            /* aria-current diz ao leitor de tela o que a cor diz ao
+               olho: esta é a seção em que você está. */
+            if (ativo) seg.el.setAttribute('aria-current', 'true');
+            else seg.el.removeAttribute('aria-current');
+          }
           if (ativo) trocarSecao(s.num, s.nome);
         }
         var feito = (i < corrente);
         if (feito !== seg.feito) {
           seg.feito = feito;
-          seg.el.classList.toggle('is-feito', feito);
+          if (segEls[i]) segEls[i].classList.toggle('is-feito', feito);
+          if (seg.el) seg.el.classList.toggle('is-feito', feito);
         }
       }
 
@@ -523,14 +583,34 @@
       var f = cob / med.escAlt;
       if (f > 1) f = 1;
 
+      /* o cabeçalho olha só a FAIXA DELE, não a barra inteira: o que
+         importa é o que passa atrás dos 60px do topo da tela. */
+      var hTopo = y + med.topoAlt;
+      var escuroNoTopo = false;
+      for (var w = 0; w < med.inv.length; w++) {
+        if (hTopo >= med.inv[w].topo && hTopo <= med.inv[w].base) { escuroNoTopo = true; break; }
+      }
+
       /* só escreve quando a mistura andou meio por cento: sem isso
          seria uma escrita de estilo por quadro para nada */
       if (Math.abs(f - reguaClaro) > 0.005) {
         reguaClaro = f;
-        apEscala.style.setProperty('--regua-rgb',
-          Math.round(120 + 123 * f) + ' ' +
-          Math.round(134 + 106 * f) + ' ' +
-          Math.round(146 +  86 * f));
+        /* Marsala (149 82 81) até off-white (243 240 232). Marsala
+           sobre a tinta dá 2,15:1 — a barra sumiria nas seções
+           invertidas. A interpolação é por FRAÇÃO da barra que está
+           sobre fundo escuro, e não por chaveamento: ela tem a
+           altura da tela e passa metade da travessia com um pé em
+           cada fundo, onde um toggle piscaria no meio do gesto. */
+        if (apEscala) {
+          apEscala.style.setProperty('--regua-rgb',
+            Math.round(149 +  94 * f) + ' ' +
+            Math.round( 82 + 158 * f) + ' ' +
+            Math.round( 81 + 151 * f));
+        }
+        /* o cabeçalho troca no mesmo compasso, mas por limiar: ele
+           é um bloco pequeno e fixo no topo, não uma faixa de tela
+           inteira — para ele "estou sobre escuro" é sim ou não. */
+        if (topo) topo.classList.toggle('is-escuro', escuroNoTopo);
       }
     }
 
@@ -627,6 +707,31 @@
       }
     }
 
+    /* ---- O CABEÇALHO DINÂMICO ----
+       Dois estados, decididos aqui porque aqui já se sabe o `y`.
+
+       `is-preso`: assim que a rolagem sai do topo, ele deixa de ser
+       transparente e vira barra — fundo translúcido e fio embaixo.
+
+       `is-fora`: rolando PARA BAIXO ele sai de cena; ao subir, volta.
+       É isto que resolve a sobreposição no rolo, que é `sticky` e
+       ocupa a tela inteira: descendo, o leitor está lendo o projeto
+       e não precisa do cabeçalho; subindo, ele quer navegar.
+
+       O limiar de 6px não é capricho: sem ele, o quique elástico do
+       fim da página (e o próprio Lenis, que interpola) fazem o
+       cabeçalho piscar entrando e saindo. */
+    if (topo) {
+      topo.classList.toggle('is-preso', y > 8);
+
+      var d = y - topoUltimoY;
+      if (d > 6 && y > med.topoAlt * 2) topoFora = true;
+      else if (d < -6 || y <= med.topoAlt) topoFora = false;
+      if (Math.abs(d) > 1) topoUltimoY = y;
+
+      topo.classList.toggle('is-fora', topoFora);
+    }
+
     /* o convite a rolar cumpriu a função no primeiro gesto */
     if (rolar) rolar.classList.toggle('is-cumprido', y > 40);
   }
@@ -642,6 +747,8 @@
 
   var ultimoY = -1;
   var reguaClaro = -1;   /* fração da régua sobre fundo escuro */
+  var topoUltimoY = 0;   /* para saber a DIREÇÃO da rolagem */
+  var topoFora = false;
 
   function ligarMarca() {
     montarRegua();
@@ -655,14 +762,15 @@
   }
 
   function ligarRelogio() {
-    if (!relogio) return;
+    if (!relogios.length) return;
 
     var opcoes = menosMovimento
       ? { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit', hour12: false }
       : { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
 
     var tique = function () {
-      relogio.textContent = new Date().toLocaleTimeString('pt-BR', opcoes);
+      var agora = new Date().toLocaleTimeString('pt-BR', opcoes);
+      for (var i = 0; i < relogios.length; i++) relogios[i].textContent = agora;
     };
 
     tique();

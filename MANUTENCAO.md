@@ -1358,6 +1358,201 @@ fonte. Depois de qualquer mudança, testar visualmente "AGÊNCIA",
 diacrítico mais alto — no mínimo numa família de título de uma linha e
 numa de várias linhas (o comportamento não é o mesmo nas duas).
 
+## REFACTOR DE 03/09 — paleta de duas cores e cabeçalho fixo
+
+Mudança grande, pedida pela Jozzi em oito itens. O que vale saber:
+
+### A paleta caiu de sete cores para duas
+
+Saíram verde, bege, azul, amarelo, bordô e marrom. Ficaram **Marsala**
+(Pantone 18-1438, `#955251`) e **off-white** (`#F3F0E8`), mais um terceiro
+VALOR do mesmo matiz do Marsala (`#4A2A29`, mesmo H e S, L de 45% para 23%).
+
+⚠ **O valor escuro não é uma terceira cor — é uma necessidade de contraste,
+medida.** Marsala sobre off-white dá 5,0:1: passa em texto normal por pouco.
+Mas o sistema inteiro é feito de alfas (`--fg-2`, `--fg-3`), e qualquer
+clareamento do Marsala cai abaixo do mínimo: 75% → 3,1:1, 90% → 4,2:1. Com o
+Marsala puro como tinta, o texto secundário do site inteiro ficaria fora da
+acessibilidade. Com o valor escuro, off-white sobre ele dá 10,8:1 — e o
+Marsala fica livre para ser o que a Jozzi pediu que ele fosse: destaque.
+
+As frações dos derivados foram **re-medidas**, não copiadas: o marsala escuro
+é mais claro que o marrom antigo, então os mesmos alfas dariam menos
+contraste. Subiram de 75/65 para 82/70.
+
+Os nomes antigos (`--marrom-rgb`, `--azul-rgb`) sobrevivem como **aliases**
+apontando para os novos. São ~40 referências espalhadas em alfas; caçar as
+quarenta era a forma mais provável de esquecer uma — exatamente como o bug do
+entrelinha nasceu.
+
+**Fotografia continua colorida.** A restrição é da paleta da INTERFACE; as
+fotos são conteúdo. A exceção é o fundo da abertura, que é atmosfera atrás de
+texto: ela entra em cinza e recebe o matiz por cima, num duotone de Marsala —
+sem isso, o véu off-white sobre foto quente produzia um rosa pastel, uma
+terceira cor que a paleta de duas não admite.
+
+### A régua lateral saiu, o cabeçalho virou navegação
+
+Foram 313 linhas de CSS: o instrumento fixo, os segmentos proporcionais, a
+abertura por aproximação, a mistura de cor por fração. Duas consequências:
+
+- `--recuo` voltou a ser `--margem` em toda largura. A calha de 88–136px que
+  o aparato reservava à esquerda de TODAS as seções voltou para o conteúdo.
+- o relógio de Curitiba sumiu do topo. "Onde ficamos" existia em parte para
+  explicá-lo; ela continua mostrando a hora, agora como informação local.
+
+Os links da nav são **escritos à mão no HTML**, não montados por JS.
+`montarRegua()` deixou de criar elementos e passou a encontrá-los. A navegação
+funciona com o motor morto; o script só acrescenta o realce da seção corrente.
+
+⚠ **`segs[i].el` pode ser NULO.** "Abertura" é uma seção sem link na nav (a
+marca já leva ao topo). Todo acesso a `.el` no `pintar()` é guardado.
+
+### ⚠ DOIS BUGS QUE EU MESMO CAUSEI NESTE REFACTOR
+
+**1. Apaguei código vizinho ao remover o aparato.** O bloco `06b. INVERSÃO`
+(`.inv`, `.campo`, `.inv--bordo`) morava DENTRO do intervalo de linhas do
+bloco 06, e eu apaguei o intervalo **por número de linha** em vez de por
+delimitador. As duas seções invertidas passaram a renderizar com fundo
+transparente e texto escuro — sem erro nenhum, só errado. Restaurado do git.
+**Apagar por intervalo numérico é rápido e é assim que se perde código que
+não se está olhando.**
+
+**2. Duas regras `.marca`.** Criei uma nova no cabeçalho e a antiga
+sobreviveu mais abaixo — vindo depois, ela vencia e zerava o alinhamento e a
+largura da nova. No telefone o CTA passava por cima do logotipo. É o MESMO
+padrão do bug do entrelinha (`.d` / `.d--2`): duas regras da mesma classe, a
+de baixo anulando a de cima em silêncio. Consolidadas numa só.
+
+### Alvos de toque agora vêm de `min-height`, não de padding
+
+Três elementos reprovaram na auditoria durante o refactor (`marca` em 37px,
+`serv__nome` em 43,x, `topo__cta` em 38px) — todos porque o alvo dependia do
+corpo da letra ou da largura de um SVG, e eu mexi nessas duas coisas.
+`min-height: 44px` não depende de nada. Onde o alvo importa, é assim que ele
+deve ser garantido.
+
+### Pendências que este refactor NÃO resolveu
+
+- o **número do WhatsApp** continua sem existir: o botão flutuante novo
+  aponta para `wa.me/` sem número, igual ao link de Contato. Quando o número
+  chegar, entra nos DOIS lugares e em nenhum outro.
+- as imagens de `data-provisorio` continuam provisórias, incluindo o fundo
+  novo da abertura e o par de fotos de "Quem somos".
+- `MOCKtráfegopago.jpeg` tem **7,1 MB** — sozinho, mais que todo o resto do
+  site somado. Precisa ser reencodado antes de publicar.
+
+## Ajustes de 04/09 — o que voltou atrás do refactor anterior
+
+Seis correções da Jozzi sobre o refactor de 03/09. Vale registrar o que
+**voltou**, porque metade disso eu tinha acabado de mudar:
+
+- **"Mais que estética, somos estratégia" voltou para "Quem somos".** Eu a
+  tinha movido para a abertura; ela volta ao lugar de origem, e as duas fotos
+  novas passam a acompanhá-la DENTRO da mesma seção em vez de ocupar o vão
+  que ela deixaria.
+- **A barra de progresso lateral voltou** — mas só a barra.
+- **O CTA "Ver todos os projetos" saiu do cabeçalho** e passou a viver na
+  seção de Projetos, ao lado da frase que a abre. Fixo no topo ele acompanhava
+  o leitor por seções onde "ver todos os projetos" não quer dizer nada.
+- **O botão flutuante do WhatsApp foi removido.** O que ficou foi o link da
+  seção de Contato, redimensionado: era `--fs-display-2` e agora é 40% do
+  display, para acompanhar o e-mail. As duas portas em pesos parecidos, e
+  nenhuma seguindo o leitor pela página.
+
+### A barra lateral MEDE, não navega
+
+Diferença importante em relação ao aparato antigo: os segmentos são `<span>`,
+não `<a>`, e não há nome de seção ao lado deles. Os seletores moram no
+cabeçalho; um índice clicável aqui seria a mesma navegação duas vezes na
+mesma tela.
+
+⚠ **O rótulo de número e nome NÃO volta para dentro dela.** Eu tentei manter
+e quebrou: são texto largo (`04 PROJETOS`, `CWB 11:35`) dentro de um contêiner
+de 3px, e transbordavam para dentro da coluna de conteúdo — no rolo, o
+"04 PROJETOS" ficava por baixo da frase de abertura da seção. O `--recuo` não
+reserva mais calha à esquerda (isso saiu com o aparato antigo e não volta),
+então não há onde esse texto morar. O nome da seção está no cabeçalho,
+realçado; a hora foi para "Onde ficamos", com o rótulo por extenso.
+
+`trocarSecao()` sobreviveu para o caso de o rótulo voltar, mas ganhou uma
+segunda guarda: `aparato` continua existindo (é a barra), `apNum`/`apSec` não.
+Sem ela, isto lançava quatro vezes por carga.
+
+A cor da barra continua interpolando por FRAÇÃO — agora de Marsala
+(`149 82 81`) até off-white. Marsala sobre a tinta dá 2,15:1: a barra sumiria
+nas seções invertidas.
+
+### Cabeçalho dinâmico: três estados
+
+- **repouso** — transparente, sem fio. A imagem da abertura passa inteira por
+  baixo dele. Por isso o `body` NÃO tem `padding-top`.
+- **`.is-preso`** — a partir de 8px de rolagem: fundo translúcido com
+  `backdrop-filter`, fio embaixo, e encolhe. O desfoque é progressive
+  enhancement (`@supports`); onde não existe, sobra o fundo translúcido.
+- **`.is-fora`** — rolando PARA BAIXO ele sai de cena; subindo, volta. É isto
+  que resolve a sobreposição no rolo, que é `sticky` e ocupa a tela inteira.
+
+⚠ **O limiar de 6px na direção não é capricho.** Sem ele, o quique elástico do
+fim da página e a própria interpolação do Lenis fazem o cabeçalho piscar
+entrando e saindo várias vezes por segundo.
+
+`.is-escuro` inverte a cor do cabeçalho sobre as seções de tinta — por
+LIMIAR, não por fração como a barra: ele é um bloco pequeno e fixo no topo,
+e para ele "estou sobre escuro" é sim ou não.
+
+### "Onde ficamos" reestruturada
+
+Estava vazia: endereço em três linhas no topo à esquerda, mapa à direita, e
+toda a coluna esquerda em branco. Virou uma composição de duas colunas de
+verdade — à esquerda endereço, uma lista de definição com os dados práticos e
+a ação; à direita o mapa, mais alto, atravessando as três fileiras.
+
+**Nada foi inventado.** O único conteúdo "novo" é a HORA, que já existia na
+barra lateral: ela volta ao lugar onde se explica. `ligarRelogio()` passou a
+usar `querySelectorAll` — a hora aparece em dois lugares e os dois têm de
+bater no segundo.
+
+### Três formas de chegar (04/09)
+
+Google Maps, Waze e Uber. Os destinos saem das **mesmas coordenadas** que a
+lista de dados mostra na tela — há uma checagem simples para confirmar que os
+três continuam concordando: extrair o `<dd>` de Coordenadas e procurá-lo nos
+`href`. Se alguém trocar o endereço, os três links têm de mudar junto.
+
+Os esquemas são os documentados por cada serviço, e nenhum precisa de chave
+ou conta nossa:
+
+| Serviço | Esquema |
+| --- | --- |
+| Google Maps | Maps URLs API, busca por endereço |
+| Waze | `waze.com/ul?ll=<lat>,<lng>&navigate=yes` |
+| Uber | `m.uber.com/ul/?action=setPickup&dropoff[latitude]=…&dropoff[longitude]=…&dropoff[formatted_address]=…` |
+
+O Uber leva **as coordenadas e o endereço escrito**. As coordenadas colocam o
+alfinete; o `formatted_address` é o que passageiro e motorista LEEM na tela do
+app. Só com coordenadas, o destino aparece como um ponto sem nome. O endereço
+usado é o mesmo das três linhas do `<address>` da seção, numa linha só, com
+"- PR" que o embed do mapa já usava.
+
+No celular com o app instalado, Waze e Uber abrem o app; sem app, abrem a
+versão web. Os colchetes do Uber vão percent-encoded (`%5B`/`%5D`) e os `&`
+como `&amp;`, senão o HTML não valida.
+
+⚠ **Uma regra órfã apareceu aqui.** A media query de ≤900px ainda apontava
+para `.onde__dados`, que virou `.onde__lista` quando a seção foi
+reestruturada. Regra órfã não avisa: ela simplesmente não aplica, e o
+empilhamento no tablet ficava dependendo do acaso da ordem no HTML. Vale
+rodar a checagem de classes órfãs (comparar os seletores do CSS com as
+classes do HTML) depois de renomear qualquer coisa.
+
+### Alvos de toque: a mesma lição, quarta vez
+
+`contato__zap` reprovou em 25px depois de eu aumentar o corpo dele. O padding
+era em `em` — encolhe junto com a letra, que é exatamente o que não pode
+acontecer num alvo. `min-height: 44px`, como já está na marca, no `serv__nome`
+e no CTA. **Onde o alvo importa, ele não pode depender do corpo da fonte.**
+
 ## O que NÃO fazer
 
 - **Não subsetar a Gracio.** É a fonte desenhada da marca (`assets/fonts/

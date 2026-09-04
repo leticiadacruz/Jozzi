@@ -60,47 +60,76 @@
   /* ---- PALETA OFICIAL DA JOZZI ----
      Os sete valores da marca. Nada abaixo inventa cor: tudo o mais
      é transparência destes mesmos sete. */
-  --off-white: #F3F0E8;
-  --verde:     #3B3D33;
-  --marrom:    #372215;
-  --azul:      #788692;
-  --bege:      #DDDCCC;
-  --bordo:     #402428;
-  --amarelo:   #EEE3B5;
+  /* ============================================================
+     PALETA — DUAS CORES, e só duas (03/09, a pedido da Jozzi).
+     As sete cores anteriores (verde, bege, azul, amarelo, bordô,
+     marrom) saíram do sistema. O que existe agora é UM matiz,
+     Marsala, em dois valores, mais o off-white de sempre.
+
+     Marsala é o Pantone 18-1438 (#955251) — não é um tom que eu
+     escolhi, é o valor canônico da cor com esse nome. O "fundo" é
+     o mesmo matiz escurecido: mesmo H e mesmo S, só o L cai (H≈1°,
+     S≈29%, L 45% → 23%). Um matiz em dois valores, não duas cores.
+
+     POR QUE PRECISOU DOS DOIS VALORES, e não só do Marsala puro:
+     Marsala sobre off-white dá 5,0:1. Passa em texto normal por
+     pouco e passa bem em corpo grande — mas QUALQUER clareamento
+     dele (o sistema inteiro é feito de alfas: --fg-2, --fg-3) cai
+     abaixo de 4,5:1. Medido: 75% de alfa → 3,1:1; 90% → 4,2:1.
+     Com o Marsala puro como tinta, o texto secundário do site
+     inteiro ficaria fora do mínimo de acessibilidade.
+     Com o valor escuro como tinta, off-white sobre ele dá 10,8:1 —
+     folga para os alfas todos, e o Marsala puro fica livre para o
+     que a Jozzi pediu que ele fosse: destaque e detalhe.
+     ============================================================ */
+  --marsala:       #955251;   /* Pantone 18-1438 — destaque, detalhe */
+  --marsala-fundo: #4A2A29;   /* mesmo matiz, valor escuro — tinta   */
+  --off-white:     #F3F0E8;   /* papel                               */
 
   /* Canais das três cores que precisam de transparência. Existem
      para que a paleta continue morando num lugar só: trocar o hexa
      acima leva junto todas as derivações. */
-  --marrom-rgb:    55 34 21;
-  --off-white-rgb: 243 240 232;
-  --azul-rgb:      120 134 146;
+  --marsala-rgb:       149 82 81;
+  --marsala-fundo-rgb: 74 42 41;
+  --off-white-rgb:     243 240 232;
+
+  /* Aliases de compatibilidade. O CSS tem ~40 referências espalhadas
+     a `--marrom-rgb`, `--azul-rgb` e `--off-white-rgb` em alfas; em
+     vez de caçar as quarenta (e correr o risco de esquecer uma, que
+     é exatamente como o bug do entrelinha nasceu), os nomes antigos
+     passam a APONTAR para os novos. Nenhum deles pinta cor antiga.
+     Se um dia forem renomeados de verdade, é um passo mecânico:
+     trocar o nome e apagar estas três linhas. */
+  --marrom-rgb: var(--marsala-fundo-rgb);
+  --azul-rgb:   var(--marsala-rgb);
 
   /* ---- FUNÇÕES ----
      Cada cor tem um trabalho e só um. As sete entram porque as sete
      têm função — nenhuma foi forçada para "mostrar a paleta".
 
-       off-white  papel, o fundo dominante
-       marrom     a tinta do texto sobre papel (13,2:1)
-       verde      o fundo das duas inversões (02 e 05)
-       bege       superfície secundária: os campos de imagem
-       azul       instrumento do aparato e anel de foco
-       amarelo    o sinal sobre tinta, onde o azul não alcança
-       bordô      seleção de texto                                */
+       off-white       papel, o fundo dominante
+       marsala-fundo   a tinta do texto e o fundo das inversões
+       marsala         destaque, detalhe, sinal e anel de foco     */
   --papel:     var(--off-white);
-  --papel-2:   var(--bege);
-  --tinta:     var(--verde);
-  --texto:     var(--marrom);
-  --sinal:     var(--azul);
-  --sinal-inv: var(--amarelo);
-  --realce:    var(--bordo);
+  /* a superfície secundária (campos de imagem) era o bege, uma cor
+     própria. Agora é o próprio Marsala a 12% sobre o papel — mesma
+     função, sem cor nova. */
+  --papel-2:   color-mix(in srgb, var(--marsala) 12%, var(--off-white));
+  --tinta:     var(--marsala-fundo);
+  --texto:     var(--marsala-fundo);
+  --sinal:     var(--marsala);
+  --sinal-inv: var(--off-white);
+  --realce:    var(--marsala);
 
   /* derivados — só transparência das cores acima.
-     As frações foram medidas, não escolhidas: 75% dá 6,2:1 no texto
-     secundário e 65% dá 4,5:1 no aparato, que é 11px e precisa do
-     limite de texto pequeno. */
+     As frações foram RE-MEDIDAS na troca de paleta, não copiadas:
+     o marsala escuro é mais claro que o marrom antigo, então os
+     mesmos alfas dariam menos contraste. Sobre papel: 82% → 7,5:1
+     no texto secundário, 70% → 5,3:1 no aparato de 11px (que
+     precisa do limite de texto pequeno, 4,5:1). */
   --fg:    var(--texto);
-  --fg-2:  rgb(var(--marrom-rgb) / .75);
-  --fg-3:  rgb(var(--marrom-rgb) / .65);
+  --fg-2:  rgb(var(--marrom-rgb) / .82);
+  --fg-3:  rgb(var(--marrom-rgb) / .70);
   --fio:   rgb(var(--marrom-rgb) / .20);
   --fio-2: rgb(var(--marrom-rgb) / .10);
 
@@ -114,7 +143,6 @@
   /* grade e margens */
   --margem:  clamp(1.25rem, 4.2vw, 3.5rem);
   --calha:   clamp(.9rem, 1.5vw, 1.5rem);
-  --aparato-l: clamp(5.5rem, 7vw, 8.5rem);
   --recuo:   var(--margem);
 
   /* ---- FAMÍLIAS ----
@@ -313,20 +341,25 @@ a { color: inherit; text-decoration: none; }
 }
 
 
-/* 06. APARATO -----------------------------------------------
-   Instrumentação, não ornamento: 11px, 40% de tinta, imóvel.
-   O único movimento em repouso na página inteira é o segundo
-   do relógio e a marca de posição descendo o fio.
+/* 06a. BARRA DE PROGRESSO LATERAL ---------------------------
+   Volta a pedido da Jozzi (04/09) com papel mais estreito que o do
+   aparato antigo: ela MEDE, não navega. Os seletores de seção
+   moram no cabeçalho; um índice clicável aqui seria a mesma
+   navegação duas vezes na mesma tela — por isso os segmentos são
+   <span>, não <a>, e não há nome de seção ao lado deles.
+
+   O que ela mostra: em que seção você está (número e nome), quanto
+   de cada uma já passou (o preenchimento) e a hora de Curitiba.
+
+   ⚠ `--recuo` continua sendo `--margem`: a barra tem 3px e mora
+   DENTRO da margem, não numa calha própria. O aparato antigo
+   reservava 88–136px à esquerda de todas as seções; essa faixa
+   ficou com o conteúdo e não volta.
    ----------------------------------------------------------- */
 .aparato { display: none; }
 
 @media (min-width: 1025px) {
-  :root { --recuo: calc(var(--margem) + var(--aparato-l)); }
-
   .aparato {
-    /* o aparato É o registro de aparato: mono, 11px, 40% de tinta.
-       Sem isto ele herda o texto corrido e vira protagonista, que
-       é exatamente o que não pode acontecer. */
     font-family: var(--fonte-aparato);
     font-size: var(--fs-aparato);
     font-weight: 400;
@@ -337,75 +370,30 @@ a { color: inherit; text-decoration: none; }
     font-variant-numeric: tabular-nums;
 
     position: fixed;
-    top: var(--margem);
+    top: calc(var(--topo-h) + var(--margem));
     bottom: var(--margem);
-    left: var(--margem);
+    left: calc(var(--margem) / 2);
     z-index: 10;
     display: flex;
     flex-direction: column;
-    width: var(--aparato-l);
-    /* o aparato inteiro não recebe ponteiro — só a régua, mais
-       abaixo. Assim o resto dele (número, relógio) continua sendo
-       instrumento passivo e não rouba clique do conteúdo. */
+    width: 3px;
+    /* instrumento passivo: não recebe ponteiro nem rouba clique */
     pointer-events: none;
   }
 
-  /* empilhado: cabe na coluna estreita e lê como instrumento,
-     não como legenda */
-  .aparato__id {
-    display: grid;
-    gap: .15rem;
-    justify-items: start;
-  }
-
-  /* a troca de seção: a máscara desce, o texto troca fora da tela e
-     a máscara sobe. Opacidade junto do recorte — só o recorte, num
-     texto de 11px de altura, lê como corte seco. */
-  .aparato__num,
-  .aparato__sec {
-    display: inline-block;
-    transition:
-      clip-path var(--t-micro) var(--curva),
-      opacity var(--t-micro) var(--curva);
-  }
-  .aparato.is-trocando .aparato__num,
-  .aparato.is-trocando .aparato__sec {
-    clip-path: inset(0 0 100% 0);
-    opacity: 0;
-  }
-
-  /* ---- A RÉGUA DAS SEÇÕES ----
-     O trilho deixa de ser um fio único com um ponto correndo por
-     cima: é a régua das oito seções, um segmento por seção, com
-     altura proporcional à altura real dela no documento.
-
-     A cada seção o instrumento se TRANSFORMA: o segmento corrente
-     engorda de 1px para 3px e ganha uma agulha horizontal na borda
-     do preenchimento; os já lidos ficam cheios em tom médio; os que
-     faltam continuam no fio silencioso. É a mesma leitura de antes
-     — onde estou, quanto falta — só que agora dividida em capítulos
-     em vez de num escorregador contínuo.
-
-     A cor sai de um canal só, `--regua-rgb`, que o script mistura da
-     ardósia até o off-white conforme a FRAÇÃO da régua que está sobre
-     seções invertidas. Ardósia é legível sobre papel e sobre tinta, e
-     por isso continua sendo o repouso — o clareamento é ganho de
-     contraste sobre o escuro, não uma troca de identidade. Sem o
-     script, o valor abaixo segura tudo em ardósia. */
+  /* o fio: sem script, contínuo; com script, segmentado */
   .aparato__escala {
     position: relative;
     flex: 1;
-    --regua-rgb: var(--azul-rgb);
-    /* 5px de caixa para o segmento ativo caber sem empurrar nada */
-    width: 5px;
-    margin: 1.1rem 0;
+    /* a cor sai de um canal só, que o script mistura do Marsala até
+       o off-white conforme a fração da barra sobre seções de tinta.
+       Sem script, fica no Marsala. */
+    --regua-rgb: var(--marsala-rgb);
+    width: 3px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 5px;
   }
-
-  /* sem a régua montada — script fora do ar — sobra o fio contínuo
-     de sempre. O instrumento nunca some. */
   .aparato__escala::before {
     content: "";
     position: absolute;
@@ -413,111 +401,23 @@ a { color: inherit; text-decoration: none; }
     top: 0;
     bottom: 0;
     width: 2px;
-    background: rgb(var(--regua-rgb) / .38);
+    background: rgb(var(--regua-rgb) / .30);
   }
   .js--regua .aparato__escala::before { content: none; }
 
-  /* ---- a régua também navega ----
-     Em repouso é o fio de sempre. Ao passar o ponteiro (ou ao
-     receber foco pelo teclado) ela abre e vira o índice da página:
-     cada segmento mostra o nome da seção e leva até ela.
-
-     A largura do aparato NÃO muda ao abrir — os nomes cabem no vão
-     que o --recuo já reserva à esquerda do conteúdo (88 a 136px, e
-     o mais longo mede ~90px em 11px). Sem empurrar nada, sem
-     precisar de fundo próprio numa faixa que atravessa seções de
-     cores diferentes. */
-  .aparato__escala { pointer-events: auto; }
-
-  /* ---- abrir por aproximação ----
-     Acertar um fio de 2px com o ponteiro é mira, não navegação. Esta
-     faixa invisível estende a área sensível por toda a calha que o
-     --recuo já reserva à esquerda do conteúdo — exatamente o vão onde
-     os nomes vão aparecer. Chegar perto basta.
-
-     Fica ATRÁS dos segmentos (z-index:-1, e eles são `position:
-     relative`), senão cobriria os próprios links que ela existe para
-     revelar. E como não é link nem tem fundo, nada além do hover
-     acontece se o ponteiro só passar por ali. */
-  .aparato__escala::after {
-    content: "";
-    position: absolute;
-    top: -2rem;
-    bottom: -2rem;
-    left: calc(var(--margem) * -1);
-    width: calc(var(--margem) + var(--aparato-l));
-    z-index: -1;
-  }
-
   .aparato__seg {
     position: relative;
-    /* o peso é a altura da seção no documento: a régua mede o
+    /* o peso é a altura da seção no documento: a barra mede o
        documento, não conta seções */
     flex: var(--peso, 1) 1 0;
     width: 2px;
     min-height: 5px;
-    background: rgb(var(--regua-rgb) / .28);
-    transition:
-      width var(--t-micro) var(--curva),
-      background-color var(--t-micro) var(--curva);
+    background: rgb(var(--regua-rgb) / .26);
+    transition: width var(--t-micro) var(--curva),
+                background-color var(--t-micro) var(--curva);
   }
-
-  /* o nome, escondido até a régua abrir. `visibility` junto da
-     opacidade: sem ela o link continuaria clicável e narrável
-     enquanto invisível. */
-  .aparato__seg-nome {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%) translateX(-6px);
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    /* o nome acompanha a mesma mistura do fio: sobre as seções
-       escuras o marrom de --fg-3 sumiria no fundo */
-    color: rgb(var(--regua-rgb) / .68);
-    transition:
-      opacity var(--t-micro) var(--curva),
-      transform var(--t-micro) var(--curva),
-      visibility var(--t-micro);
-  }
-
-  .aparato__escala:hover .aparato__seg-nome,
-  .aparato__escala:focus-within .aparato__seg-nome {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(-50%) translateX(0);
-  }
-
-  /* com a régua aberta o fio engrossa: o alvo do ponteiro deixa de
-     ser 1px e passa a ser a faixa inteira do segmento */
-  .aparato__escala:hover .aparato__seg,
-  .aparato__escala:focus-within .aparato__seg { width: 5px; }
-
-  a.aparato__seg { display: block; }
-  a.aparato__seg::after {
-    /* área de clique invisível cobrindo o nome: o fio tem 3px, o
-       texto está fora dele, e sem isto só o fio seria clicável */
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: var(--aparato-l);
-    pointer-events: none;
-  }
-  .aparato__escala:hover a.aparato__seg::after,
-  .aparato__escala:focus-within a.aparato__seg::after { pointer-events: auto; }
-
-  a.aparato__seg:hover .aparato__seg-nome,
-  a.aparato__seg:focus-visible .aparato__seg-nome { color: rgb(var(--regua-rgb)); }
-  a.aparato__seg:hover,
-  a.aparato__seg:focus-visible { background: rgb(var(--regua-rgb) / .85); }
   .aparato__seg.is-feito { background: rgb(var(--regua-rgb) / .52); }
-  .aparato__seg.is-ativo {
-    width: 5px;
-    background: rgb(var(--regua-rgb) / .38);
-  }
+  .aparato__seg.is-ativo { width: 3px; background: rgb(var(--regua-rgb) / .34); }
 
   /* o preenchimento anda com a rolagem dentro da própria seção.
      Sem transição: quem suaviza é a rolagem interpolada, e uma
@@ -528,83 +428,68 @@ a { color: inherit; text-decoration: none; }
     top: 0;
     width: 100%;
     height: 0;
-    background: rgb(var(--regua-rgb) / .85);
+    background: rgb(var(--regua-rgb) / .95);
   }
-
-  /* a agulha: um fio de 9px na borda do preenchimento, só no
-     segmento corrente. É o que faz a régua ser lida como
-     instrumento e não como barra de progresso. */
-  .aparato__seg.is-ativo .aparato__seg-nome { color: rgb(var(--regua-rgb)); }
-
+  /* a agulha: um fio curto na borda do preenchimento, só no
+     segmento corrente. É o que faz a barra ser lida como
+     instrumento e não como barra de carregamento. */
   .aparato__seg.is-ativo .aparato__seg-feito::after {
     content: "";
     position: absolute;
     left: 0;
     bottom: -1px;
-    width: 12px;
+    width: 10px;
     height: 1px;
-    background: rgb(var(--regua-rgb) / .95);
+    background: rgb(var(--regua-rgb));
   }
 
-  /* na carga, a escala se desenha de cima para baixo */
-  /* Máscara PRÓPRIA, e não a `revelar` compartilhada: aquela usa
-     `inset(... 0 ...)` à direita, o que basta para os blocos de
-     texto do site mas corta tudo além da borda do elemento — e a
-     régua tem 3px de largura. Os nomes das seções, que abrem a
-     72px, sumiam por completo. O -200% à direita libera a
-     horizontal e mantém a revelação vertical igual. */
-  .js .aparato__escala { clip-path: inset(0 -320px 100% -160px); }
+  /* na carga, a barra se desenha de cima para baixo. Máscara
+     PRÓPRIA (não a `revelar` compartilhada): a barra tem 3px de
+     largura e o inset da outra cortaria tudo além dela. */
+  .js .aparato__escala { clip-path: inset(0 -12px 100% 0); }
   .js .aparato.is-ligado .aparato__escala {
     animation: revelar-regua var(--t-entra) var(--curva) both;
   }
-  /* -320px e NÃO -200%: a porcentagem em inset() é relativa à
-     largura do próprio elemento, e a régua tem 3px — os "200%"
-     liberavam 6px, com o nome a 72px continuando cortado. Valor
-     absoluto, folgado o bastante para o nome mais longo. */
-  /* a esquerda também vai a valor negativo: a faixa de aproximação
-     avança para dentro da margem da página, e com `left: 0` no
-     recorte ela era decepada — só o lado direito abria. */
   @keyframes revelar-regua {
-    from { clip-path: inset(0 -320px 102% -160px); }
-    to   { clip-path: inset(0 -320px -8% -160px); }
+    from { clip-path: inset(0 -12px 102% 0); }
+    to   { clip-path: inset(0 -12px -8% 0); }
   }
 
-  /* cada bloco troca de cor conforme o que está atrás DELE, não
-     conforme a seção corrente: o aparato ocupa a altura toda da tela
-     e, na travessia, o topo e o rodapé estão sobre fundos diferentes.
-     Sem transição — a troca acompanha a aresta do fundo. */
-  .aparato__id.is-claro,
-  .aparato__hora.is-claro { color: rgb(var(--off-white-rgb) / .62); }
+}
 
-  .aparato__hora {
-    display: grid;
-    gap: .15rem;
-    white-space: nowrap;
-  }
-  .aparato__hora span { display: block; }
+@media (prefers-reduced-motion: reduce) {
+  .js .aparato__escala,
+  .js .aparato.is-ligado .aparato__escala { clip-path: none; animation: none; }
+  .aparato__seg { transition: none; }
 }
 
 
 /* 06b. INVERSÃO ---------------------------------------------
    Papel vira tinta. É a pontuação entre capítulos do site — não um
    fundo escuro decorativo. Sem borda: a aresta de cor É a divisa.
-   ----------------------------------------------------------- */
-/* ---- OS TRÊS FUNDOS ----
-   O ritmo passa a ser papel · papel · VERDE · papel · BEGE · BORDÔ ·
-   papel. Antes eram cinco seções idênticas em papel e duas em verde:
-   a paleta existia nos tokens e não na tela.
 
-   O bordô no Contato não é troca de cor — é diferenciação narrativa.
-   O manifesto e o clímax não podem ter o mesmo fundo, e a 05 era a
-   seção que a auditoria apontou como a mais genérica do site. */
-.inv--bordo { --tinta: var(--bordo); }
+   ⚠ ESTE BLOCO FOI DESTRUÍDO E RESTAURADO (03/09). Ele morava
+   DENTRO do intervalo de linhas do antigo bloco 06 (o aparato), e
+   quando o aparato saiu eu apaguei o intervalo inteiro por número
+   de linha em vez de por delimitador. `.inv` e `.campo` foram
+   junto, e as duas seções invertidas (Nossa visão e Contato)
+   passaram a renderizar com fundo transparente e texto escuro —
+   sem erro nenhum, só errado. Apagar por intervalo numérico é
+   rápido e é assim que se perde código vizinho.
+
+   Com a paleta de duas cores o ritmo mudou: era
+   papel · papel · VERDE · papel · BEGE · BORDÔ · papel, com três
+   fundos diferentes. Agora é papel e tinta, e só. A alternância
+   continua sendo a pontuação entre capítulos — o que ela perdeu
+   foi a variação de matiz entre uma inversão e outra. */
+.inv--bordo { --tinta: var(--marsala-fundo); }
 
 .campo {
   background: var(--papel-2);
   border-top: 0;
-  /* sobre bege o aparato cai para 4,19:1 e não alcança o mínimo de
-     texto pequeno. Sobe só aqui. */
-  --fg-3: rgb(var(--marrom-rgb) / .72);
+  /* sobre a superfície clara o aparato precisa de mais tinta para
+     alcançar o mínimo de texto pequeno */
+  --fg-3: rgb(var(--marrom-rgb) / .78);
 }
 
 .inv {
@@ -617,11 +502,216 @@ a { color: inherit; text-decoration: none; }
   --fg-3:  rgb(var(--off-white-rgb) / .62);
   --fio:   rgb(var(--off-white-rgb) / .22);
   --fio-2: rgb(var(--off-white-rgb) / .11);
-  /* sobre verde o azul dá 2,96:1 e nem como anel de foco serve.
-     O amarelo dá 8,6:1 — é ele que sinaliza aqui. */
+  /* sobre a tinta o Marsala dá 2,2:1 e não serve nem como anel de
+     foco. Quem sinaliza aqui é o off-white. */
   --sinal: var(--sinal-inv);
 }
 
+/* 06. CABEÇALHO FIXO ---------------------------------------
+   A régua lateral saiu daqui (03/09). Eram 313 linhas: o
+   instrumento fixo à esquerda, os segmentos proporcionais à
+   altura real de cada seção, a abertura por aproximação, a
+   mistura de cor por fração sobre fundo escuro. Tudo isso deixou
+   de existir — a Jozzi pediu os seletores no cabeçalho.
+
+   Duas consequências que valem estar escritas:
+     · `--recuo` volta a ser `--margem` em toda largura. A calha
+       de 88–136px que o aparato ocupava à esquerda era reservada
+       em TODAS as seções; o conteúdo inteiro do site ganhou essa
+       faixa de volta.
+     · o relógio de Curitiba sumiu do topo da tela. A seção "Onde
+       ficamos" existia em parte para explicá-lo ("a trilha diz CWB
+       14:32 desde a 00 sem nunca se explicar"); ela continua
+       mostrando a hora, mas agora como informação local, não como
+       resolução de um motivo que corre a página toda.
+   ----------------------------------------------------------- */
+/* CABEÇALHO DINÂMICO E TRANSPARENTE (04/09)
+   Três estados, e o script só escreve duas classes:
+
+     repouso   — sobre a abertura, fundo transparente e sem fio. A
+                 imagem da abertura passa por baixo dele inteira.
+     .is-preso — assim que a rolagem começa: ganha fundo translúcido
+                 com `backdrop-filter`, fio embaixo, e encolhe um
+                 pouco. É aqui que ele vira "barra" de fato.
+     .is-fora  — rolando PARA BAIXO ele sai de cena; ao subir, volta.
+                 Sem isso ele cobria permanentemente o topo do rolo,
+                 que é `position: sticky` e ocupa a tela inteira —
+                 o problema que a Jozzi apontou.
+
+   `--fundo-topo` guarda a cor do papel com alfa, para o
+   `backdrop-filter` ter o que desfocar sem apagar a imagem. */
+.topo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  padding: clamp(.9rem, 2vh, 1.4rem) var(--margem);
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  transition:
+    background-color var(--t-entra) var(--curva),
+    border-color var(--t-entra) var(--curva),
+    padding var(--t-entra) var(--curva),
+    transform var(--t-entra) var(--curva);
+}
+
+.topo.is-preso {
+  background: rgb(var(--off-white-rgb) / .78);
+  border-bottom-color: var(--fio);
+  padding-top: clamp(.5rem, 1.2vh, .8rem);
+  padding-bottom: clamp(.5rem, 1.2vh, .8rem);
+}
+/* o desfoque é progressive enhancement: onde não existe, sobra o
+   fundo translúcido, que já basta para o texto se sustentar */
+@supports (backdrop-filter: blur(1px)) {
+  .topo.is-preso {
+    background: rgb(var(--off-white-rgb) / .62);
+    backdrop-filter: blur(14px) saturate(1.1);
+  }
+}
+
+/* sai de cena descendo, volta subindo. `pointer-events: none` para
+   não interceptar clique enquanto está fora. */
+.topo.is-fora {
+  transform: translateY(-100%);
+  pointer-events: none;
+}
+
+/* sobre as seções de tinta o cabeçalho inverte: sem isto, marca e
+   links em marsala escuro sobre fundo escuro somem. */
+.topo.is-escuro {
+  color: var(--papel);
+  --fg: var(--papel);
+  --fg-3: rgb(var(--off-white-rgb) / .70);
+  --sinal: var(--off-white);
+  --fio: rgb(var(--off-white-rgb) / .22);
+}
+.topo.is-escuro.is-preso { background: rgb(var(--marsala-fundo-rgb) / .72); }
+@supports (backdrop-filter: blur(1px)) {
+  .topo.is-escuro.is-preso { background: rgb(var(--marsala-fundo-rgb) / .55); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topo { transition: none; }
+  .topo.is-fora { transform: none; }
+}
+
+/* A marca encosta na margem: com o aparato fora, não há mais nada
+   à esquerda dela para respeitar.
+
+   ⚠ REGRA ÚNICA. Existiam DUAS `.marca` no arquivo — esta e uma
+   antiga, mais abaixo, que vinha depois e portanto vencia: ela
+   zerava o `margin-right: auto` e a largura daqui, e no telefone o
+   CTA passava por cima do logotipo. É o mesmo tipo de bug que o
+   entrelinha dos títulos já tinha dado (duas regras da mesma
+   classe, a de baixo anulando a de cima em silêncio). Não recriar
+   uma segunda: o alvo de toque, a largura e o alinhamento moram
+   todos aqui. */
+.marca {
+  display: block;
+  flex: none;
+  /* Alvo de toque por `min-height`, e NÃO por padding.
+     O lockup tem 15,6:1 — a altura visível sai da largura, e a
+     largura mudou quando o cabeçalho virou fixo (de 11rem para
+     7rem no piso, para caber ao lado do CTA no telefone). Com
+     padding fixo o alvo passou a depender de uma largura que eu
+     já tinha mexido: a auditoria pegou 37px. `min-height` não
+     depende de nada — vale 44 sendo o logotipo do tamanho que
+     for, hoje e depois. */
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0;
+  margin: 0 auto 0 0;
+}
+
+.topo__nav { display: none; }
+
+@media (min-width: 900px) {
+  /* A nav só existe onde cabe. Abaixo de 900px sobram marca e CTA —
+     e isso NÃO é perda: a régua lateral também era `display:none`
+     no telefone, então o mobile nunca teve navegação de seção. A
+     página é uma rolagem só, na ordem de leitura. */
+  .topo__nav { display: block; }
+  .topo__lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: clamp(.9rem, 1.8vw, 1.8rem);
+  }
+  .topo__lista a {
+    display: block;
+    /* o alvo de toque vem do padding, não do corpo da letra */
+    padding: .75rem 0;
+    color: var(--fg-3);
+    white-space: nowrap;
+    border-bottom: 1px solid transparent;
+    transition: color var(--t-micro) var(--curva),
+                border-color var(--t-micro) var(--curva);
+  }
+  .topo__lista a:hover,
+  .topo__lista a:focus-visible { color: var(--fg); }
+  /* a seção corrente: o script põe .is-ativo e aria-current juntos,
+     para o olho e para o leitor de tela dizerem a mesma coisa */
+  .topo__lista a.is-ativo {
+    color: var(--sinal);
+    border-bottom-color: var(--sinal);
+  }
+}
+
+/* O CTA mora na SEÇÃO DE PROJETOS (04/09), não no cabeçalho: fixo
+   no topo ele acompanhava o leitor por seções onde "ver todos os
+   projetos" não quer dizer nada. Aqui ele fica ao lado da frase
+   que abre a seção. */
+.rolo__cabeca {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem var(--calha);
+}
+.rolo__cabeca__t { flex: 1 1 22rem; min-width: 0; }
+
+.rolo__cta {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: .7em;
+  min-height: 44px;
+  padding: .7em 1.2em;
+  border: 1px solid var(--sinal);
+  color: var(--sinal);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color var(--t-micro) var(--curva),
+              color var(--t-micro) var(--curva);
+}
+.rolo__cta:hover,
+.rolo__cta:focus-visible { background: var(--sinal); color: var(--tinta); }
+.rolo__cta__seta {
+  width: 1.5em;
+  height: 1px;
+  background: currentColor;
+  flex: none;
+  transition: transform var(--t-micro) var(--curva);
+}
+.rolo__cta:hover .rolo__cta__seta,
+.rolo__cta:focus-visible .rolo__cta__seta { transform: translateX(4px); }
+
+/* Sem `padding-top` no body: o cabeçalho é transparente em repouso
+   e a abertura nasce POR BAIXO dele de propósito — é o que faz a
+   imagem de fundo dela chegar ao topo da tela. A abertura já tem
+   `padding-top` suficiente para o texto não encostar na barra. */
+:root { --topo-h: clamp(3.6rem, 7vh, 4.4rem); }
+
+/* âncora: o alvo de um #link não pode parar atrás do cabeçalho */
+[id] { scroll-margin-top: calc(var(--topo-h) + 1rem); }
 
 /* 07. TOPO -------------------------------------------------- */
 .topo {
@@ -648,18 +738,16 @@ a { color: inherit; text-decoration: none; }
    link vai pro início do site: padding invisível alarga a área
    clicável sem alterar o tamanho visual da marca. Achado na
    auditoria mobile de 28/08. */
-.marca {
-  display: block;
-  padding: clamp(10px, 3vh, 17px) 0;
-  margin: clamp(-10px, -3vh, -17px) 0;
-}
 /* o lockup tem 15,6:1 — largura é a medida útil, não altura. As
    antigas 4,5–6,5rem foram desenhadas para o mark de 3,2:1 e aqui
    dariam 7px de altura. Estas dão 11 a 15px: o mesmo peso óptico
    que o mark tinha, na proporção nova. */
 .marca__svg {
   display: block;
-  width: clamp(11rem, 17vw, 15rem);
+  /* 7rem no piso e não 11: com o cabeçalho fixo, a marca divide a
+     linha com o CTA. Medido a 390px: marca 112 + CTA 194 + calha e
+     margens = 366 de 390. Em 11rem (176px) o CTA passava por cima. */
+  width: clamp(7rem, 15vw, 15rem);
   height: auto;
   color: var(--fg);
 }
@@ -795,12 +883,85 @@ a { color: inherit; text-decoration: none; }
    o vazio de cima é composição, não sobra.
    ----------------------------------------------------------- */
 .abertura {
+  position: relative;
   min-height: 100svh;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   padding-top: clamp(5rem, 16vh, 11rem);
   padding-bottom: clamp(2.5rem, 9vh, 6rem);
+  /* o fundo sangra até a borda da tela, mas o CONTEÚDO continua
+     preso à margem — por isso o fundo é um filho absoluto com
+     `inset` negativo na horizontal, e não um background da seção
+     (que herdaria o padding do .wrap). */
+  isolation: isolate;
+}
+
+/* `inset: 0` e não um inset negativo: a seção já ocupa a largura
+   inteira da tela — `.wrap` dá a ela PADDING lateral, não largura
+   menor. O negativo que eu tinha posto aqui empurrava o fundo 20px
+   para fora da tela de cada lado; não gerava rolagem horizontal
+   (o body corta), mas a auditoria pega isso e ela está certa:
+   nada deve existir fora da tela sem motivo. */
+.abertura__fundo {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+/* A foto entra em CINZA e recebe o matiz por cima, num duotone
+   de Marsala. Sem isto o véu off-white sobre uma foto quente
+   produzia um rosa pastel — uma terceira cor que a paleta de duas
+   não admite. Mesma lógica do filtro que o mapa do Google já usa:
+   correção de temperatura, não estilização. */
+.abertura__fundo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  filter: grayscale(1) contrast(1.04);
+}
+.abertura__fundo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--marsala);
+  mix-blend-mode: multiply;
+  opacity: .55;
+  pointer-events: none;
+}
+/* O véu. Mais denso à esquerda, onde mora o texto, e abre à
+   direita, onde a imagem pode aparecer. Sem ele o contraste do
+   título passaria a depender do que a foto tiver naquele pedaço —
+   e isso quebra silenciosamente quando a imagem definitiva
+   chegar, que é o pior tipo de dependência. */
+.abertura__veu {
+  position: absolute;
+  inset: 0;
+  /* z-index acima do ::after do duotone: o véu é o que garante o
+     contraste do texto, e tem de vir por último */
+  z-index: 1;
+  background:
+    linear-gradient(to right,
+      rgb(var(--off-white-rgb) / .93) 0%,
+      rgb(var(--off-white-rgb) / .88) 42%,
+      rgb(var(--off-white-rgb) / .62) 78%,
+      rgb(var(--off-white-rgb) / .50) 100%);
+}
+@media (max-width: 768px) {
+  /* no telefone o texto ocupa a largura toda: o véu não tem para
+     onde abrir sem passar por baixo dele */
+  .abertura__veu {
+    background: rgb(var(--off-white-rgb) / .93);
+  }
+}
+
+/* o lema que veio da seção 01: abre a página, acima do título */
+.abertura__lema {
+  margin: 0 0 clamp(1.5rem, 4.5vh, 2.8rem);
+  max-width: 18ch;
+  color: var(--sinal);
 }
 
 /* a frase ocupa a coluna larga; a nota de margem ocupa o resto.
@@ -812,6 +973,9 @@ a { color: inherit; text-decoration: none; }
   align-items: start;
   margin-bottom: clamp(2rem, 6vh, 4.5rem);
 }
+/* o lema atravessa as duas colunas: ele abre o bloco, não divide
+   espaço com a lista de frentes */
+.abertura__lema { grid-column: 1 / -1; }
 
 .abertura__t { max-width: 15ch; }
 
@@ -1026,6 +1190,23 @@ a { color: inherit; text-decoration: none; }
   font-size: clamp(1.8rem, 2.5vw + .5rem, 3.5rem);
 }
 
+/* O par de fotos que substituiu o lema (03/09). Duas colunas
+   iguais e proporção igual: é um par, não uma foto principal com
+   uma auxiliar. Empilha no telefone, onde duas 4:3 lado a lado
+   ficariam com 150px de largura cada. */
+.quem__par {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--calha);
+  margin-bottom: clamp(1.8rem, 5vh, 2.8rem);
+}
+.quem__par__f { margin: 0; }
+.fig__campo--43 { aspect-ratio: 4 / 3; }
+
+@media (max-width: 560px) {
+  .quem__par { grid-template-columns: 1fr; }
+}
+
 .quem__corpo {
   display: grid;
   gap: 1.1rem;
@@ -1044,13 +1225,18 @@ a { color: inherit; text-decoration: none; }
    tinta, uma superfície mais clara viraria segundo plano e a
    seção perderia a inversão que ela existe para fazer.
    ----------------------------------------------------------- */
+/* Seção de passagem rápida, a pedido da Jozzi (03/09): ela não é
+   destino, é o que separa "quem somos" de "o que fazemos". O
+   respiro caiu de 16vh para 9vh e os cards apertaram o próprio
+   padding — a seção encolheu ~40% de altura sem perder nenhuma
+   palavra. */
 .olhar {
-  padding-top: clamp(5rem, 16vh, 11rem);
-  padding-bottom: clamp(5rem, 16vh, 11rem);
+  padding-top: clamp(3rem, 9vh, 6rem);
+  padding-bottom: clamp(3rem, 9vh, 6rem);
 }
 
 .olhar__t {
-  margin: 0 0 clamp(2.2rem, 6vh, 3.6rem);
+  margin: 0 0 clamp(1.4rem, 3.5vh, 2.2rem);
   max-width: 20ch;
 }
 
@@ -1066,8 +1252,8 @@ a { color: inherit; text-decoration: none; }
 .prin {
   display: grid;
   align-content: start;
-  gap: clamp(.7rem, 1.6vh, 1rem);
-  padding: clamp(1.5rem, 2.6vw, 2.4rem);
+  gap: clamp(.5rem, 1.2vh, .8rem);
+  padding: clamp(1.1rem, 2vw, 1.7rem);
   border: 1px solid var(--fio);
 }
 
@@ -1124,7 +1310,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 .prin__n {
-  margin: 0 0 clamp(.6rem, 2vh, 1.2rem);
+  margin: 0 0 clamp(.4rem, 1.2vh, .7rem);
   color: var(--fg-3);
   font-variant-numeric: tabular-nums;
 }
@@ -1136,7 +1322,9 @@ a { color: inherit; text-decoration: none; }
 .prin__t {
   margin: 0;
   font-family: var(--fonte-titulo);
-  font-size: clamp(1.5rem, 1.5vw + .85rem, 2.5rem);
+  /* ligeiramente menor a pedido da Jozzi (03/09): o card é de
+     passagem, e o título não precisa do corpo de um destino. */
+  font-size: clamp(1.25rem, 1.15vw + .75rem, 2rem);
   /* 460 e não 500: tipo claro sobre fundo escuro engorda
      opticamente. É compensação, não capricho. */
   font-weight: 460;
@@ -1180,6 +1368,40 @@ a { color: inherit; text-decoration: none; }
 .serv__t {
   margin: 0 0 clamp(2rem, 5.5vh, 3.4rem);
   max-width: 22ch;
+}
+
+/* "Cada marca é singular" — veio da seção 05 (03/09). Mesma
+   composição em degrau que ela tinha lá: a frase grande à
+   esquerda, o texto de sustentação na metade que ela deixou
+   vazia, alinhados pela base. */
+.serv__virada {
+  margin: 0 0 clamp(2.5rem, 8vh, 4.5rem);
+  padding-bottom: clamp(2rem, 6vh, 3.5rem);
+  border-bottom: 1px solid var(--fio);
+}
+.serv__virada__t {
+  margin: 0;
+  max-width: 13ch;
+  font-size: clamp(1.8rem, 3.2vw + .5rem, 3.6rem);
+}
+.serv__virada__ap {
+  margin: 0 0 clamp(.9rem, 2.4vh, 1.4rem);
+  color: var(--fg-3);
+}
+.serv__virada__c p { margin: 0; color: var(--fg-2); }
+
+@media (min-width: 1025px) {
+  .serv__virada {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--calha);
+    align-items: end;
+  }
+  .serv__virada__t { grid-column: 1 / span 6; }
+  .serv__virada__c { grid-column: 8 / span 5; }
+}
+@media (max-width: 1024px) {
+  .serv__virada__c { margin-top: clamp(1.5rem, 4vh, 2.2rem); }
 }
 
 .serv {
@@ -1308,6 +1530,10 @@ a { color: inherit; text-decoration: none; }
   gap: .5rem;
   justify-items: start;
   width: 100%;
+  /* alvo de toque: o botão parava em 43,x px a 390 — arredondado
+     para 44 no relatório, reprovado no limite. `min-height` tira
+     a medida da dependência do corpo da letra. */
+  min-height: 44px;
   margin: 0;
   padding: clamp(1rem, 2.4vh, 1.4rem) clamp(1rem, 2vw, 1.5rem) 0;
   border: 0;
@@ -1870,16 +2096,28 @@ img.onde__mapa {
   transition: color var(--t-micro) var(--curva);
 }
 
+/* O WhatsApp deixou de ter botão flutuante (04/09) e passou a ser
+   só ISTO: a segunda porta da seção de contato. Por isso ele
+   cresceu — era o corpo do display-2 e agora acompanha o e-mail,
+   que é a primeira porta. As duas portas em pesos parecidos, e
+   nenhuma delas seguindo o leitor pela página. */
 .contato__zap {
   grid-column: 9 / span 4;
   grid-row: 2;
   align-self: start;
-  font-size: var(--fs-display-2);
+  font-size: calc(var(--fs-display) * .40);
   font-weight: 500;
   letter-spacing: -.035em;
   line-height: 1;
   color: var(--fg);
   text-decoration: none;
+  /* alvo de toque por min-height, não por padding: o corpo aqui é
+     uma fração do display e no telefone cai para ~25px. Padding em
+     `em` encolhe junto com a letra — exatamente o que não pode
+     acontecer num alvo. Mesma correção da marca e do serv__nome. */
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   padding: .12em 0;
   transition: color var(--t-micro) var(--curva);
 }
@@ -1961,21 +2199,33 @@ img.onde__mapa {
   align-items: end;
 }
 
+/* o endereço sobe (03/09): com `align-items: end` na grade ele
+   descia até a base do mapa, que é 1:1 e alto — ficava perto do
+   rodapé da seção enquanto o topo do mapa sobrava vazio. */
 .onde__endereco {
   grid-column: 1 / span 4;
   grid-row: 1;
+  align-self: start;
   font-style: normal;   /* <address> vem em itálico por padrão */
   margin: 0;
+}
+
+.onde__t {
+  margin: 0 0 clamp(1.8rem, 5vh, 3rem);
+  max-width: 14ch;
 }
 
 /* o campo encosta na margem da página: um mapa que flutua no meio
    da coluna lê como widget colado; encostado na margem, lê como
    parte da página. 1:1 e não 16:9 — proporção larga é a forma dos
    widgets de mapa. */
+/* o mapa atravessa as três fileiras da grade: é ele que dá a
+   altura da seção, e a coluna de texto se acomoda ao lado */
 .onde__mapa {
-  grid-column: 9 / span 4;
-  grid-row: 1;
-  aspect-ratio: 1;
+  grid-column: 8 / span 5;
+  grid-row: 1 / span 3;
+  align-self: stretch;
+  min-height: clamp(20rem, 46vh, 30rem);
   background: var(--papel-2);
   display: grid;
   place-items: center;
@@ -2001,32 +2251,76 @@ img.onde__mapa {
   filter: grayscale(1) sepia(.32) contrast(.92) brightness(1.04);
 }
 
-.onde__dados {
+/* REESTRUTURADA (04/09). A seção estava vazia: endereço em três
+   linhas no topo à esquerda, mapa à direita, e todo o resto da
+   coluna esquerda em branco.
+
+   Agora é uma composição de duas colunas de verdade — a esquerda
+   carrega endereço, dados práticos e a ação; a direita é o mapa,
+   mais alto para acompanhar a altura da coluna de texto. Nenhum
+   conteúdo foi inventado: o que entrou de novo foi a HORA, que já
+   existia na barra lateral e é esta seção que explica. */
+.onde__lista {
   grid-column: 1 / span 5;
   grid-row: 2;
+  margin: clamp(1.8rem, 5vh, 2.8rem) 0 0;
   display: grid;
-  gap: .35rem;
-  margin: 0;
+  gap: 0;
+  border-top: 1px solid var(--fio);
 }
+.onde__lista__par {
+  display: grid;
+  grid-template-columns: minmax(0, 10rem) minmax(0, 1fr);
+  gap: var(--calha);
+  padding: .8rem 0;
+  border-bottom: 1px solid var(--fio);
+}
+.onde__lista dt { color: var(--fg-3); }
+.onde__lista dd { margin: 0; color: var(--fg-2); font-variant-numeric: tabular-nums; }
 
-.onde__acao {
-  grid-column: 9 / span 4;
-  grid-row: 2;
-  margin: 0;
+/* Três formas de chegar, lado a lado. Cada uma é um alvo de 44px
+   por `min-height` — não por padding, que aqui seria em `em` e
+   encolheria junto com a letra de 11px. */
+.onde__acoes {
+  grid-column: 1 / span 5;
+  grid-row: 3;
+  margin: clamp(1.4rem, 4vh, 2rem) 0 0;
+  align-self: start;
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem clamp(1.2rem, 3vw, 2.2rem);
 }
-.onde__acao a {
+.onde__acao__l {
+  display: inline-flex;
+  align-items: center;
+  gap: .6em;
+  min-height: 44px;
   color: var(--fg-2);
   text-decoration: none;
   border-bottom: 1px solid var(--fio);
-  padding-bottom: .35em;
   transition: color var(--t-micro) var(--curva),
               border-color var(--t-micro) var(--curva);
 }
+/* a seta é o mesmo gesto do "Saiba mais" do rolo e do CTA de
+   Projetos: um fio que anda ao receber o ponteiro */
+.onde__acao__seta {
+  width: 1.4em;
+  height: 1px;
+  background: currentColor;
+  flex: none;
+  opacity: .5;
+  transition: transform var(--t-micro) var(--curva),
+              opacity var(--t-micro) var(--curva);
+}
+.onde__acao__l:hover .onde__acao__seta,
+.onde__acao__l:focus-visible .onde__acao__seta { transform: translateX(4px); opacity: 1; }
 /* o texto escurece e o fio assume o azul: em 11px o azul sozinho
    baixaria a legibilidade do estado de hover em vez de aumentá-la */
-.onde__acao a:hover,
-.onde__acao a:focus-visible,
-.onde__acao a:active {
+.onde__acao__l:hover,
+.onde__acao__l:focus-visible,
+.onde__acao__l:active {
   color: var(--fg);
   border-color: var(--sinal);
 }
@@ -2038,19 +2332,22 @@ img.onde__mapa {
     grid-template-columns: 1fr;
     align-items: start;
   }
+  /* ⚠ `.onde__dados` NÃO existe mais — virou `.onde__lista` quando a
+     seção foi reestruturada, e esta media query tinha ficado
+     apontando para o nome antigo. Regra órfã não avisa: ela
+     simplesmente não aplica, e o empilhamento no tablet ficava
+     dependendo do acaso da ordem no HTML. */
   .onde__endereco,
   .onde__mapa,
-  .onde__dados,
-  .onde__acao { grid-column: 1; grid-row: auto; }
+  .onde__lista,
+  .onde__acoes { grid-column: 1; grid-row: auto; }
 
-  .onde__mapa  { max-width: 22rem; margin-top: clamp(1.6rem, 5vh, 2.4rem); }
-  .onde__dados { margin-top: clamp(1.2rem, 3.5vh, 1.8rem); }
-
-  /* alvo de toque de 44px no único link da seção */
-  .onde__acao a {
-    display: inline-block;
-    padding: .9rem 0;
+  .onde__mapa  {
+    max-width: 30rem;
+    min-height: clamp(16rem, 40vh, 22rem);
+    margin-top: clamp(1.6rem, 5vh, 2.4rem);
   }
+  .onde__lista { margin-top: clamp(1.2rem, 3.5vh, 1.8rem); }
 }
 
 
@@ -2087,17 +2384,21 @@ img.onde__mapa {
 /* ---- 1 · a declaração ---- */
 .sobre__t {
   margin: 0;
-  max-width: 18ch;
-  /* própria, e menor que --fs-display: esta frase tem 58 caracteres
-     e no corpo cheio do display ocupava 912px — mais de uma tela só
-     para o título. A Gracio ainda é caixa alta por desenho, então
-     ela pesa mais que a Switzer no mesmo corpo. */
-  font-size: clamp(2rem, 4.4vw + .5rem, 5.4rem);
+  /* 24ch e não 18, e corpo menor: o título deixou de abrir a seção
+     sozinho na largura toda e passou a dividir a fileira com a foto
+     (03/09). Na coluna que sobrou, a medida antiga quebrava a frase
+     em seis linhas — mais alta que a própria foto ao lado. */
+  max-width: 24ch;
+  font-size: clamp(1.7rem, 2.6vw + .5rem, 3.4rem);
 }
 .sobre__corpo {
   margin: 0;
   color: var(--fg-2);
 }
+/* o título deixou de abrir a seção e passou a abrir o BLOCO de
+   texto: por isso a margem inferior curta, que o cola no parágrafo
+   em vez de separá-lo. */
+.sobre__texto .sobre__t { margin-bottom: clamp(1rem, 2.6vh, 1.6rem); }
 .sobre__fig-decl { margin: 0; }
 .fig__campo--45 { aspect-ratio: 4 / 5; }
 
@@ -2160,7 +2461,26 @@ img.onde__mapa {
   font-style: italic;
 }
 
-.sobre__ficha { display: grid; }
+.sobre__ficha { display: grid; position: relative; }
+
+/* o numeral: marca a ordem das duas fichas sem precisar de um
+   "01/02" escrito por extenso. Fica na margem, fora da coluna de
+   texto — aparato, não conteúdo. */
+.sobre__ficha__n {
+  margin: 0 0 .8rem;
+  color: var(--sinal);
+  font-variant-numeric: tabular-nums;
+}
+@media (min-width: 1025px) {
+  /* o numeral ocupa a fileira inteira acima da ficha: solto na
+     calha entre a foto e o texto ele lia como sujeira, não como
+     marcação de ordem */
+  .sobre__ficha__n { grid-column: 1 / -1; grid-row: 1; }
+  .sobre__ficha--a .sobre__fig,
+  .sobre__ficha--a .sobre__bio,
+  .sobre__ficha--b .sobre__fig,
+  .sobre__ficha--b .sobre__bio { grid-row: 2; }
+}
 
 /* ---- 3 · o título que abre o bloco das pessoas ----
    Hierarquia acima dos nomes: os nomes são display-2, este é
@@ -2294,9 +2614,12 @@ img.onde__mapa {
     grid-template-columns: repeat(12, minmax(0, 1fr));
     gap: clamp(2.5rem, 7vh, 4.5rem) var(--calha);
   }
-  .sobre__t         { grid-column: 1 / span 8;  grid-row: 1; }
-  .sobre__fig-decl  { grid-column: 1 / span 5;  grid-row: 2; }
-  .sobre__corpo     { grid-column: 7 / span 6;  grid-row: 2; }
+  /* Ordem nova (03/09): a foto abre a seção, e título + texto
+     descem juntos ao lado dela, como uma unidade só. O degrau
+     que existia antes (título em cima sozinho, corpo embaixo à
+     direita) deixou de existir — a Jozzi pediu o agrupamento. */
+  .sobre__fig-decl  { grid-column: 1 / span 5;  grid-row: 1; }
+  .sobre__texto     { grid-column: 7 / span 6;  grid-row: 1; align-self: center; }
 
   /* a frase grande e o texto de 11px na MESMA faixa, alinhados
      pela base: a diferença de corpo vira composição em vez de
@@ -2321,21 +2644,29 @@ img.onde__mapa {
     display: grid;
     gap: clamp(3rem, 9vh, 5.5rem);
   }
-  /* start, e não o `end` que a seção usava quando havia UMA
-     pessoa. Ali o retrato e a bio tinham altura parecida e a base
-     comum era composição. Com duas fichas de extensões diferentes
-     o `end` empurra o nome da ficha curta para o pé do retrato e
-     abre um vazio acima dele. Pelo topo, as duas leem igual
-     independentemente do tamanho do texto. */
+  /* Composição ALTERNADA (03/09), a pedido da Jozzi: uma ficha
+     entra pela esquerda, a seguinte pela direita. É o que tira a
+     seção da leitura "duas fileiras iguais" e faz o olho descer em
+     ziguezague — e o vazio que sobra do outro lado de cada ficha é
+     o espaço negativo que dá o ar da coisa.
+
+     O retrato cresceu de 3 para 4 colunas: com o alternado, uma
+     imagem pequena demais fica solta no meio da largura. */
   .sobre__ficha {
     grid-template-columns: repeat(12, minmax(0, 1fr));
     gap: var(--calha);
-    align-items: start;
+    align-items: center;
   }
-  .sobre__fig { grid-column: 1 / span 3; }
+  .sobre__ficha--a .sobre__fig { grid-column: 1 / span 4; grid-row: 1; }
+  .sobre__ficha--a .sobre__bio { grid-column: 6 / span 7; grid-row: 1; }
+  /* na ficha B a imagem vai para a direita e o texto para a
+     esquerda — mesmas larguras, lados trocados */
+  .sobre__ficha--b .sobre__fig { grid-column: 9 / span 4; grid-row: 1; }
+  .sobre__ficha--b .sobre__bio { grid-column: 1 / span 7; grid-row: 1; }
+  .sobre__fig { grid-column: 1 / span 4; }
   /* até a coluna 12, e não até a 9: a caixa cresce para a direita
      porque é a medida que torna a justificação possível. */
-  .sobre__bio { grid-column: 5 / span 8; }
+  .sobre__bio { grid-column: 6 / span 7; }
 
 
 }

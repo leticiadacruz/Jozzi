@@ -24,7 +24,7 @@
      ANTES do style.css, para os tokens de familia ja acharem
      as fontes declaradas quando forem resolvidos. -->
 <link rel="stylesheet" href="https://use.typekit.net/oyj0zig.css">
-<link rel="stylesheet" href="assets/css/style.css?v=96">
+<link rel="stylesheet" href="assets/css/style.css?v=115">
 
 <script>
 (function () {
@@ -121,32 +121,70 @@
 <a class="pular" href="#abertura">Pular para o conteúdo</a>
 
 
-<!-- ============================================================
-     APARATO — instrumentação silenciosa (desktop ≥1025px)
-     ============================================================ -->
-<div class="aparato" id="aparato">
-  <p class="aparato__id" aria-hidden="true">
-    <span class="aparato__num" data-aparato-num>00</span>
-    <span class="aparato__sec" data-aparato-sec>Abertura</span>
-  </p>
-  <!-- a régua é montada pelo main.js: um segmento por seção, com
-       altura proporcional à altura real dela no documento. Sem
-       script sobra o fio contínuo, desenhado no ::before. -->
-  <nav class="aparato__escala" data-aparato-escala aria-label="Seções desta página"></nav>
-  <p class="aparato__hora" aria-hidden="true">CWB<span data-relogio>--:--:--</span></p>
-</div>
 
 
 <!-- ============================================================
      TOPO
      ============================================================ -->
-<header class="topo wrap">
-  <a class="marca rv" href="#abertura" data-atraso="60" aria-label="Jozzi Creative Lab — início">
+<!-- ============================================================
+     TOPO — fixo, e agora é ele que navega
+     A régua lateral saiu e os seletores de seção subiram para cá
+     (03/09). Três zonas numa linha: marca à esquerda encostada na
+     margem, seções no meio, e o CTA do portfólio à direita.
+
+     Os links são ESCRITOS À MÃO, não montados por JS. A navegação
+     inteira funciona com o motor morto; o script só acrescenta o
+     realce da seção corrente, que é enfeite e pode faltar.
+
+     "Abertura" não está na lista de propósito: a marca à esquerda
+     já leva ao topo, e repetir isso gastaria um item da linha.
+     ============================================================ -->
+<header class="topo" id="topo">
+  <a class="marca" href="#abertura" aria-label="Jozzi Creative Lab — início">
     <svg class="marca__svg" viewBox="0 0 1000 64.22" aria-hidden="true" focusable="false">
       <use href="#marca-jozzi"></use>
     </svg>
   </a>
+
+  <nav class="topo__nav ap" data-nav-secao aria-label="Seções desta página">
+    <ul class="topo__lista" role="list">
+      <li><a href="#quem-somos">Quem somos</a></li>
+      <li><a href="#nossa-visao">Nossa visão</a></li>
+      <li><a href="#servicos">Serviços</a></li>
+      <li><a href="#marcas">Projetos</a></li>
+      <li><a href="#sobre">Sobre</a></li>
+      <li><a href="#contato">Contato</a></li>
+      <li><a href="#onde-ficamos">Onde ficamos</a></li>
+    </ul>
+  </nav>
+
 </header>
+
+
+
+
+<!-- ============================================================
+     BARRA DE PROGRESSO LATERAL
+     Volta a pedido da Jozzi (04/09), mas com um papel mais estreito
+     que o do aparato antigo: ela MEDE, não navega. Os seletores de
+     seção moram no cabeçalho agora, então repetir aqui um índice
+     clicável seria a mesma navegação duas vezes na mesma tela.
+
+     O que sobrou é SÓ a barra. O número e o nome da seção saíram
+     porque eram texto largo dentro de um contêiner de 3px: eles
+     transbordavam para dentro da coluna de conteúdo e colidiam com
+     o texto das seções — visível no rolo, onde o "04 PROJETOS"
+     ficava por baixo da frase de abertura. O nome da seção já está
+     no cabeçalho, realçado; a hora foi para "Onde ficamos", com o
+     rótulo por extenso, que é onde ela se explica.
+
+     A régua é montada pelo main.js: um segmento por seção, com
+     altura proporcional à altura real dela no documento. Sem
+     script sobra o fio contínuo, desenhado no ::before.
+     ============================================================ -->
+<div class="aparato" id="aparato" aria-hidden="true">
+  <div class="aparato__escala" data-aparato-escala></div>
+</div>
 
 
 <main>
@@ -157,6 +195,20 @@
      própria tipografia: o peso da Nexa responde à leitura.
      ============================================================ -->
 <section class="abertura wrap" id="abertura" data-secao data-num="00" data-nome="Abertura">
+
+  <!-- O fundo cobre a seção inteira. O véu por cima não é enfeite:
+       sem ele o texto fica sobre a foto e o contraste passa a
+       depender do que a foto tiver naquele pedaço — que é
+       exatamente o tipo de coisa que quebra quando a imagem
+       definitiva chegar. O gradiente é mais denso à esquerda, onde
+       mora o texto, e abre à direita, onde a imagem pode aparecer.
+       IMAGEM PROVISÓRIA: sai com os outros `data-provisorio`. -->
+  <div class="abertura__fundo" aria-hidden="true">
+    <img class="prov" data-provisorio src="assets/img/styling/solstice-magazine/02.avif"
+         alt="" width="1050" height="1400" decoding="async">
+    <div class="abertura__veu"></div>
+  </div>
+
   <div class="abertura__bloco">
     <h1 class="abertura__t d" data-peso data-linhas>We create for you.</h1>
 
@@ -202,6 +254,27 @@
     <h2 class="secao__ap ap rv" id="quem-titulo">Quem somos</h2>
 
     <p class="quem__t d d--2 rv">Mais que estética,<br>somos estratégia.</p>
+
+    <!-- as duas fotos entram DENTRO da seção, sem deslocar o lema
+         (04/09): ele voltou ao lugar de origem e elas passaram a
+         acompanhá-lo, entre a frase e o corpo do texto.
+         IMAGENS PROVISÓRIAS. -->
+    <div class="quem__par">
+      <figure class="quem__par__f fig rv">
+        <div class="fig__campo fig__campo--43" data-figura>
+          <span class="ap">Imagem 4:3</span>
+          <img class="prov" data-provisorio src="assets/img/styling/carol-andrade/05.avif"
+               alt="" aria-hidden="true" width="931" height="1400" loading="lazy" decoding="async">
+        </div>
+      </figure>
+      <figure class="quem__par__f fig rv">
+        <div class="fig__campo fig__campo--43" data-figura>
+          <span class="ap">Imagem 4:3</span>
+          <img class="prov" data-provisorio src="assets/img/styling/leandra-klisievicz/03.avif"
+               alt="" aria-hidden="true" width="933" height="1400" loading="lazy" decoding="async">
+        </div>
+      </figure>
+    </div>
 
     <div class="quem__corpo">
       <p class="rv">A Jozzi se diferencia por operar na autenticidade e no posicionamento real
@@ -317,6 +390,23 @@
   <h2 class="secao__ap ap rv" id="serv-titulo">Serviços</h2>
 
   <p class="serv__t d d--2 rv">Como criamos para você.</p>
+
+  <!-- "Cada marca é singular" veio da seção 05 a pedido da Jozzi
+       (03/09). Faz sentido onde está agora: era a virada de uma
+       seção sobre a agência, e aqui é a premissa dos seis serviços
+       — cada um deles existe porque cada marca precisa de um
+       recorte diferente. -->
+  <div class="serv__virada">
+    <p class="serv__virada__t d rv" data-linhas>Cada marca é singular.</p>
+    <div class="serv__virada__c">
+      <h3 class="serv__virada__ap ap rv">Nossas expertises</h3>
+      <p class="rv">Como o nosso próprio lema já diz, somos experts em criar para você. Como
+      marketing lab, enxergamos que cada projeto requer profundidade e, por causa disso, somos
+      pequenos, priorizando que a atenção ao detalhe seja personalizada. Com ênfase no mercado da
+      moda, desenvolvemos processos criativos e comunicação do zero a partir de um diagnóstico do
+      seu objetivo. Juntos, buscamos respostas para os resultados que você quer alcançar.</p>
+    </div>
+  </div>
 
   <ul class="serv__lista" role="list">
 
@@ -544,9 +634,18 @@
     </div>
     <div class="rolo__veu" aria-hidden="true"></div>
 
+    <!-- O CTA vive AQUI (04/09), e só aqui: ele pertence à seção de
+         Projetos, ao lado da frase que a abre. Fixo no cabeçalho
+         ele acompanhava o leitor pelo site inteiro, inclusive em
+         seções onde "ver todos os projetos" não quer dizer nada. -->
     <div class="rolo__cabeca">
-      <h2 class="secao__ap ap rv" id="marcas-titulo">Projetos que já fizemos</h2>
-      <p class="marcas__lede lede rv">Traduzimos a essência de cada marca, do detalhe ao resultado final.</p>
+      <div class="rolo__cabeca__t">
+        <h2 class="secao__ap ap rv" id="marcas-titulo">Projetos que já fizemos</h2>
+        <p class="marcas__lede lede rv">Traduzimos a essência de cada marca, do detalhe ao resultado final.</p>
+      </div>
+      <a class="rolo__cta ap rv" href="projetos.html">
+        Ver todos os projetos<span class="rolo__cta__seta" aria-hidden="true"></span>
+      </a>
     </div>
 
     <!-- Sem JavaScript esta lista é uma lista: os quatro nomes
@@ -589,19 +688,6 @@
         <a class="rolo__saiba ap" href="projetos/shop-carol.html">Saiba mais<span class="rolo__saiba__seta" aria-hidden="true"></span></a>
       </li>
 
-      <!-- A SEXTA FACE não é um projeto: é a saída do tambor.
-           Vem no mesmo `data-rolo-item` porque tem de girar junto —
-           é isso que a faz chegar como "o próximo", e não como um
-           bloco colado embaixo. O `data-rolo-cta` existe só para o
-           contador saber que aqui não há o que contar: são cinco
-           projetos, e esta face é a sexta. -->
-      <li class="rolo__item rolo__item--cta" data-rolo-item data-rolo-cta>
-        <p class="rolo__cta__ap ap"></p>
-        <h3 class="rolo__nome d d--2">Clientes / Styling.</h3>
-        <a class="rolo__cta__botao" href="projetos.html">
-          Ver todos os projetos<span class="rolo__cta__seta" aria-hidden="true"></span>
-        </a>
-      </li>
 
     </ul>
 
@@ -653,9 +739,12 @@
        deixava um vão morto embaixo à esquerda desde que o título
        encolheu para caber em tela. A imagem mora nesse vão: não é
        ilustração acrescentada, é o que faz o degrau fechar. -->
+  <!-- Ordem pedida pela Jozzi (03/09): a FOTO abre a seção, e o
+       título desce para se agrupar com o texto descritivo. Antes
+       o título abria sozinho no topo e a foto vinha depois, num
+       degrau; agora a imagem é a entrada e o par título+texto lê
+       como uma unidade só. -->
   <div class="sobre__decl">
-    <p class="sobre__t d rv" data-linhas>A primeira agência de marketing com foco em moda de Curitiba.</p>
-
     <figure class="sobre__fig-decl fig rv">
       <div class="fig__campo fig__campo--45" data-figura>
         <span class="ap">Imagem 4:5</span>
@@ -665,7 +754,10 @@
       <figcaption class="ap">A Jozzi &mdash; imagem a definir</figcaption>
     </figure>
 
-    <p class="sobre__corpo rv">Jozzi nasceu com sonoridade de marca de moda &mdash; curta, fácil de lembrar,
+    <div class="sobre__texto">
+      <p class="sobre__t d rv" data-linhas>A primeira agência de marketing com foco em moda de Curitiba.</p>
+
+      <p class="sobre__corpo rv">Jozzi nasceu com sonoridade de marca de moda &mdash; curta, fácil de lembrar,
       com o mesmo peso dos nomes que a gente reconhece de longe numa vitrine. Não é coincidência:
       tratamos cada cliente com o mesmo critério que uma boa grife trata uma coleção. Nada entra
       sem motivo, e o que fica carrega a assinatura de quem fez.
@@ -675,22 +767,9 @@
     queremos. Acreditamos que autenticidade só existe quando há fidelidade ao propósito. Ao
     acumularmos uma gama de experiências com marcas no mercado da moda, nos posicionamos a partir
     da objetividade em cada etapa.
-  </p>
-
-  </div>
-
-  <!-- 2 · a virada -->
-  <div class="sobre__virada">
-    <p class="sobre__linha d rv" data-linhas>Cada marca é singular.</p>
-
-    <div class="sobre__exp">
-      <h3 class="sobre__exp__ap ap rv">Nossas expertises</h3>
-      <p class="rv">Como o nosso próprio lema já diz, somos experts em criar para você. Como
-      marketing lab, enxergamos que cada projeto requer profundidade e, por causa disso, somos
-      pequenos, priorizando que a atenção ao detalhe seja personalizada. Com ênfase no mercado da
-      moda, desenvolvemos processos criativos e comunicação do zero a partir de um diagnóstico do
-      seu objetivo. Juntos, buscamos respostas para os resultados que você quer alcançar.</p>
+      </p>
     </div>
+
   </div>
 
   <!-- 3 · as pessoas
@@ -705,7 +784,8 @@
 
     <h3 class="sobre__pessoa__t d rv" data-linhas>Quem está por trás da Jozzi.</h3>
 
-    <article class="sobre__ficha">
+    <article class="sobre__ficha sobre__ficha--a">
+      <p class="sobre__ficha__n ap" aria-hidden="true">01</p>
       <figure class="sobre__fig fig rv">
         <div class="fig__campo" data-figura>
           <span class="ap">Retrato 3:4</span>
@@ -722,7 +802,8 @@
       </div>
     </article>
 
-    <article class="sobre__ficha">
+    <article class="sobre__ficha sobre__ficha--b">
+      <p class="sobre__ficha__n ap" aria-hidden="true">02</p>
       <figure class="sobre__fig fig rv">
         <div class="fig__campo" data-figura>
           <span class="ap">Retrato 3:4</span>
@@ -871,6 +952,11 @@
          data-num="07" data-nome="Onde ficamos" aria-labelledby="onde-titulo">
   <h2 class="secao__ap ap rv" id="onde-titulo">Onde ficamos</h2>
 
+  <!-- título visível, a pedido da Jozzi (03/09). O rótulo acima é
+       aparato escondido acima de 1025px; até aqui a seção abria
+       direto no endereço, sem uma linha que a nomeasse na tela. -->
+  <p class="onde__t d d--2 rv">Onde ficamos.</p>
+
   <div class="onde__campo">
 
     <address class="onde__endereco lede rv">
@@ -903,15 +989,72 @@
               allowfullscreen></iframe>
     </div>
 
-    <p class="onde__dados ap rv">
-      <span> -25.4162, -49.2613</span>
-      <span>Visitas com horário reservado especialmente para você.</span>
-    </p>
+    <!-- Os dados práticos deixaram de ser duas linhas soltas
+         embaixo do mapa e viraram uma lista de definição (04/09).
+         A seção estava vazia do lado esquerdo: o endereço ocupava
+         três linhas no topo e o resto da coluna era vão morto.
 
-    <p class="onde__acao ap rv">
-      <a href="https://www.google.com/maps/search/?api=1&query=Av.%20Jo%C3%A3o%20Gualberto%2C%201342%2C%20Curitiba" target="_blank" rel="noopener noreferrer"
-         data-cursor="Abrir">Abrir no Google Maps</a>
-    </p>
+         Nada aqui é conteúdo novo — é o mesmo que já existia, mais
+         a HORA, que volta ao lugar onde ela se explica: a barra
+         lateral diz "CWB 14:32" a página inteira sem nunca dizer o
+         que é, e é esta seção que resolve isso. Por isso aqui ela
+         aparece com o rótulo por extenso. -->
+    <dl class="onde__lista ap rv">
+      <div class="onde__lista__par">
+        <dt>Hora em Curitiba</dt>
+        <dd><span data-relogio>--:--:--</span></dd>
+      </div>
+      <div class="onde__lista__par">
+        <dt>Visitas</dt>
+        <dd>Com horário reservado especialmente para você</dd>
+      </div>
+      <div class="onde__lista__par">
+        <dt>Coordenadas</dt>
+        <dd>-25.4162, -49.2613</dd>
+      </div>
+    </dl>
+
+    <!-- Três formas de chegar (04/09). Os três destinos saem das
+         MESMAS coordenadas que a lista acima mostra — nenhum
+         endereço novo foi inventado para eles.
+
+         Os esquemas de URL são os documentados por cada serviço:
+           · Google Maps — Maps URLs API, busca por endereço
+           · Waze        — `waze.com/ul?ll=<lat>,<lng>&navigate=yes`
+           · Uber        — deep link universal `m.uber.com/ul/`, com
+                           o destino em latitude/longitude E em
+                           `formatted_address`. As coordenadas
+                           colocam o alfinete; o endereço escrito é
+                           o que o passageiro e o motorista LEEM na
+                           tela do app — sem ele o destino aparece
+                           como um ponto sem nome.
+
+         No celular com o app instalado, os dois últimos abrem o
+         app; sem app, abrem a versão web do serviço. Nenhum deles
+         precisa de chave nem de conta nossa. -->
+    <ul class="onde__acoes ap rv" role="list">
+      <li>
+        <a class="onde__acao__l"
+           href="https://www.google.com/maps/search/?api=1&amp;query=Av.%20Jo%C3%A3o%20Gualberto%2C%201342%2C%20Curitiba"
+           target="_blank" rel="noopener noreferrer" data-cursor="Abrir">
+          VÁ COM GOOGLE MAPS<span class="onde__acao__seta" aria-hidden="true"></span>
+        </a>
+      </li>
+      <li>
+        <a class="onde__acao__l"
+           href="https://waze.com/ul?ll=-25.4162%2C-49.2613&amp;navigate=yes"
+           target="_blank" rel="noopener noreferrer" data-cursor="Abrir">
+          VÁ COM WAZE<span class="onde__acao__seta" aria-hidden="true"></span>
+        </a>
+      </li>
+      <li>
+        <a class="onde__acao__l"
+           href="https://m.uber.com/ul/?action=setPickup&amp;pickup=my_location&amp;dropoff%5Blatitude%5D=-25.4162&amp;dropoff%5Blongitude%5D=-49.2613&amp;dropoff%5Bnickname%5D=Jozzi%20Creative%20Lab&amp;dropoff%5Bformatted_address%5D=Av.%20Jo%C3%A3o%20Gualberto%2C%201342%20-%20Urban%20Office%2C%20sala%201912%2C%20Curitiba%20-%20PR"
+           target="_blank" rel="noopener noreferrer" data-cursor="Abrir">
+          VÁ COM UBER<span class="onde__acao__seta" aria-hidden="true"></span>
+        </a>
+      </li>
+    </ul>
 
   </div>
 </section>
