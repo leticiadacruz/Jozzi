@@ -1649,6 +1649,140 @@ um `<a class="contato__l">` igual aos outros.
 Continua pendente: **telefone** (a Jozzi nunca forneceu) e o **e-mail**
 definitivo (só o domínio está confirmado).
 
+## Harmonização de imagens (09/09)
+
+A Jozzi pediu que as imagens diminuíssem e ganhassem harmonia entre si. As
+medidas em 1440px, antes → depois:
+
+| Imagem | Antes | Depois |
+| --- | --- | --- |
+| Declaração de "Sobre a Jozzi" | 5 colunas, ~499px | 4 colunas, teto de 22rem → 352px |
+| Retratos das fichas (Letícia, Murilo) | 4 colunas, ~370px | 3 colunas, teto de 18rem → 288px |
+| Retratos da equipe | `auto-fit` sem teto, ~390px | piso 190px + teto de 46rem → 231px |
+
+Os **tetos em `rem` importam**: sem eles, `auto-fit` e as frações de coluna
+voltam a crescer nas telas largas, e a equipe passava a pesar mais que os
+fundadores logo acima dela.
+
+As duas fotos de "Mais que estética" passaram a ficar **uma em cima da
+outra**, centralizadas. Lado a lado, na coluna da direita, cada uma ficava com
+metade de meia página — pequena demais para o 4:3 que elas têm.
+
+⚠ **O teto e a centralização moram na FIGURA, não no contêiner.** `max-width`
++ `margin-inline: auto` no `.quem__par` criavam dependência circular: ele é
+item de grid, e margem automática faz o item se dimensionar pelo conteúdo —
+mas o conteúdo é uma faixa `1fr`, que depende da largura do contêiner. O
+navegador resolve para ZERO e as duas fotos somem, sem erro nenhum. Medido
+antes de publicar: faixa de 0px, figura 0x0.
+
+### Mais uma regra duplicada — a quinta
+
+`.sobre__ficha--a/b .sobre__fig` e `.sobre__bio` repetiam `grid-row: 1`, e
+vinham DEPOIS da regra que põe foto e bio na fileira 2. Resultado: o numeral
+da ficha caía na mesma fileira do texto e ficava por cima do cargo — "02" em
+cima de "CARGO A DEFINIR". Corrigido tirando o `grid-row` das regras de baixo,
+não acrescentando uma sexta. **Uma propriedade, um lugar.**
+
+### A auditoria agora espera as transições assentarem
+
+O script mediu a marca em 43,99px e reprovou o alvo de toque — mas a altura
+real é exatamente 44. Estava medindo enquanto o cabeçalho voltava de
+`is-fora`, e a transição de 600ms deixava sobra de subpixel. O script agora
+espera 900ms e dois `requestAnimationFrame` antes de medir. **Falso positivo
+de ferramenta custa tanto quanto bug: manda consertar o que não está quebrado.**
+
+⚠ **O script de auditoria vive no scratchpad da sessão, não em `/tmp`.** Ele
+sumiu entre uma sessão e outra e precisou ser reescrito. Se for para durar,
+tem de entrar no repositório — mas aí vira dependência de Playwright num
+projeto que não tem nenhuma. Fica no scratchpad, e reescrever é rápido.
+
+## "Mais que estética": centro com centro (09/09)
+
+`.quem` usava `align-items: end` — as duas colunas encostavam pela BASE. Como
+o texto tem cerca de metade da altura da pilha de fotos, o centro dele ficava
+**173px abaixo** do centro delas: alinhado pela base, desalinhado aos olhos.
+Passou a `center`, e o `align-self: end` das fotos saiu junto. Medido: 0px de
+diferença entre os centros em 1440 e 1200.
+
+⚠ **Outra regra órfã, a sexta.** A media query de ≤1024 ainda continha
+`.quem__txt { grid-column: 7 / span 6 }` — sobra de quando a FIGURA ficava à
+esquerda e o texto à direita. A figura saiu em 04/09, o texto foi para a
+coluna 1, e esta regra continuou empurrando-o para a metade direita abaixo de
+1024px, onde as fotos já ocupam a largura toda. Medido: texto começando em
+x=520 de 1024, espremido em meia página sem motivo nenhum.
+
+**Regra órfã não avisa — ela só continua valendo.** Depois de mover qualquer
+elemento entre colunas, conferir as media queries que o citam.
+
+## Auditoria de design e responsividade (09/09)
+
+Medida, não opinada: 25 combinações de página × largura (5 páginas × 320, 390,
+768, 1024, 1440), coletando contraste calculado, escala tipográfica,
+espaçamentos, raios, sombras, alvos de toque e cobertura de estados
+interativos.
+
+**Resultado: 0 reprovações de contraste, 0 estouros horizontais, 0 erros de
+JS, 0 alvos abaixo de 44px** (depois das três correções abaixo).
+
+### O que foi corrigido
+
+| O quê | Era | Virou |
+| --- | --- | --- |
+| `.abertura__rolar` | 41px de **largura** (a altura já passava) | `min-width: 44px` |
+| `.marca` | sem nenhum retorno ao ponteiro | hover em opacidade |
+| `.serv__card` | respondia só via `is-ativo` do JS | hover/`focus-within` em CSS |
+
+O card de serviço é o mais relevante dos três: **com o motor morto, seis cards
+clicáveis ficavam completamente inertes ao ponteiro**, porque o único sinal
+era a classe que o script põe. O `:focus-within` acompanha o `:hover` porque
+quem chega pelo teclado foca o `<button>` DENTRO do card, não o card.
+
+### O que foi verificado e está certo — não mexer
+
+- **Cores:** tudo deriva de três valores (`marsala-fundo`, `off-white`,
+  `marsala`) mais alfas. Nenhuma cor solta em 25 medições.
+- **Raios e sombras:** zero de ambos, em todo o site. É decisão editorial, não
+  esquecimento — "padronizar" aqui seria introduzir o que o sistema recusa.
+- **Foco:** existe um `:focus-visible` **global** com anel de 2px. Todo
+  elemento focável já tem foco visível sem precisar de regra própria.
+- **Espaçamento fora da grade de 4px:** 33 de 49 valores. É consequência do
+  sistema ser **fluido** (`clamp()` com vw/vh) e não escalonado. Forçar
+  múltiplos de 4px significaria abandonar o dimensionamento fluido — uma troca
+  ruim, e contrária à arquitetura documentada.
+- **`serv__rotulo` a 24,7px:** dentro da faixa proibida de 24–44px e a 1,45x o
+  corpo do texto (mínimo do sistema: 1,8x). **Já documentado** como o custo
+  aceito do pedido de "títulos em uma linha".
+
+### ⚠ A FERRAMENTA TEVE MAIS BUGS QUE O CÓDIGO
+
+Quatro falsos positivos, todos capazes de me fazer "consertar" o que estava
+certo. Vale a lista, porque qualquer auditoria futura vai cair neles:
+
+1. **`color(srgb 0.9 0.87 0.84)`** — o `color-mix` do `--papel-2` sai nessa
+   notação, com floats de 0 a 1. Lidos como 0–255, qualquer cor clara vira
+   quase preta: acusou 1,36:1 num rótulo que tem 4,56:1.
+2. **Opacidade de ancestral** — o painel da equipe tem `opacity: 0` no pai e 1
+   no filho. Checar só o próprio elemento acusa texto invisível como se
+   estivesse na tela (deu 1:1).
+3. **Véu que é IRMÃO, não ancestral** — o título dos cards fica sobre um
+   `.styling-grid__veu` absoluto, irmão do bloco de texto. Subindo só pela
+   árvore, o véu não existe e o off-white aparece "sobre bege claro".
+4. **CSS aninhado** — `CSSStyleRule.cssRules` hoje EXISTE (lista vazia, mas
+   truthy). Uma recursão `if (r.cssRules)` trata toda regra como contêiner e
+   nunca lê seletor nenhum: reportou "nenhum `:hover` no site" com 26 deles no
+   arquivo. O teste certo é `r.cssRules && r.type !== 1`.
+
+O script vive no scratchpad da sessão (`lib-medir.js` + `rodar-auditoria.js`).
+
+### Ponto em aberto, não resolvido
+
+**O telefone não tem navegação de seção.** Abaixo de 900px o cabeçalho é só a
+marca: a nav some e o CTA mora dentro da seção de Projetos. Isso é coerente
+com a página ser uma rolagem só, e é o comportamento que já existia (a régua
+lateral também nunca apareceu no telefone). Mas é uma decisão de produto, não
+um detalhe: se a Jozzi quiser um menu no celular, é uma adição — não um
+conserto.
+
 ## O que NÃO fazer
 
 - **Não subsetar a Gracio.** É a fonte desenhada da marca (`assets/fonts/
