@@ -1783,6 +1783,83 @@ lateral também nunca apareceu no telefone). Mas é uma decisão de produto, nã
 um detalhe: se a Jozzi quiser um menu no celular, é uma adição — não um
 conserto.
 
+## JozziTacticalMatrix — o painel de combo (11/09)
+
+Pedido da Jozzi: um painel "tático" em Serviços para combinar frentes, ver o
+escopo e pedir orçamento. O pedido veio escrito para React + framer-motion +
+lucide + Tailwind; **o site não tem nada disso**, e a decisão foi integrar no
+stack atual — JS nativo e o CSS do próprio site, nenhuma biblioteca nova.
+
+**Onde vive:** HTML no fim de `#servicos` (`index.html`, `#JozziTacticalMatrix`),
+script em `assets/js/matriz.js`, CSS na seção **10c2** do `style.css`.
+
+**De onde vêm os dados — não mexer nisso sem pensar:** as frentes, os nomes e
+os entregáveis são LIDOS dos seis `.serv__card` da mesma seção (`.serv__rotulo`
+e `.serv__tags li`). Mudou a copy de um card, a matriz acompanha. A
+"telemetria" é contagem desses dados: frentes ativas, entregáveis mapeados,
+entregáveis por frente. **Não há preço, prazo nem porcentagem** — a Jozzi não
+forneceu nenhum, e o painel não inventa. Os três protocolos (Launch, Content
+Scaling, Full Stack Growth) têm os nomes do pedido; a composição de cada um é
+um ponto de partida editável em `PRESETS`, no topo do `matriz.js`.
+
+**WhatsApp:** o link da Jozzi é `wa.me/message/…`, que **não aceita texto
+pré-preenchido**. O botão copia a mensagem montada para a área de
+transferência e abre o link normalmente (sem `preventDefault` nem
+`window.open`, para não cair no bloqueador de pop-up); a pessoa só cola. Se a
+cópia falhar, a mensagem aparece num campo selecionado. Se um dia a Jozzi
+tiver o número em formato `wa.me/55…`, dá para trocar por `?text=` e a cópia
+vira redundante.
+
+**Comportamentos:** embaralhador de 300 ms (hexadecimais e símbolos, trava da
+esquerda para a direita, cancela a mudança anterior); radar SVG girando só
+enquanto o painel está na tela; onda na coordenada do clique (máx. 4 vivas);
+vidro = alfa + `backdrop-filter`, cantos em L = oito fios de fundo. No
+telefone (≤768) os três cards somem e entra o botão "Ver detalhes táticos do
+combo", que abre uma folha (`<dialog>`) com abas *01. Escopo · 02. Telemetria ·
+03. Orçamento*; fecha por Esc, botão, toque fora ou puxando a pega.
+
+**Tela cheia, tamanho fixo (pedido da Jozzi, 11/09).** O painel ocupa a
+largura inteira (sangra por cima do recuo do `.wrap`) e tem EXATAMENTE uma
+tela de altura: `height: 100svh`. Trocar protocolo ou frente não muda nada
+de tamanho — nem o painel, nem os cards, nem a folha do celular (que tem
+`height: 85svh`, não `max-height`).
+- **Por que `svh` e não `dvh`:** a `dvh` acompanha a barra de endereço do
+  celular aparecendo e sumindo, e o painel mudaria de altura no meio da
+  rolagem. A `svh` fica parada.
+- **O que não cabe rola por dentro**, nunca empurra a borda: a lista do
+  Escopo, o miolo da Telemetria (`.mz-tel__rolo`) e texto + mensagem do
+  Orçamento (`.mz-orc__rolo`). O botão do WhatsApp e as notas ficam FORA
+  dessas áreas, sempre no pé do card. Rolar só a mensagem, ou só a lista
+  "por frente", não bastava: em 1280×720 e 1024×768 o resto do card já
+  empurrava o botão para fora. As áreas que rolam levam
+  `data-lenis-prevent`, senão o Lenis toma a roda do mouse.
+- No celular quem rola, se preciso, é o bloco de controles; o botão "Ver
+  detalhes táticos do combo" fica ancorado no pé da tela.
+- Embaixo o painel desconta o respiro da seção (`--serv-pb`, declarado em
+  `.serv`) para encostar na seção seguinte. Se o padding de `.serv` mudar,
+  mude a variável — não o número solto.
+- Testado em 1440×900, 1280×720, 1024×768, 900×1000, 390×844, 390×664,
+  360×640 e 320×568, em quatro estados cada (Launch, Full Stack, nenhuma
+  frente, Content Scaling): altura igual à tela em todos, nada vazando do
+  card, botão sempre visível.
+
+**Ordem dos scripts:** `matriz.js` carrega ANTES do `main.js`. Ele tira o
+`hidden` do painel, e o `main.js` mede as faixas escuras (`[data-inv]`) ao
+subir — na ordem inversa mediria o painel com altura zero e o cabeçalho não
+escureceria sobre ele.
+
+**Exceções assumidas às regras do sistema, por pedido explícito:** o radar é
+uma segunda animação em laço (a regra abaixo diz uma só) e o painel é uma
+superfície escura com grade. As duas ficam CONTIDAS no painel. A luz de status
+ao lado do título é parada de propósito — pulsar seria um terceiro laço.
+
+**Testado (11/09):** desktop 1440, tablet 900, telefone 390; preset, ajuste
+manual (vira "Personalizado" e volta a reconhecer o protocolo), cópia real
+para a área de transferência, abertura do WhatsApp, folha (abas por seta,
+arrastar, Esc, foco devolvido ao botão), movimento reduzido (sem embaralhar,
+radar parado), sem JavaScript (painel escondido, link simples visível), e a
+auditoria de regressão das 9 páginas × 4 larguras: 0 problemas.
+
 ## O que NÃO fazer
 
 - **Não subsetar a Gracio.** É a fonte desenhada da marca (`assets/fonts/
@@ -1848,6 +1925,7 @@ styling.html                grade de fotos do portfólio de Styling
 styling/*.html               19 páginas de caso, uma por trabalho
 assets/css/style.css        folha única, com sumário numerado no topo
 assets/js/main.js           IIFE, nove módulos numerados
+assets/js/matriz.js         JozziTacticalMatrix (painel de combo em Serviços)
 assets/js/lenis.min.js      rolagem interpolada (não editar)
 assets/fonts/               Gracio (marca) + IBM Plex Mono
 assets/img/                 imagens do site + logotipo + favicon

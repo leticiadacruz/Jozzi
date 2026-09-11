@@ -24,7 +24,7 @@
      ANTES do style.css, para os tokens de familia ja acharem
      as fontes declaradas quando forem resolvidos. -->
 <link rel="stylesheet" href="https://use.typekit.net/oyj0zig.css">
-<link rel="stylesheet" href="assets/css/style.css?v=128">
+<link rel="stylesheet" href="assets/css/style.css?v=129">
 
 <script>
 (function () {
@@ -567,6 +567,100 @@
       moda, desenvolvemos processos criativos e comunicação do zero a partir de um diagnóstico do
       seu objetivo. Juntos, buscamos respostas para os resultados que você quer alcançar.</p>
     </div>
+  </div>
+
+  <!-- JozziTacticalMatrix (11/09) — o painel para montar um combo de
+       frentes e pedir orçamento. Vive em assets/js/matriz.js.
+       As frentes NÃO são escritas aqui: o script lê os seis cards
+       acima (nome + etiquetas). Mudou um card, a matriz acompanha.
+       Nenhum número do painel é inventado: tudo o que ele mostra é
+       contado a partir desses cards (frentes, entregáveis).
+       Sem JavaScript a matriz fica escondida e vale o link simples. -->
+  <p class="mz-semjs" data-mz-semjs>
+    <a class="mz-semjs__a" href="https://wa.me/message/A5HZRIZWCMH3O1" target="_blank" rel="noopener noreferrer">Pedir um orçamento pelo WhatsApp</a>
+  </p>
+
+  <div class="matriz" id="JozziTacticalMatrix" data-matriz data-inv hidden
+       data-whatsapp="https://wa.me/message/A5HZRIZWCMH3O1" aria-labelledby="mz-titulo" role="region">
+    <div class="mz-ondas" data-mz-ondas aria-hidden="true"></div>
+
+    <div class="mz-cab">
+      <div class="mz-cab__txt">
+        <p class="mz-sis ap"><span class="mz-sis__luz" aria-hidden="true"></span>Matriz tática · <span class="mz-sis__sec">Serviços · </span><span data-mz-estado>Sistema ativo</span></p>
+        <h3 class="mz-titulo" id="mz-titulo">Monte o seu combo.</h3>
+        <p class="mz-desc">Combine as frentes, veja o escopo que elas cobrem juntas e peça um orçamento feito para a sua marca.</p>
+      </div>
+      <svg class="mz-radar" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="mz-varre-g" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="currentColor" stop-opacity="0"/>
+            <stop offset="1" stop-color="currentColor" stop-opacity=".55"/>
+          </linearGradient>
+        </defs>
+        <circle cx="60" cy="60" r="58" class="mz-radar__anel"/>
+        <circle cx="60" cy="60" r="40" class="mz-radar__anel"/>
+        <circle cx="60" cy="60" r="22" class="mz-radar__anel"/>
+        <path d="M60 2V118M2 60H118" class="mz-radar__eixo"/>
+        <g class="mz-radar__varre"><path d="M60 60L60 2A58 58 0 0 1 110.2 31Z" fill="url(#mz-varre-g)"/></g>
+        <g data-mz-pontos></g>
+      </svg>
+    </div>
+
+    <div class="mz-ctrl">
+      <div class="mz-grupo">
+        <p class="mz-grupo__ap ap" id="mz-ap-presets">Protocolo <span class="mz-grupo__st" data-mz-protocolo></span></p>
+        <div class="mz-presets" role="group" aria-labelledby="mz-ap-presets" data-mz-presets></div>
+      </div>
+      <div class="mz-grupo">
+        <p class="mz-grupo__ap ap" id="mz-ap-frentes">Frentes <span class="mz-grupo__st" data-mz-contagem></span></p>
+        <div class="mz-frentes" role="group" aria-labelledby="mz-ap-frentes" data-mz-frentes></div>
+      </div>
+    </div>
+
+    <div class="mz-cards" data-mz-cards>
+      <article class="mz-card" aria-labelledby="mz-c1">
+        <span class="mz-canto" aria-hidden="true"></span>
+        <header class="mz-card__cab"><span class="mz-idx ap">01</span><h4 class="mz-card__t" id="mz-c1">Escopo</h4></header>
+        <div class="mz-card__corpo" data-mz-alvo="escopo"></div>
+      </article>
+      <article class="mz-card" aria-labelledby="mz-c2">
+        <span class="mz-canto" aria-hidden="true"></span>
+        <header class="mz-card__cab"><span class="mz-idx ap">02</span><h4 class="mz-card__t" id="mz-c2">Telemetria</h4></header>
+        <div class="mz-card__corpo" data-mz-alvo="telemetria"></div>
+      </article>
+      <article class="mz-card" aria-labelledby="mz-c3">
+        <span class="mz-canto" aria-hidden="true"></span>
+        <header class="mz-card__cab"><span class="mz-idx ap">03</span><h4 class="mz-card__t" id="mz-c3">Orçamento</h4></header>
+        <div class="mz-card__corpo" data-mz-alvo="orcamento"></div>
+      </article>
+    </div>
+
+    <div class="mz-movel">
+      <p class="mz-resumo ap" data-mz-resumo></p>
+      <button class="mz-abrir" type="button" data-mz-abrir aria-haspopup="dialog">Ver detalhes táticos do combo</button>
+    </div>
+
+    <dialog class="mz-folha" data-mz-folha aria-labelledby="mz-folha-t" data-lenis-prevent>
+      <div class="mz-folha__pega" data-mz-pega>
+        <span class="mz-folha__barra" aria-hidden="true"></span>
+        <div class="mz-folha__cab">
+          <h3 class="mz-folha__t" id="mz-folha-t">Detalhes do combo</h3>
+          <button class="mz-fechar" type="button" data-mz-fechar>Fechar</button>
+        </div>
+        <div class="mz-abas" role="tablist" aria-label="Detalhes do combo">
+          <button class="mz-aba" type="button" role="tab" id="mz-aba-escopo" aria-controls="mz-painel-escopo" aria-selected="true"><span class="mz-idx">01.</span> Escopo</button>
+          <button class="mz-aba" type="button" role="tab" id="mz-aba-telemetria" aria-controls="mz-painel-telemetria" aria-selected="false" tabindex="-1"><span class="mz-idx">02.</span> Telemetria</button>
+          <button class="mz-aba" type="button" role="tab" id="mz-aba-orcamento" aria-controls="mz-painel-orcamento" aria-selected="false" tabindex="-1"><span class="mz-idx">03.</span> Orçamento</button>
+        </div>
+      </div>
+      <div class="mz-folha__corpo">
+        <div class="mz-painel" role="tabpanel" id="mz-painel-escopo" aria-labelledby="mz-aba-escopo" tabindex="0" data-mz-alvo="escopo"></div>
+        <div class="mz-painel" role="tabpanel" id="mz-painel-telemetria" aria-labelledby="mz-aba-telemetria" tabindex="0" data-mz-alvo="telemetria" hidden></div>
+        <div class="mz-painel" role="tabpanel" id="mz-painel-orcamento" aria-labelledby="mz-aba-orcamento" tabindex="0" data-mz-alvo="orcamento" hidden></div>
+      </div>
+    </dialog>
+
+    <p class="mz-leitor" aria-live="polite" data-mz-vivo></p>
   </div>
 </section>
 
@@ -1145,6 +1239,10 @@
 <span class="cursor ap" id="cursor" aria-hidden="true"></span>
 
 <script src="assets/js/lenis.min.js" defer></script>
+<!-- a matriz roda ANTES do main.js: ela tira o `hidden` do painel, e o
+     main.js mede as faixas escuras ([data-inv]) ao subir. Na ordem
+     inversa ele mediria o painel com altura zero. -->
+<script src="assets/js/matriz.js?v=1" defer></script>
 <script src="assets/js/main.js" defer></script>
 </body>
 </html>
