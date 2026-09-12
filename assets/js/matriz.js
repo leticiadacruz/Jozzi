@@ -4,8 +4,7 @@
    Pedido original: um componente React com framer-motion, lucide e
    Tailwind. O site não tem nada disso (nem bundler), e a Jozzi
    decidiu integrar no stack atual: JS nativo + o CSS do próprio
-   site, nenhuma biblioteca nova. Todos os comportamentos do pedido
-   estão aqui; as cores são as duas da marca, não o verde "hacker".
+   site, nenhuma biblioteca nova. As cores são as duas da marca.
 
    REGRA DE DADOS: o painel não inventa nada. As frentes, os nomes e
    os entregáveis são LIDOS dos seis `.serv__card` da própria seção.
@@ -16,6 +15,11 @@
    texto pré-preenchido. Decisão da Jozzi: o botão copia a mensagem
    montada para a área de transferência e abre o link; a pessoa só
    cola.
+
+   UMA TELA, ZERO ROLAGEM (12/09): o painel tem 100dvh e nada nele
+   rola. Quem faz caber é o módulo 06 (densidade): mede e escolhe o
+   nível de detalhe que cabe na altura disponível. Ver a seção 10c2
+   do CSS.
    ============================================================ */
 (function () {
   'use strict';
@@ -148,15 +152,16 @@
      Cada alvo (card no desktop, aba da folha no telefone) é
      reescrito inteiro a cada mudança. Os nós com [data-scr] são
      folhas de texto — o embaralhador troca o textContent deles, e
-     um nó com filhos perderia os filhos. */
+     um nó com filhos perderia os filhos.
+
+     Cada alvo tem no máximo DOIS filhos: o bloco de cima e o de
+     baixo. O CSS os afasta (`space-between`), e é assim que a nota
+     e o botão do WhatsApp ficam ancorados no rodapé do card. */
   var total = servicos.length;
 
   function htmlEscopo(sel) {
     if (!sel.length) return '<p class="mz-vazio">Nenhuma frente selecionada. Escolha um protocolo ou ligue as frentes acima.</p>';
-    /* data-lenis-prevent nas três áreas que rolam por dentro (lista,
-       entregáveis, mensagem): sem ele o Lenis toma a roda do mouse e
-       rola a página em vez da lista */
-    return '<ol class="mz-escopo" role="list" data-lenis-prevent>' + sel.map(function (s) {
+    return '<ol class="mz-escopo" role="list">' + sel.map(function (s) {
       return '<li class="mz-escopo__i">' +
                '<span class="mz-cod" data-scr>' + s.cod + '</span>' +
                '<div><p class="mz-escopo__n" data-scr>' + esc(s.nome) + '</p>' +
@@ -173,8 +178,7 @@
     function linha(rot, val) {
       return '<div class="mz-tel__l"><dt class="mz-rot">' + rot + '</dt><dd class="mz-val" data-scr>' + val + '</dd></div>';
     }
-    /* mesmo desenho do orçamento: o miolo rola, a nota fica no pé */
-    return '<div class="mz-tel__rolo" data-lenis-prevent><dl class="mz-tel">' +
+    return '<div class="mz-bloco"><dl class="mz-tel">' +
       linha('Frentes ativas', dois(sel.length) + '/' + dois(total)) +
       linha('Entregáveis mapeados', dois(entregaveis)) +
       linha('Protocolo', esc(protocolo ? protocolo.cod + ' · ' + protocolo.nome : 'Personalizado')) +
@@ -192,18 +196,19 @@
 
   function htmlOrcamento(sel) {
     var vazio = !sel.length;
-    /* texto e mensagem rolam JUNTOS numa área só; o botão e o aviso
-       ficam fora dela, sempre no pé do card — em qualquer altura de
-       tela e com qualquer número de frentes */
-    return '<div class="mz-orc__rolo" data-lenis-prevent>' +
+    return '<div class="mz-bloco">' +
       '<p class="mz-orc__txt">Cada projeto parte de um diagnóstico do seu objetivo — por isso o orçamento é conversado, não tabelado.</p>' +
-      '<p class="mz-rot">Mensagem</p>' +
-      '<p class="mz-msg" data-scr>' + esc(vazio ? 'Selecione ao menos uma frente.' : mensagem(sel)) + '</p>' +
+      '<div class="mz-orc__bloco-msg"><p class="mz-rot">Prévia da mensagem</p>' +
+      /* a prévia perde a linha em branco (a mensagem copiada não):
+         cortada em 3 linhas, a linha vazia virava um "…" solto */
+      '<p class="mz-msg" data-scr>' + esc(vazio ? 'Selecione ao menos uma frente.' : mensagem(sel).replace('\n\n', '\n')) + '</p></div>' +
       '</div>' +
+      '<div class="mz-bloco mz-orc__pe">' +
       '<a class="mz-cta" data-mz-cta href="' + esc(WHATSAPP) + '" target="_blank" rel="noopener noreferrer"' +
         (vazio ? ' aria-disabled="true"' : '') + '>Solicitar orçamento no WhatsApp</a>' +
       '<p class="mz-aviso" role="status" data-mz-aviso>A mensagem é copiada ao clicar; no WhatsApp, é só colar.</p>' +
-      '<textarea class="mz-copia" data-mz-copia readonly hidden aria-label="Mensagem para copiar"></textarea>';
+      '<textarea class="mz-copia" data-mz-copia readonly hidden aria-label="Mensagem para copiar"></textarea>' +
+      '</div>';
   }
 
   var MONTA = { escopo: htmlEscopo, telemetria: htmlTelemetria, orcamento: htmlOrcamento };
@@ -232,6 +237,10 @@
 
     desenharPontos();
 
+    /* a densidade é escolhida com o texto FINAL no lugar — antes do
+       embaralhador começar a trocar caracteres */
+    ajustar();
+
     if (animar) {
       /* só embaralha o que está na tela: os cards no desktop, o
          resumo no telefone (lá os cards moram na folha fechada) */
@@ -258,13 +267,52 @@
       var ang = (i / total) * Math.PI * 2 - Math.PI / 2;
       var r = i % 2 ? 40 : 26;
       h += '<circle class="mz-radar__ponto" cx="' + (60 + Math.cos(ang) * r).toFixed(1) +
-           '" cy="' + (60 + Math.sin(ang) * r).toFixed(1) + '" r="2.6"/>';
+           '" cy="' + (60 + Math.sin(ang) * r).toFixed(1) + '" r="1.4"/>';
     });
     pontos.innerHTML = h;
   }
 
 
-  /* 06. O EMBARALHADOR — 300ms ------------------------------
+  /* 06. DENSIDADE — FAZER CABER SEM ROLAR --------------------
+     Uma tela, e nada rola dentro dela. Para cada caixa, tenta o
+     nível 0 (tudo) e vai subindo até o conteúdo caber:
+       · o painel sobe de nível se transbordar, ou se os cards
+         ficariam com menos de CARDS_MIN px de altura;
+       · cada card / aba da folha sobe de nível se o corpo
+         transbordar.
+     Roda depois de cada mudança, no redimensionamento (inclusive
+     a barra do celular mudando a dvh) e quando as fontes chegam.
+     NÃO roda dentro de quadro de animação: lê layout, e ler layout
+     por quadro é exatamente o que o MANUTENCAO proíbe. */
+  var CARDS_MIN = 220;
+
+  function transborda(el) { return el.scrollHeight > el.clientHeight + 1; }
+
+  function nivelar(el, attr, excede) {
+    for (var n = 0; n <= 3; n++) {
+      el.setAttribute(attr, String(n));
+      if (!excede()) return;
+    }
+  }
+
+  function caber(alvo) {
+    /* offsetParent nulo = não está na tela (cards no telefone, aba
+       escondida, folha fechada): medir ali daria zero */
+    if (!alvo || alvo.offsetParent === null) return;
+    nivelar(alvo, 'data-denso', function () { return transborda(alvo); });
+  }
+
+  function ajustar() {
+    if (raiz.hidden) return;
+    var comCards = cards.offsetParent !== null;
+    nivelar(raiz, 'data-denso-painel', function () {
+      return transborda(raiz) || (comCards && cards.clientHeight < CARDS_MIN);
+    });
+    alvos.forEach(caber);
+  }
+
+
+  /* 07. O EMBARALHADOR — 300ms ------------------------------
      Cada caractere gira entre hexadecimais e símbolos e trava da
      esquerda para a direita. Espaço e quebra de linha nunca giram:
      é o que mantém a forma do texto legível enquanto ele assenta.
@@ -303,7 +351,7 @@
   }
 
 
-  /* 07. COPIAR E ABRIR --------------------------------------
+  /* 08. COPIAR E ABRIR --------------------------------------
      O clipboard é chamado DENTRO do clique e o link segue o seu
      caminho normal (sem preventDefault, sem window.open): é o que
      evita o bloqueador de pop-up. Se a cópia falhar, a mensagem
@@ -326,6 +374,8 @@
     function manual() {
       campo.value = msg;
       campo.hidden = false;
+      /* o campo ocupa altura: o card pode precisar apertar */
+      caber(cta.closest('[data-mz-alvo]'));
       campo.focus();
       campo.select();
       aviso.textContent = 'Não foi possível copiar sozinho. Copie a mensagem abaixo e cole no WhatsApp.';
@@ -341,7 +391,7 @@
   });
 
 
-  /* 08. ONDA NO CLIQUE --------------------------------------
+  /* 09. ONDA NO CLIQUE --------------------------------------
      Nasce na coordenada exata do ponteiro. No máximo quatro vivas
      de uma vez — clique em rajada não empilha dezenas de nós. */
   var ondas = raiz.querySelector('[data-mz-ondas]');
@@ -360,7 +410,7 @@
   });
 
 
-  /* 09. RADAR SÓ GIRA NA TELA ------------------------------- */
+  /* 10. RADAR SÓ GIRA NA TELA ------------------------------- */
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(function (en) {
       raiz.classList.toggle('is-visivel', en[0].isIntersecting);
@@ -370,7 +420,7 @@
   }
 
 
-  /* 10. A FOLHA DO TELEFONE ---------------------------------
+  /* 11. A FOLHA DO TELEFONE ---------------------------------
      <dialog> nativo, como a lupa do styling: foco preso, Esc e
      retorno de foco vêm do navegador. Fecha por Esc, pelo botão,
      tocando fora ou puxando a pega para baixo. */
@@ -385,6 +435,8 @@
     folha.classList.remove('is-aberta');
     folha.showModal();
     document.documentElement.classList.add('mz-travado');
+    /* aberta, a folha tem altura: agora dá para medir a aba */
+    caber(folha.querySelector('.mz-painel:not([hidden])'));
     /* dois quadros: o primeiro pinta a folha fora da tela, o
        segundo a traz — sem isso a transição não tem de onde partir */
     window.requestAnimationFrame(function () {
@@ -409,12 +461,6 @@
     document.documentElement.classList.remove('mz-travado');
     folha.classList.remove('is-aberta');
     abrir.focus();
-  });
-
-  /* a folha só existe abaixo de 769px; se a janela crescer com ela
-     aberta, os cards voltam e ela sai */
-  window.addEventListener('resize', function () {
-    if (folha.open && window.innerWidth > 768) folha.close();
   });
 
   /* arrastar para fechar: 100px de curso OU um puxão rápido */
@@ -450,6 +496,7 @@
       a.tabIndex = on ? 0 : -1;
       document.getElementById(a.getAttribute('aria-controls')).hidden = !on;
     });
+    caber(document.getElementById(aba.getAttribute('aria-controls')));
     if (focar) aba.focus();
   }
   abas.forEach(function (a, i) {
@@ -467,7 +514,26 @@
   });
 
 
-  /* 11. LIGAR ----------------------------------------------- */
+  /* 12. REMEDIR QUANDO A TELA MUDA ---------------------------
+     O ResizeObserver pega também a barra de endereço do celular
+     aparecendo e sumindo (a altura é dvh). Mudar a densidade não
+     muda o tamanho do painel, então não há laço. */
+  window.addEventListener('resize', function () {
+    /* a folha só existe abaixo de 769px */
+    if (folha.open && window.innerWidth > 768) folha.close();
+  });
+  if ('ResizeObserver' in window) {
+    new ResizeObserver(function () {
+      ajustar();
+      if (folha.open) caber(folha.querySelector('.mz-painel:not([hidden])'));
+    }).observe(raiz);
+  } else {
+    window.addEventListener('resize', ajustar);
+  }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajustar);
+
+
+  /* 13. LIGAR ----------------------------------------------- */
   var semJs = document.querySelector('[data-mz-semjs]');
   if (semJs) semJs.hidden = true;
   raiz.hidden = false;

@@ -1796,20 +1796,30 @@ img.onde__mapa {
 
    É o único lugar do site com estética de "painel": grade tática,
    radar, vidro, cantos em L. Isso foi pedido — e fica CONTIDO
-   aqui. As regras de material do resto (sem raio, sem sombra) valem
-   dentro dele também: o vidro é blur + alfa, e os cantos são fio.
+   aqui. Sem sombra; o vidro é blur + alfa, e os cantos são fio.
 
-   Paleta: as duas cores da marca. O acento é o Marsala clareado
-   com off-white (55%) porque o Marsala puro sobre o fundo escuro
-   dá 2,15:1 — ilegível. A mistura dá 4,85:1: passa o mínimo de
-   texto pequeno e continua sendo o mesmo matiz.
+   Paleta: as duas cores da marca. O pedido de 12/09 falava em
+   `bg-neutral-950` (quase preto); o fundo continua sendo o
+   Marsala escuro, porque a paleta do site é de duas cores. O
+   acento é o Marsala clareado com off-white (55%): o Marsala puro
+   sobre o fundo escuro dá 2,15:1, a mistura dá 4,85:1.
 
    Tipografia: Gracio nos títulos, Nexa em descrição e botão,
-   Plex Mono SÓ em rótulo de telemetria, código de frente, índice
-   numerado e status. Nada de mono em frase.
+   Plex Mono SÓ em rótulo de telemetria, código, índice e status.
 
-   Tamanho dos títulos dos cards: 1.25rem (20px), abaixo da faixa
-   proibida de 24–44px do sistema de display.
+   ⚠ UMA TELA, ZERO ROLAGEM (12/09). O painel tem exatamente
+   `100dvh` e `overflow: hidden`, e NADA dentro dele rola — nem os
+   cards. O que garante que o conteúdo caiba não é rolagem, é
+   DENSIDADE: o matriz.js mede e escolhe o nível (0 a 3) que cabe.
+     · `data-denso-painel` no painel: aperta cabeçalho e controles
+       quando os cards ficariam baixos demais;
+     · `data-denso` em cada card (e em cada aba da folha): 0 mostra
+       tudo, 1 corta etiquetas e mensagem em menos linhas, 2 esconde
+       o que é detalhe (etiquetas, lista por frente, texto do
+       orçamento), 3 é o mínimo (nomes em duas colunas, só o botão).
+   Para a medição funcionar, os filhos do corpo do card são
+   `flex: none` — não encolhem, e o excesso aparece no scrollHeight
+   do corpo. Não trocar por `min-height: 0` neles.
    ----------------------------------------------------------- */
 .mz-semjs { margin: clamp(2.5rem, 8vh, 4.5rem) 0 0; }
 .mz-semjs__a {
@@ -1832,49 +1842,60 @@ img.onde__mapa {
 
   position: relative;
   isolation: isolate;
-  overflow: hidden;
-  /* TELA CHEIA E TAMANHO FIXO (pedido da Jozzi, 11/09).
-     Largura: sangra até as bordas, desfazendo o recuo do .wrap.
-     Altura: exatamente uma tela, e NUNCA muda com o que está
-     selecionado — o que não cabe rola dentro do próprio card.
-     `svh` e não `dvh`: a dvh acompanha a barra de endereço do
-     celular aparecendo e sumindo, e o painel mudaria de altura
-     durante a rolagem. A svh é a tela com a barra à mostra, e fica
-     parada. (`vh` antes é a rede para navegador sem svh.)
-     Embaixo, desconta o respiro da seção para encostar na próxima. */
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  gap: clamp(.5rem, 1.6vh, 1rem);
+  /* uma tela, exata. `vh` antes é a rede para navegador sem dvh. */
   height: 100vh;
-  height: 100svh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
+  overflow: hidden;
+  /* largura cheia: sangra por cima do recuo do .wrap. Embaixo,
+     desconta o respiro da seção para encostar na seguinte. */
   margin: clamp(3rem, 10vh, 6rem) calc(var(--margem) * -1) calc(var(--serv-pb) * -1) calc(var(--recuo) * -1);
-  /* em cima, a altura do cabeçalho fixo: ele passa por cima do
-     painel e não pode cobrir a primeira linha */
-  padding: calc(var(--topo-h) + clamp(.5rem, 1.6vh, 1.25rem)) var(--margem) clamp(1rem, 3vh, 2rem) var(--recuo);
+  /* Em cima: a altura do cabeçalho fixo do site, que passa por cima
+     do painel. Nas laterais: a margem do site, e não um padding
+     menor — no desktop a barra de progresso mora dentro dela
+     (left: margem/2) e passaria por cima do conteúdo. */
+  padding: calc(var(--topo-h) + .5rem) var(--margem) 1rem var(--recuo);
   scroll-margin-top: 0;
   color: var(--fg);
   background-color: var(--marsala-fundo);
-  /* grade tática: dois fios de 1px a cada 32px, e um halo de
-     Marsala no canto do radar para o vidro ter o que desfocar */
   background-image:
     radial-gradient(ellipse 60% 70% at 88% 0%, rgb(var(--marsala-rgb) / .38), transparent 70%),
     linear-gradient(rgb(var(--off-white-rgb) / .05) 1px, transparent 1px),
     linear-gradient(90deg, rgb(var(--off-white-rgb) / .05) 1px, transparent 1px);
   background-size: auto, 32px 32px, 32px 32px;
+  /* é um painel de controle, não um texto: seleção de texto
+     acidental num clique duplo atrapalhava. A mensagem de reserva
+     (textarea) volta a ser selecionável lá embaixo. */
+  -webkit-user-select: none;
+  user-select: none;
 }
+@media (min-width: 768px) {
+  .matriz { padding-bottom: 1.5rem; }
+}
+/* o `display: flex` acima venceria o `hidden` do navegador */
+.matriz[hidden] { display: none; }
 /* :not(dialog) — o <dialog> modal é `position: fixed` pelo
    navegador; um `relative` aqui o prenderia dentro do painel */
 .matriz > :not(dialog) { position: relative; z-index: 1; }
-/* o `display: flex` acima venceria o `hidden` do navegador */
-.matriz[hidden] { display: none; }
 
-/* ---- a onda do clique ---- */
+/* ---- fundo (radar) e ondas: camadas recortadas ----
+   Recortadas para que nada delas entre no scrollHeight do painel,
+   que é o que o ajuste de densidade mede. */
+.matriz > .mz-fundo,
 .matriz > .mz-ondas {
   position: absolute;
   inset: 0;
-  z-index: 3;
   overflow: hidden;
   pointer-events: none;
 }
+.matriz > .mz-fundo { z-index: 0; }
+.matriz > .mz-ondas { z-index: 3; }
+
 .mz-onda {
   position: absolute;
   width: 16px;
@@ -1889,63 +1910,20 @@ img.onde__mapa {
   to   { transform: scale(14); opacity: 0; }
 }
 
-/* ---- cabeçalho: sistema, título, radar ---- */
-.mz-cab {
-  flex: none;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--calha);
-  padding-bottom: clamp(.75rem, 2vh, 1.25rem);
-  border-bottom: 1px solid var(--mz-linha);
-}
-/* sem flex: com flex o texto virava item anônimo e, no telefone, a
-   luz ficava sozinha numa linha acima da frase */
-.mz-sis {
-  margin: 0 0 1rem;
-  color: var(--fg-3);
-}
-.mz-sis__luz {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  margin-right: .6em;
-  vertical-align: .12em;
-  border-radius: 50%;
-  /* parada de propósito: o site admite UMA animação em laço além do
-     convite a rolar, e ela é o radar (pedido explícito). Uma luz
-     pulsando ao lado seria o segundo laço — ruído. */
-  background: var(--mz-acento);
-}
-.mz-titulo {
-  margin: 0 0 .6rem;
-  font-family: var(--fonte-titulo);
-  /* limitado pela ALTURA da tela: o painel tem uma tela só, e em
-     notebook baixo o título cheio comeria o espaço dos cards */
-  font-size: min(var(--fs-display-2), 7svh);
-  font-weight: 500;
-  letter-spacing: -.035em;
-  line-height: var(--lh-titulo);
-}
-.mz-desc {
-  margin: 0;
-  max-width: 42ch;
-  font-size: var(--fs-texto);
-  line-height: 1.5;
-  color: var(--fg-2);
-}
-
 .mz-radar {
-  flex: none;
-  width: clamp(64px, 12svh, 112px);
+  position: absolute;
+  top: 55%;
+  right: -10vmin;
+  width: min(78vmin, 820px);
   height: auto;
+  transform: translateY(-50%);
   color: var(--mz-acento);
+  opacity: .5;
 }
-.mz-radar__anel { fill: none; stroke: currentColor; stroke-opacity: .4; stroke-width: .6; }
-.mz-radar__eixo { fill: none; stroke: currentColor; stroke-opacity: .25; stroke-width: .5; }
+.mz-radar__anel { fill: none; stroke: currentColor; stroke-opacity: .45; stroke-width: .35; }
+.mz-radar__eixo { fill: none; stroke: currentColor; stroke-opacity: .3; stroke-width: .3; }
 .mz-radar__ponto { fill: var(--papel); }
-/* gira sempre, mas só enquanto o painel está na tela (o JS liga
-   .is-visivel) — fora dela não há por que gastar quadro */
+/* gira sempre, mas só enquanto o painel está na tela */
 .mz-radar__varre {
   transform-origin: 60px 60px;
   animation: mz-giro 4.8s linear infinite;
@@ -1954,36 +1932,83 @@ img.onde__mapa {
 .matriz.is-visivel .mz-radar__varre { animation-play-state: running; }
 @keyframes mz-giro { to { transform: rotate(360deg); } }
 
-/* ---- controles: protocolo e frentes ---- */
+/* ---- cabeçalho tático: uma linha ---- */
+.mz-cab {
+  flex: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--calha);
+  padding: .5rem 0;
+  border-bottom: 1px solid var(--mz-linha);
+}
+.mz-sis { margin: 0 0 .35rem; color: var(--fg-3); }
+.mz-sis__luz {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: .6em;
+  vertical-align: .12em;
+  border-radius: 50%;
+  /* parada de propósito: o laço do painel é o radar; uma luz
+     pulsando ao lado seria um segundo laço — ruído */
+  background: var(--mz-acento);
+}
+.mz-titulo {
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  /* limitado também pela ALTURA: o painel é uma tela só */
+  font-size: min(clamp(1.5rem, 1.6vw + 1rem, 3rem), 6dvh);
+  font-weight: 500;
+  letter-spacing: -.035em;
+  line-height: var(--lh-titulo);
+}
+.mz-desc {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  max-width: 44ch;
+  margin: 0;
+  font-size: .8125rem;
+  line-height: 1.45;
+  color: var(--fg-2);
+}
+@media (min-width: 768px) {
+  .mz-cab { padding: .75rem 0; }
+  .mz-desc { font-size: .875rem; }
+}
+
+/* ---- controles: protocolo e frentes, compactos ---- */
 .mz-ctrl {
   flex: none;
   display: grid;
-  gap: clamp(.75rem, 2vh, 1.5rem);
-  padding: clamp(.75rem, 2.2vh, 1.5rem) 0;
+  gap: .6rem 1.5rem;
 }
-.mz-grupo__ap { margin: 0 0 .75rem; color: var(--fg-3); }
+.mz-grupo__ap { margin: 0 0 .4rem; color: var(--fg-3); }
 .mz-grupo__st { color: var(--mz-acento); }
 
-.mz-presets { display: flex; flex-wrap: wrap; gap: .5rem; }
+.mz-presets { display: flex; flex-wrap: wrap; gap: .4rem; }
 .mz-frentes {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: .5rem;
+  gap: .4rem;
 }
 
 .mz-preset,
 .mz-frente {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: .65rem;
-  min-height: 44px;
-  padding: .5rem .9rem;
+  gap: .55rem;
+  min-height: 32px;
+  padding: .375rem .625rem;
   border: 1px solid var(--mz-linha);
   border-radius: 0;
   background: rgb(var(--off-white-rgb) / .03);
   color: var(--fg-2);
   font-family: var(--fonte-texto);
-  font-size: .9375rem;
+  font-size: .8125rem;
   line-height: 1.25;
   text-align: left;
   cursor: pointer;
@@ -2006,6 +2031,11 @@ img.onde__mapa {
   .mz-preset:hover,
   .mz-frente:hover { border-color: rgb(var(--off-white-rgb) / .42); color: var(--fg); }
 }
+/* no toque o alvo volta a 44px: compacto é para o mouse */
+@media (pointer: coarse) {
+  .mz-preset,
+  .mz-frente { min-height: 44px; }
+}
 
 .mz-cod {
   flex: none;
@@ -2018,8 +2048,8 @@ img.onde__mapa {
 .mz-frente__n { flex: 1; min-width: 0; }
 .mz-frente__st {
   flex: none;
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
   border: 1px solid currentColor;
 }
 .mz-frente[aria-pressed="true"] .mz-frente__st {
@@ -2027,36 +2057,13 @@ img.onde__mapa {
   border-color: var(--mz-acento);
 }
 
-/* ---- os três cards ---- */
-/* os cards ficam com TODA a altura que sobra da tela — fixa. O
-   conteúdo que muda (listas, mensagem) rola por dentro. */
-.mz-cards {
-  flex: 1 1 0;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  grid-template-rows: minmax(0, 1fr);
-  gap: var(--calha);
-  align-items: stretch;
-}
-.mz-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  min-height: 0;
-  padding: clamp(.9rem, 2vh, 1.25rem) 1.25rem;
-  border: 1px solid var(--mz-linha);
-  background: var(--mz-vidro);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-}
-.mz-card[aria-busy="true"] { cursor: progress; }
-/* os cantos em L: oito fios de 1px, dois por canto, desenhados
-   como fundo — sem elemento extra por canto */
-.mz-canto {
-  --c: var(--mz-acento);
-  --l: 14px;
+/* ---- os cantos em L: nos cards e nos botões ligados ----
+   Oito fios de 1px, dois por canto, desenhados como fundo. As
+   variáveis são lidas em cada elemento: o card usa perna de 14px
+   em acento, o botão ligado usa 7px em off-white. */
+.mz-canto,
+.mz-preset[aria-pressed="true"]::after,
+.mz-frente[aria-pressed="true"]::after {
   position: absolute;
   inset: -1px;
   pointer-events: none;
@@ -2071,13 +2078,52 @@ img.onde__mapa {
     linear-gradient(var(--c), var(--c)) bottom right / 1px var(--l);
   background-repeat: no-repeat;
 }
+.mz-canto { --c: var(--mz-acento); --l: 14px; }
+.mz-preset[aria-pressed="true"]::after,
+.mz-frente[aria-pressed="true"]::after {
+  content: '';
+  --c: var(--papel);
+  --l: 7px;
+}
+
+/* ---- os três cards: dividem a altura que sobra ---- */
+.mz-cards {
+  flex: 1 1 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: minmax(0, 1fr);
+  gap: .75rem;
+}
+@media (min-width: 768px)  { .mz-cards { gap: 1rem; } }
+@media (min-width: 1280px) { .mz-cards { gap: 1.5rem; } }
+
+/* o card NÃO tem overflow hidden: os cantos em L passam 1px para
+   fora da borda e seriam cortados. Quem recorta é o corpo. */
+.mz-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: .75rem;
+  border: 1px solid var(--mz-linha);
+  background: var(--mz-vidro);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+@media (min-width: 768px)  { .mz-card { padding: 1rem; } }
+@media (min-width: 1280px) { .mz-card { padding: 1.25rem; } }
+.mz-card[aria-busy="true"] { cursor: progress; }
+
 .mz-card__cab {
   flex: none;
   display: flex;
   align-items: baseline;
-  gap: .75rem;
-  margin-bottom: .85rem;
-  padding-bottom: .75rem;
+  gap: .7rem;
+  margin-bottom: .6rem;
+  padding-bottom: .5rem;
   border-bottom: 1px dashed var(--mz-linha);
 }
 .mz-idx {
@@ -2091,44 +2137,61 @@ img.onde__mapa {
 .mz-folha__t {
   margin: 0;
   font-family: var(--fonte-titulo);
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   font-weight: 500;
   letter-spacing: -.02em;
   line-height: var(--lh-titulo);
 }
-.mz-card__corpo { flex: 1 1 0; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+@media (min-width: 1025px) { .mz-card__t { font-size: 1.25rem; } }
 
-/* o que rola por dentro: fio fino no tom do painel */
-.mz-ctrl,
-.mz-escopo,
-.mz-tel__rolo,
-.mz-orc__rolo,
+/* o corpo: recorta, e empurra o bloco de baixo (nota, botão) para
+   o rodapé do card */
+.mz-card__corpo,
 .mz-painel {
-  scrollbar-width: thin;
-  scrollbar-color: rgb(var(--off-white-rgb) / .3) transparent;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: .75rem;
 }
+.mz-card__corpo > *,
+.mz-painel > * { flex: none; min-width: 0; }
 
 /* conteúdo — o mesmo nos cards e nas abas da folha */
-.mz-vazio { margin: 0; color: var(--fg-2); font-size: .9375rem; line-height: 1.5; }
+.mz-vazio { margin: 0; color: var(--fg-2); font-size: .8125rem; line-height: 1.5; }
+
 .mz-escopo {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
   display: grid;
   align-content: start;
-  gap: .85rem;
+  gap: .6rem;
   margin: 0;
-  padding: 0 .5rem 0 0;
+  padding: 0;
   list-style: none;
 }
 .mz-escopo__i {
   display: grid;
-  grid-template-columns: 2.6rem minmax(0, 1fr);
-  gap: .5rem;
+  grid-template-columns: 2.4rem minmax(0, 1fr);
+  gap: .4rem;
   align-items: baseline;
 }
-.mz-escopo__n { margin: 0; font-size: var(--fs-texto); line-height: 1.35; color: var(--fg); }
-.mz-escopo__tags { margin: .15rem 0 0; font-size: .875rem; line-height: 1.45; color: var(--fg-2); }
+.mz-escopo__n { margin: 0; font-size: .875rem; line-height: 1.3; color: var(--fg); }
+.mz-escopo__tags {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin: .1rem 0 0;
+  font-size: .75rem;
+  line-height: 1.4;
+  color: var(--fg-2);
+}
+@media (min-width: 768px) {
+  .mz-escopo__n { font-size: .9375rem; }
+  .mz-escopo__tags { font-size: .8125rem; }
+}
 
 .mz-rot {
   margin: 0;
@@ -2144,14 +2207,14 @@ img.onde__mapa {
   justify-content: space-between;
   align-items: baseline;
   gap: 1rem;
-  padding: .65rem 0;
+  padding: .45rem 0;
   border-bottom: 1px solid var(--mz-linha);
 }
 .mz-tel__l:first-child { padding-top: 0; }
 .mz-val {
   margin: 0;
   font-family: var(--fonte-aparato);
-  font-size: .8125rem;
+  font-size: .75rem;
   letter-spacing: .08em;
   text-transform: uppercase;
   text-align: right;
@@ -2163,59 +2226,56 @@ img.onde__mapa {
   grid-auto-flow: column;
   grid-auto-columns: 1fr;
   gap: 4px;
-  margin: 1.1rem 0 .85rem;
+  margin: .8rem 0 .7rem;
 }
-.mz-barras i { height: 6px; background: rgb(var(--off-white-rgb) / .12); }
+.mz-barras i { height: 5px; background: rgb(var(--off-white-rgb) / .12); }
 .mz-barras i.is-on { background: var(--mz-acento); }
-.mz-tel__sub { margin-bottom: .5rem; }
-/* o miolo da telemetria rola inteiro e a nota fica no pé. Rolar só
-   a lista "por frente" não servia: em 1280×720 ela encolhia até
-   sumir e sobrava só o rótulo. */
-.mz-tel__rolo {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  margin-bottom: .75rem;
-  padding-right: .5rem;
-}
+.mz-tel__sub { margin-bottom: .4rem; }
 .mz-porfrente {
   display: grid;
-  gap: .4rem;
+  gap: .3rem;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 .mz-porfrente li {
   display: grid;
-  grid-template-columns: 2.6rem minmax(0, 1fr) auto;
-  gap: .5rem;
+  grid-template-columns: 2.4rem minmax(0, 1fr) auto;
+  gap: .4rem;
   align-items: baseline;
-  font-size: .875rem;
-  line-height: 1.4;
+  font-size: .8125rem;
+  line-height: 1.35;
   color: var(--fg-2);
 }
-.mz-nota { margin: auto 0 0; font-size: .8125rem; line-height: 1.45; color: var(--fg-3); }
+.mz-nota { margin: 0; font-size: .75rem; line-height: 1.4; color: var(--fg-3); }
 
-.mz-orc__txt { margin: 0 0 1rem; font-size: .9375rem; line-height: 1.5; color: var(--fg-2); }
-/* texto + mensagem ocupam o que sobra e rolam juntos: é o que
-   garante o botão do WhatsApp SEMPRE à vista, com uma frente ou
-   com seis, num notebook de 768px de altura ou num monitor alto.
-   (Rolar só a mensagem não bastava: em 1024×768 o texto de cima
-   sozinho já empurrava o botão para fora do card.) */
-.mz-orc__rolo {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  margin-bottom: 1rem;
-  padding-right: .5rem;
+.mz-orc__txt {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  margin: 0 0 .7rem;
+  font-size: .8125rem;
+  line-height: 1.45;
+  color: var(--fg-2);
 }
+/* prévia: a mensagem inteira vai para a área de transferência; aqui
+   ela aparece cortada no número de linhas que a altura permite */
 .mz-msg {
-  margin: .5rem 0 0;
-  padding: .85rem 1rem;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 9;
+  overflow: hidden;
+  margin: .4rem 0 0;
+  /* embaixo, borda transparente em vez de padding: o overflow corta
+     na caixa de PADDING, e um padding de baixo deixava aparecer meia
+     linha do texto que o line-clamp escondeu */
+  padding: .6rem .8rem 0;
+  border-bottom: .6rem solid transparent;
   border-left: 2px solid var(--mz-acento);
   background: rgb(var(--off-white-rgb) / .04);
-  font-size: .875rem;
-  line-height: 1.5;
+  font-size: .8125rem;
+  line-height: 1.45;
   white-space: pre-line;
   overflow-wrap: anywhere;
   color: var(--fg);
@@ -2224,9 +2284,8 @@ img.onde__mapa {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
-  margin-top: auto;
-  padding: .75rem 1.25rem;
+  min-height: 44px;
+  padding: .6rem 1.25rem;
   background: var(--papel);
   color: var(--marsala-fundo);
   font-family: var(--fonte-texto);
@@ -2243,21 +2302,76 @@ img.onde__mapa {
 @media (hover: hover) and (pointer: fine) {
   .mz-cta:not([aria-disabled="true"]):hover { background: var(--mz-acento); }
 }
-.mz-aviso { margin: .75rem 0 0; font-size: .8125rem; line-height: 1.45; color: var(--fg-2); }
+.mz-aviso {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin: .5rem 0 0;
+  font-size: .75rem;
+  line-height: 1.4;
+  color: var(--fg-2);
+}
 .mz-copia:not([hidden]) {
   display: block;
   width: 100%;
-  min-height: 8rem;
-  margin-top: .75rem;
-  padding: .75rem;
+  height: 5.5rem;
+  margin-top: .5rem;
+  padding: .5rem;
   border: 1px solid var(--mz-linha);
   border-radius: 0;
   background: transparent;
   color: var(--fg);
   font: inherit;
-  font-size: .875rem;
-  resize: vertical;
+  font-size: .8125rem;
+  resize: none;
+  -webkit-user-select: text;
+  user-select: text;
 }
+
+/* ---- DENSIDADE DOS CARDS (o JS escolhe 0–3) ---- */
+[data-denso="1"] .mz-escopo { gap: .4rem; }
+[data-denso="1"] .mz-escopo__tags { -webkit-line-clamp: 1; }
+[data-denso="1"] .mz-tel__l { padding: .3rem 0; }
+[data-denso="1"] .mz-porfrente { gap: .15rem; }
+[data-denso="1"] .mz-orc__txt { -webkit-line-clamp: 2; }
+[data-denso="1"] .mz-msg { -webkit-line-clamp: 5; }
+
+[data-denso="2"] .mz-escopo,
+[data-denso="3"] .mz-escopo { gap: .35rem; }
+[data-denso="2"] .mz-escopo__tags,
+[data-denso="3"] .mz-escopo__tags,
+[data-denso="2"] .mz-tel__sub,
+[data-denso="3"] .mz-tel__sub,
+[data-denso="2"] .mz-porfrente,
+[data-denso="3"] .mz-porfrente,
+[data-denso="2"] .mz-orc__txt,
+[data-denso="3"] .mz-orc__txt { display: none; }
+[data-denso="2"] .mz-tel__l,
+[data-denso="3"] .mz-tel__l { padding: .25rem 0; }
+[data-denso="2"] .mz-msg { -webkit-line-clamp: 3; }
+
+[data-denso="3"] .mz-escopo { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: .75rem; }
+[data-denso="3"] .mz-escopo__i { grid-template-columns: 2rem minmax(0, 1fr); }
+[data-denso="3"] .mz-escopo__n { font-size: .8125rem; }
+[data-denso="3"] .mz-barras { margin: .5rem 0 0; }
+[data-denso="3"] .mz-nota,
+[data-denso="3"] .mz-orc__bloco-msg { display: none; }
+
+/* ---- DENSIDADE DO PAINEL (o JS escolhe 0–3) ---- */
+.matriz[data-denso-painel="1"],
+.matriz[data-denso-painel="2"],
+.matriz[data-denso-painel="3"] { gap: .45rem; }
+.matriz[data-denso-painel="1"] .mz-desc { -webkit-line-clamp: 1; }
+.matriz[data-denso-painel="2"] .mz-desc,
+.matriz[data-denso-painel="3"] .mz-desc { display: none; }
+.matriz[data-denso-painel="2"] .mz-titulo,
+.matriz[data-denso-painel="3"] .mz-titulo { font-size: min(clamp(1.35rem, 1.2vw + .9rem, 2.25rem), 5dvh); }
+.matriz[data-denso-painel="2"] .mz-cab,
+.matriz[data-denso-painel="3"] .mz-cab { padding: .35rem 0; }
+.matriz[data-denso-painel="3"] .mz-sis,
+.matriz[data-denso-painel="3"] .mz-resumo { display: none; }
+.matriz[data-denso-painel="3"] .mz-grupo__ap { margin-bottom: .25rem; }
 
 /* ---- telefone: gatilho e folha ---- */
 .mz-movel { display: none; }
@@ -2282,14 +2396,17 @@ img.onde__mapa {
   inset: auto 0 0 0;
   width: 100%;
   max-width: none;
-  /* altura FIXA, não teto: com `max-height` a folha encolhia e
-     crescia conforme a aba (escopo curto, orçamento longo) */
-  height: 85svh;
+  /* altura FIXA, não teto — senão a folha mudava de tamanho a
+     cada aba. E sem rolagem dentro: as abas usam a mesma
+     densidade dos cards. */
+  height: 85vh;
+  height: 85dvh;
   max-height: none;
   margin: 0;
   padding: 0;
   border: 0;
   border-top: 1px solid var(--mz-acento);
+  overflow: hidden;
   color: var(--fg);
   background-color: var(--marsala-fundo);
   background-image:
@@ -2310,8 +2427,6 @@ html.mz-travado { overflow: hidden; }
   padding: .5rem var(--margem) 0;
   touch-action: none;
   cursor: grab;
-  user-select: none;
-  -webkit-user-select: none;
 }
 .mz-folha__barra {
   display: block;
@@ -2361,23 +2476,14 @@ html.mz-travado { overflow: hidden; }
 .mz-aba:focus-visible,
 .mz-painel:focus-visible { outline: 2px solid var(--papel); outline-offset: -2px; }
 .mz-folha__corpo {
-  flex: 1;
+  flex: 1 1 0;
   min-height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: 1.25rem var(--margem) calc(1.5rem + env(safe-area-inset-bottom));
-}
-.mz-painel {
-  flex: 1 1 0;
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  display: flex;
-  flex-direction: column;
+  padding: 1rem var(--margem) calc(1rem + env(safe-area-inset-bottom));
 }
 .mz-painel[hidden] { display: none; }
-.mz-painel .mz-cta { margin-top: 0; }
 
 /* só para leitor de tela */
 .matriz > .mz-leitor {
@@ -2394,55 +2500,50 @@ html.mz-travado { overflow: hidden; }
 @media (min-width: 900px) {
   .mz-ctrl { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
 }
-/* ≥1025 — título e descrição lado a lado: uma linha de altura a
-   menos no cabeçalho, que vira altura para os cards */
-@media (min-width: 1025px) {
-  .mz-cab__txt {
-    display: grid;
-    grid-template-columns: auto minmax(0, 38ch);
-    column-gap: clamp(1.5rem, 4vw, 4rem);
-    align-items: end;
-  }
-  .mz-sis { grid-column: 1 / -1; }
-  .mz-titulo { margin: 0; }
-}
 @media (min-width: 769px) and (max-width: 1024px) {
-  .mz-card { padding-inline: 1rem; }
+  .mz-card { padding-inline: .85rem; }
 }
-/* ≤768 — sem cards (vão para a folha). A tela fixa se divide em
-   três: cabeçalho, controles (que rolam se não couberem) e o
-   gatilho da folha, ancorado no pé. */
+/* ≤768 — sem cards (vão para a folha). A tela se divide em três —
+   cabeçalho, controles e o gatilho da folha — e o
+   `justify-content: space-between` do painel distribui a sobra. */
 @media (max-width: 768px) {
   .mz-cards { display: none; }
-  .mz-ctrl {
-    flex: 1 1 0;
-    min-height: 0;
-    overflow-y: auto;
-    align-content: start;
-  }
-  .mz-movel {
-    flex: none;
-    display: grid;
-    gap: .6rem;
-    padding-top: .75rem;
-    border-top: 1px solid var(--mz-linha);
-  }
-  .mz-radar { width: 64px; }
+  .mz-cab { flex-direction: column; align-items: stretch; gap: .4rem; }
+  .mz-desc { max-width: none; }
   .mz-sis__sec { display: none; }
-  .mz-desc { font-size: .9375rem; line-height: 1.45; }
-  .mz-grupo__ap { margin-bottom: .5rem; }
-  /* três protocolos numa fila só, código em cima do nome */
-  .mz-presets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .4rem; }
+  .mz-movel { flex: none; display: grid; gap: .6rem; }
+  .mz-radar { top: 42%; right: -30vmin; width: 110vmin; opacity: .35; }
+  .mz-presets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .mz-preset {
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    gap: .15rem;
-    padding: .45rem .6rem;
-    font-size: .875rem;
+    gap: .1rem;
   }
-  .mz-frentes { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .4rem; }
-  .mz-frente { gap: .5rem; padding: .45rem .6rem; font-size: .875rem; }
+  .mz-frentes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mz-preset,
+  .mz-frente { min-height: 44px; padding: .4rem .6rem; font-size: .8125rem; }
+}
+/* ≥1920 e alto — monitor grande / 4K. O painel é uma tela só, e em
+   2560×1440 os corpos de 13–15px deixavam os cards quase vazios.
+   A densidade continua valendo por cima disto se algo não couber. */
+@media (min-width: 1920px) and (min-height: 1000px) {
+  .mz-card { padding: 1.75rem; }
+  .mz-card__t { font-size: 1.625rem; }
+  .mz-escopo { gap: .9rem; }
+  .mz-escopo__n { font-size: 1.125rem; }
+  .mz-escopo__tags,
+  .mz-porfrente li,
+  .mz-orc__txt,
+  .mz-msg,
+  .mz-desc { font-size: 1rem; }
+  .mz-val { font-size: .875rem; }
+  .mz-tel__l { padding: .7rem 0; }
+  .mz-preset,
+  .mz-frente { padding: .5rem .8rem; font-size: .9375rem; }
+  .mz-cta { min-height: 52px; font-size: 1.0625rem; }
+  .mz-aviso,
+  .mz-nota { font-size: .875rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   .mz-radar__varre { animation: none; }
