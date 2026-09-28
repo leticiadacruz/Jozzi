@@ -4132,14 +4132,11 @@ html.js--sem-motor .carregando { display: none; }
    manter, dois lugares que a usam. */
 .indice__t { margin: 0 0 clamp(1rem, 3vh, 1.6rem); max-width: 14ch; }
 
-.indice__bloco { margin-top: clamp(3rem, 9vh, 5rem); }
-
-.indice__ap {
-  margin: 0 0 clamp(1.2rem, 3.5vh, 1.8rem);
-  padding-bottom: .8rem;
-  border-bottom: 1px solid var(--fio);
-  color: var(--fg-3);
-}
+/* .indice__bloco e .indice__ap saíram (28/09): eram o cabeçalho e o
+   respiro de cada uma das duas listas de projetos.html ("Clientes"
+   e "Styling"). A Jozzi pediu para as duas se fundirem numa lista
+   só, na mesma ordem da grade de styling.html — sem a separação,
+   não sobra nenhum lugar que use as duas classes. */
 
 
 

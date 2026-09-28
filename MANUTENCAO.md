@@ -2074,6 +2074,35 @@ zero estouro horizontal, zero erro de JavaScript. Nenhum `.avif` referenciado
 ficou quebrado; nenhum arquivo de imagem ficou órfão em
 `assets/img/styling/`.
 
+## `projetos.html` fundida com a ordem da grade (28/09, parte 2)
+
+A separação "Clientes" / "Styling" que o item anterior preservou durou pouco:
+a Jozzi voltou e pediu para as duas listas se fundirem numa só, na MESMA
+ordem 01–27 que rege `styling.html`. Feito:
+- Os dois `<div class="indice__bloco">` (com seus `<h3>` de contagem) viraram
+  UMA `<ul class="styling-grid">`, sem cabeçalho de grupo — o mesmo padrão
+  simples que `styling.html` já usava.
+- **Teacher Paula saiu daqui também.** "Nenhum card que não estiver nessa
+  contagem" foi a instrução — antes eu tinha mantido essa página como o
+  "índice completo" e deixado a Teacher Paula só fora da vitrine; agora as
+  duas páginas mostram exatamente os mesmos 27, na mesma ordem. A página
+  `styling/teacher-paula.html` continua existindo, só não tem link em
+  lugar nenhum do site agora.
+- A frase da introdução que explicava a separação ("Os projetos de styling
+  entram aqui pelo mesmo motivo dos outros: são clientes") saiu — não fazia
+  mais sentido sem a separação para explicar. A frase que sobrou já existia,
+  não é texto novo.
+- **`.indice__bloco` e `.indice__ap` saíram do CSS.** Eram usadas só pelos
+  dois cabeçalhos de grupo que não existem mais; sem elas, zero seletor órfão.
+  Isso mexeu no `style.css`, então o cache-bust subiu (`?v=133`) nas 31
+  páginas.
+
+**Testado:** as duas páginas (`styling.html` e `projetos.html`) batem — mesmos
+27 slugs, mesma ordem, mesmas capas. 390 e 1440px, zero imagem quebrada, zero
+estouro, zero erro. Rodei a auditoria geral do site três vezes seguidas (uma
+delas relatou 1 falha isolada; as outras duas e uma nova rodada de
+confirmação vieram limpas — timing do Chrome headless, não coisa do código).
+
 ## `projetos.html` sincronizada com a grade (28/09)
 
 Ficou pendente da rodada anterior: essa página é um ÍNDICE separado de
