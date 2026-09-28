@@ -2022,6 +2022,86 @@ real para a área de transferência + abertura do WhatsApp, folha do celular
 abre e fecha com Esc, movimento reduzido pula o embaralhador. Auditoria geral
 do site (9 páginas × 4 larguras): 0 problemas.
 
+## Segunda leva de capas + reordenação da grade (28/09)
+
+A Jozzi mandou 21 fotos (zip "capas fotos") com uma ordem explícita de 27
+projetos, numerada 01–27. Apliquei as duas coisas: a grade de `styling.html`
+foi **refeita do zero nessa ordem exata**, e cada foto virou a `01.avif`
+(capa) do projeto correspondente — mesmo tratamento das capas anteriores:
+recorte central 2:3, 933×1400, AVIF com qualidade adaptativa (80 → 32, teto de
+~105KB; `sis2-alfaiataria` fechou em 109KB mesmo no chão da escada — aceitei,
+a diferença é imperceptível numa capa única).
+
+⚠ **Nomes de arquivo vindos de Mac trazem acento em NFD** (`á` como `a` +
+combinante U+0301), não NFC. Um dicionário Python escrito à mão (`'Effeá'`)
+não bate com `os.path.basename()` se o disco devolver NFD — comparar só depois
+de `unicodedata.normalize('NFC', …)` dos dois lados. Foi exatamente o que
+aconteceu aqui: a foto do Effeá "sumiu" na primeira passada só por causa disso.
+
+**A ordem trouxe três novidades que não existiam na grade:**
+- **Widepine Cafés** (02) e **Shop Carol** (15) — as páginas já existiam em
+  `projetos/` (casos de cliente antigos, de antes deste projeto de fotos) mas
+  nunca tiveram card na grade de styling. Entraram sem foto (nenhuma das duas
+  tinha capa no zip nem tem `<img>` na própria página — são `fig__campo`
+  vazios com "Foto 1", "Foto 2", "Foto 3" desde sempre).
+- **A.TEC** (07) — projeto novo, sem página, sem foto, sem texto. Criei
+  `styling/a-tec.html` no molde do `teacher-paula.html` (a página mais
+  recente que ainda tinha tudo marcado como pendente), com etiquetas e corpo
+  **substituídos por "a fornecer"** — não herdei a copy da Teacher Paula por
+  engano; o script confere que nenhum fragmento dela sobrou no arquivo novo.
+
+**Teacher Paula saiu da grade.** A lista de 27 da Jozzi não inclui esse
+projeto; a pedido dela, o card saiu de `styling.html`. **A página
+`styling/teacher-paula.html` continua existindo** — só não tem mais link na
+grade. Reversível: basta reinserir o `<li>`.
+
+**Ficaram sem foto nova** (não vieram no zip): Widepine, Shop Carol e A.TEC
+(nunca tiveram), e Stella Maranhão (26) — que mantém a capa PROVISÓRIA da
+rodada de 25/09 (emprestada da Solstice Magazine), sem imagem nova.
+**Etérea Cookies** (05) e **Collab** (09) também não vieram no zip, mas já
+tinham capa real de antes (do lote grande do Drive) — mantidas como estavam.
+
+**`projetos.html` ficou desatualizada.** É uma página separada, um índice em
+texto (não uma grade de fotos) com "Clientes — 5" e "Styling — 19" — não foi
+tocada nesta rodada porque o pedido era especificamente sobre capas/grade, e
+essa página não tem imagem nenhuma. Ela já estava desatualizada antes disto
+(não lista Maysa, New Again, Old Money) e agora também não lista A.TEC nem
+reflete a ordem nova. Fica pendente até a Jozzi pedir para sincronizar.
+
+**Testado (28/09):** styling.html e as 3 páginas novas/tocadas (a-tec,
+widepine-cafes, shop-carol) em 390 e 1440px — zero imagem quebrada, zero 404,
+zero estouro horizontal, zero erro de JavaScript. Nenhum `.avif` referenciado
+ficou quebrado; nenhum arquivo de imagem ficou órfão em
+`assets/img/styling/`.
+
+## `projetos.html` sincronizada com a grade (28/09)
+
+Ficou pendente da rodada anterior: essa página é um ÍNDICE separado de
+`styling.html` — "Clientes" e "Styling" em duas listas, cada uma com sua
+própria contagem no `<h3>`. Não usa a ordem numerada 01–27 da Jozzi (essa é
+só da grade); usa a lógica que a própria página já tinha:
+- **Clientes** — ordem de criação (não alfabética), sem mudar: Collab, Claudia
+  Choma, Descomplica Perícias, Widepine Cafés, Shop Carol. Só as fotos e a
+  contagem foram atualizadas.
+- **Styling** — alfabética pelo título exibido. Entraram nas posições certas:
+  **A.TEC** (entre "Amanda II" e "Bazaar Fashion" — tratei o ponto como se não
+  existisse, senão ele ordena antes de tudo por ser ASCII baixo), **Maysa**,
+  **New Again** e **Old Money** (entre "Luciana Burgos" e "Sis2 Alfaiataria").
+  19 → 23 itens.
+
+**Teacher Paula continua aqui**, mesmo tendo saído da grade de
+`styling.html`. Esta página se chama "Todos os projetos" — ela é o índice
+completo, a grade é a vitrine curada. Um projeto pode sair da vitrine sem
+sair do índice.
+
+**A foto provisória da Stella Maranhão (da rodada de 25/09) NÃO foi trazida
+para cá.** Essa página nunca teve o dispositivo de capa emprestada — só
+`styling.html` tem, porque foi pedido lá especificamente. Aqui ela mantém o
+`Foto 1:1` normal, igual sempre teve.
+
+**Testado:** 390 e 1440px, 28 cards, 23 imagens carregando sem 404 nem
+quebra, sem estouro horizontal, zero erro de JavaScript.
+
 ## O que NÃO fazer
 
 - **Não subsetar a Gracio.** É a fonte desenhada da marca (`assets/fonts/
