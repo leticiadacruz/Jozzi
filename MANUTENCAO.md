@@ -1860,6 +1860,113 @@ arrastar, Esc, foco devolvido ao botão), movimento reduzido (sem embaralhar,
 radar parado), sem JavaScript (painel escondido, link simples visível), e a
 auditoria de regressão das 9 páginas × 4 larguras: 0 problemas.
 
+## A matriz em UMA TELA, sem rolagem (12/09)
+
+Refatoração pedida pela Jozzi: o painel passa a ocupar **exatamente uma tela**
+(`100dvh` + `overflow: hidden`) e **nada dentro dele rola** — nem os cards.
+Antes havia rolagem interna em três caixas; agora não há nenhuma.
+
+**O que faz caber é DENSIDADE, não rolagem.** O `matriz.js` (módulo 06) mede e
+escolhe o maior nível de detalhe que cabe na altura disponível:
+- `data-denso-painel` no painel (0–3): aperta cabeçalho e controles. Sobe de
+  nível se o painel transbordar OU se os cards ficariam com menos de 220px.
+- `data-denso` em cada card e em cada aba da folha (0–3): 0 mostra tudo; 1 corta
+  etiquetas e prévia em menos linhas; 2 esconde detalhe (etiquetas, lista por
+  frente, texto do orçamento); 3 é o mínimo (nomes em duas colunas, só o botão).
+
+⚠ **Para a medição funcionar**, os filhos do corpo do card são `flex: none` — não
+encolhem, e o excesso aparece no `scrollHeight`. Trocar por `min-height: 0` neles
+quebra o ajuste em silêncio: tudo "cabe" e o conteúdo some recortado.
+
+O ajuste roda depois de cada mudança, no `ResizeObserver` do painel (que pega a
+barra de endereço do celular mudando a `dvh`) e quando as fontes chegam. Nunca
+dentro de quadro de animação — ele lê layout.
+
+**Outras decisões desta rodada:**
+- `dvh` (e não `svh`): foi o pedido explícito. Custo: no celular a altura
+  acompanha a barra de endereço aparecendo e sumindo.
+- O radar virou FUNDO (grande, atrás dos cards, dentro de `.mz-fundo`, que
+  recorta) — no cabeçalho ele comia altura. O recorte também mantém o radar fora
+  do `scrollHeight` que a densidade mede.
+- Cantos em L também nos botões ligados (perna de 7px em off-white).
+- Chips compactos (32–37px) NO MOUSE; em `pointer: coarse` voltam a 44px. A
+  auditoria do site cobra 44px nas larguras de telefone, e lá eles têm 44.
+- A prévia da mensagem perde a linha em branco (a mensagem copiada não): cortada
+  em 3 linhas, a linha vazia virava um "…" solto.
+- `.mz-msg` usa `border-bottom` transparente no lugar de `padding-bottom`: o
+  `overflow` corta na caixa de padding, e o padding deixava aparecer meia linha
+  do texto que o `line-clamp` escondia.
+- O pedido veio em Tailwind (`bg-neutral-950`, `p-6`, `line-clamp-2`). As
+  medidas viraram CSS do site; o fundo continua Marsala escuro (paleta de duas
+  cores), e as laterais continuam na margem do site — no desktop a barra de
+  progresso mora dentro dela e passaria por cima do conteúdo.
+
+**Testado (25/09):** 2560×1440, 1920×1080, 1440×900, 1280×720, 1280×600,
+1024×768, 900×1000, 390×844, 390×664, 360×640 e 320×568, em quatro estados cada:
+altura igual à tela, nenhuma caixa rolando, nada transbordando, botão sempre no
+pé do card e a folha do celular cabendo nas três abas.
+
+## Troca das fotos de styling (25/09)
+
+Origem: uma pasta-mãe pública no Drive da Jozzi ("00 - PASTAS OK") com 23
+pastas. **Regra da Jozzi: o que vai para o site é a subpasta `Selecionadas`
+(ou `SELEÇÃO` / `01- SELEÇÃO`) mais a `Capa`.** Os arquivos soltos na raiz de
+cada pasta são o take inteiro e NÃO entram — uma das pastas tem inclusive uma
+subpasta `IGNORAR` com 82 fotos.
+
+⚠ O filtro precisa aceitar as três grafias. A primeira versão procurava só
+"Selecionadas"/"SELEÇÃO" e a Carol Andrade ("01- SELEÇÃO") caiu na raiz: foram
+64 fotos erradas para a página. Hoje o casamento é por *substring* sem acento
+(`sele`, `capa`).
+
+**Como ficou:** 20 pastas viraram 20 projetos, 257 fotos. Em cada projeto,
+`01.avif` é a Capa (é ela que a grade usa como card) e as seguintes são as
+Selecionadas, na ordem do Drive.
+
+**Processamento:** baixadas pelo endpoint de thumbnail do Drive em 2200px,
+cortadas no centro para 2:3 (o mesmo recorte que `.caso__foto img` já fazia no
+CSS), redimensionadas para 933×1400 e codificadas em AVIF com qualidade
+adaptativa (80 → 56, parando quando a foto cabe em 105KB). Média final de 84KB;
+antes, com qualidade fixa, a média dava 139KB e a maior batia 487KB.
+
+**Três projetos novos** (Maysa, New Again, Old Money) ganharam página: as pastas
+existiam e não havia caso no site. Etiquetas e texto ficaram MARCADOS
+("etiquetas a fornecer" / "Texto a fornecer") — não há copy da Jozzi para eles
+e nada foi inventado.
+
+⚠ **A lupa mora na página, não no main.js.** As 15 páginas que ainda não tinham
+foto também não tinham o `<dialog class="lupa">` — ao ganhar fotos, os botões de
+ampliar existiam e não abriam nada (sem erro no console: o `ligarLupa` só
+desiste quando não acha o diálogo). O bloco foi copiado para todas. **Página de
+caso com foto tem que ter o `<dialog>`** — se criar uma nova a partir de uma
+página sem foto, confira isso.
+
+**A grade virou a lista da Jozzi (25/09).** A pedido, a grade de `styling.html`
+passou a ter os 24 projetos da lista que ela mandou, **na ordem dela** — inclusive
+as três pastas de cliente (Claudia Choma, Collab, Descomplica Perícias), cujos
+cards apontam para `projetos/*.html`, não para `styling/`. As fotos delas ficam
+em `assets/img/projetos/<slug>/` (mesma regra: `01.avif` é a Capa). Teacher Paula
+NÃO estava na lista; o card continua no fim da grade até a Jozzi confirmar se sai.
+
+⚠ Ao regerar cards da grade, preservar o `<p class="styling-grid__projeto ap">` —
+é o rótulo acima do título (Stella Maranhão "Cartas de Tarot", Amanda Woman
+"Woman"). Eu apaguei os dois numa regeneração e tive de restaurar do git.
+
+**Pendências desta rodada:**
+- `Bazaar Fashion` e `Effeá` não têm subpasta de seleção no Drive, só `CAPA`.
+  Usei os arquivos da raiz (12 e 15 fotos). Se a Jozzi montar a `Selecionadas`
+  dessas duas, é só rodar de novo.
+- `Stella Maranhão` e `Teacher Paula` não têm pasta no Drive. A pedido da Jozzi
+  (25/09), os dois cards da grade ganharam **capa PROVISÓRIA** — foto de outro
+  projeto, marcada com `data-provisorio`, só para ver o layout preenchido. **Não
+  pode ir ao ar assim.** As páginas de caso das duas seguem com o campo marcado
+  ("Fotos a fornecer"), sem foto provisória.
+  Para arrancar as duas quando a foto real chegar:
+  `sed -i '' '/PROVISÓRIA/,+4d' styling.html` (confira o trecho antes) — e a
+  regra `.styling-grid__foto:has(.prov) > .ap` do bloco 11z do CSS sai junto.
+- As três pastas de cliente do Drive (Claudia Choma Nutri, Collab, Descomplica
+  Perícias) ficaram de fora a pedido: são páginas de `projetos/`, não styling.
+
 ## O que NÃO fazer
 
 - **Não subsetar a Gracio.** É a fonte desenhada da marca (`assets/fonts/

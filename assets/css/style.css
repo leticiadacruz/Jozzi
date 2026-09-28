@@ -4148,7 +4148,10 @@ html.js--sem-motor .carregando { display: none; }
 }
 
 .fig__campo:has(.prov) > .ap,
-.serv__plate:has(.prov) > .ap { display: none; }
+.serv__plate:has(.prov) > .ap,
+/* os dois cards da grade de styling que ainda não têm foto real
+   (Stella Maranhão e Teacher Paula) — 25/09 */
+.styling-grid__foto:has(.prov) > .ap { display: none; }
 
 /* (o véu do numeral saiu junto com o numeral — a chapa agora é só
    a foto, sem nada escrito por cima que precise de piso) */
