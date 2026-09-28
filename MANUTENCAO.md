@@ -1967,6 +1967,61 @@ NÃO estava na lista; o card continua no fim da grade até a Jozzi confirmar se 
 - As três pastas de cliente do Drive (Claudia Choma Nutri, Collab, Descomplica
   Perícias) ficaram de fora a pedido: são páginas de `projetos/`, não styling.
 
+## Redesign: menos "painel tático", mais o resto do site (28/09)
+
+A primeira versão da matriz tinha estética própria — grade de fundo, radar
+girando, cartões em vidro fosco com cantos em L, uma luz piscando ao lado do
+título, rótulos como "Protocolo" e "Sistema ativo". A Jozzi pediu para tirar o
+clima de ficção científica e aproximar do resto do site. **Isto foi só
+redesign visual — nenhum comportamento mudou** (zero rolagem, densidade,
+embaralhador de 300ms, folha do celular, cópia + WhatsApp, tudo como estava).
+
+**O que saiu, e por quê:**
+- **O radar** (`.mz-fundo`, `<svg class="mz-radar">`, a varredura girando, os
+  pontos por frente) — decoração pura, sem informação que não estivesse já nos
+  cards.
+- **A onda no clique** (`.mz-ondas` / `.mz-onda`, o `pointerdown` em
+  `matriz.js`) — mesmo raciocínio.
+- **A grade de fundo e o halo** atrás do painel e da folha do celular — o
+  painel voltou a ser tinta cheia, exatamente como as outras seções invertidas
+  (`.inv`) do site.
+- **Os cantos em L** nos três cards e nos chips ativos — os cards viraram
+  campo delimitado por fio, sem fundo próprio, a MESMA regra que `.prin`
+  (Nossa Visão) já seguia. Zero sombra, zero raio de canto, zero blur — as
+  mesmas restrições de sempre, só que agora aplicadas aqui também.
+- **A luz piscando + "Matriz tática · Serviços · Sistema ativo"** — a linha
+  inteira saiu; o painel abre direto no título.
+- **O vidro fosco dos cards** (`backdrop-filter: blur`) — sem a grade atrás
+  para desfocar, não tinha mais função.
+
+**O que mudou de nome (só o texto visível, nada de estrutura):**
+- "Protocolo" → **"Combo"** (rótulo do grupo de presets e da linha
+  correspondente dentro do card de Telemetria) — reaproveita a palavra que o
+  resto do componente já usava ("Monte o seu combo", "Combo: Launch").
+- "Ver detalhes **táticos** do combo" → "Ver detalhes do combo" (botão do
+  celular).
+- Os códigos dos chips — `S01`…`S06` nos serviços, `P1`/`P2`/`P3` nos presets
+  — perderam a letra e viraram só o numeral (`01`…`06`, `01`/`02`/`03`), na
+  cor quieta `--fg-3`, o mesmo tratamento do índice dos cards (`.mz-idx`) e de
+  `.prin__n` em Nossa Visão. Achar por letra parecia designação de sistema;
+  numeral simples é só um índice, igual ao resto do site.
+
+**Token reaproveitado:** `--mz-linha`, uma cor de fio própria da matriz
+(`rgb(off-white / .14)`), foi embora — toda borda do componente usa
+`var(--fio)` agora, o MESMO fio que `.inv` e `.prin` já usam (`rgb(off-white /
+.22)`). Um card da matriz e um card de Nossa Visão têm, byte a byte, a mesma
+borda.
+
+**Testado (28/09):** a bateria de telas do bloco anterior (2560×1440 a
+320×568, quatro seleções cada) continua em zero: mesma altura da tela, nada
+rolando, nada transbordando, botão sempre no pé do card. Testado também sem
+nenhum resíduo visual (busquei `.mz-radar`, `.mz-fundo`, `.mz-ondas`,
+`.mz-onda`, `.mz-canto`, `.mz-sis` no DOM — nenhum), sem `background-image` nem
+`backdrop-filter` no painel, embaralhador ainda troca o texto em 300ms, cópia
+real para a área de transferência + abertura do WhatsApp, folha do celular
+abre e fecha com Esc, movimento reduzido pula o embaralhador. Auditoria geral
+do site (9 páginas × 4 larguras): 0 problemas.
+
 ## O que NÃO fazer
 
 - **Não subsetar a Gracio.** É a fonte desenhada da marca (`assets/fonts/

@@ -17,9 +17,15 @@
    cola.
 
    UMA TELA, ZERO ROLAGEM (12/09): o painel tem 100dvh e nada nele
-   rola. Quem faz caber é o módulo 06 (densidade): mede e escolhe o
+   rola. Quem faz caber é o módulo 05 (densidade): mede e escolhe o
    nível de detalhe que cabe na altura disponível. Ver a seção 10c2
    do CSS.
+
+   REDESIGN (28/09): a Jozzi pediu menos "painel tático" e mais
+   alinhado ao resto do site. Saíram os pontos do radar
+   (desenharPontos) e a onda no clique — nenhum dos dois tinha
+   função além de decoração. O texto visível trocou "Protocolo" por
+   "Combo" e "detalhes táticos" por "detalhes", em index.html.
    ============================================================ */
 (function () {
   'use strict';
@@ -39,7 +45,7 @@
     var rot = card.querySelector('.serv__rotulo');
     return {
       slug: bt && bt.id ? bt.id.replace('serv-bt-', '') : 'frente-' + (i + 1),
-      cod:  'S' + dois(i + 1),
+      cod:  dois(i + 1),
       nome: rot ? rot.textContent.trim() : '',
       tags: [].slice.call(card.querySelectorAll('.serv__tags li')).map(function (li) {
         return li.textContent.trim();
@@ -56,11 +62,11 @@
      cada um é um ponto de partida, e a pessoa ajusta frente a
      frente. Uma frente que sumir da seção some do protocolo junto. */
   var PRESETS = [
-    { id: 'launch',            cod: 'P1', nome: 'Launch',
+    { id: 'launch',            cod: '01', nome: 'Launch',
       frentes: ['branding', 'social-media', 'styling', 'captacao-de-conteudo'] },
-    { id: 'content-scaling',   cod: 'P2', nome: 'Content Scaling',
+    { id: 'content-scaling',   cod: '02', nome: 'Content Scaling',
       frentes: ['social-media', 'captacao-de-conteudo', 'trafego-pago'] },
-    { id: 'full-stack-growth', cod: 'P3', nome: 'Full Stack Growth',
+    { id: 'full-stack-growth', cod: '03', nome: 'Full Stack Growth',
       frentes: servicos.map(function (s) { return s.slug; }) }
   ].map(function (p) {
     p.frentes = p.frentes.filter(existe);
@@ -160,7 +166,7 @@
   var total = servicos.length;
 
   function htmlEscopo(sel) {
-    if (!sel.length) return '<p class="mz-vazio">Nenhuma frente selecionada. Escolha um protocolo ou ligue as frentes acima.</p>';
+    if (!sel.length) return '<p class="mz-vazio">Nenhuma frente selecionada. Escolha um combo ou ligue as frentes acima.</p>';
     return '<ol class="mz-escopo" role="list">' + sel.map(function (s) {
       return '<li class="mz-escopo__i">' +
                '<span class="mz-cod" data-scr>' + s.cod + '</span>' +
@@ -181,7 +187,7 @@
     return '<div class="mz-bloco"><dl class="mz-tel">' +
       linha('Frentes ativas', dois(sel.length) + '/' + dois(total)) +
       linha('Entregáveis mapeados', dois(entregaveis)) +
-      linha('Protocolo', esc(protocolo ? protocolo.cod + ' · ' + protocolo.nome : 'Personalizado')) +
+      linha('Combo', esc(protocolo ? protocolo.cod + ' · ' + protocolo.nome : 'Personalizado')) +
       linha('Status', sel.length ? 'Combo pronto' : 'Aguardando seleção') +
       '</dl>' +
       '<div class="mz-barras" aria-hidden="true">' + barras + '</div>' +
@@ -218,7 +224,6 @@
   var stProtocolo = raiz.querySelector('[data-mz-protocolo]');
   var stContagem = raiz.querySelector('[data-mz-contagem]');
   var vivo = raiz.querySelector('[data-mz-vivo]');
-  var pontos = raiz.querySelector('[data-mz-pontos]');
   var avisoVivo = null;
 
   function atualizar(animar) {
@@ -234,8 +239,6 @@
     stContagem.textContent = '· ' + dois(sel.length) + '/' + dois(total);
     resumo.innerHTML = '<span data-scr>' + dois(sel.length) + '/' + dois(total) + ' frentes · ' +
                        dois(entregaveis) + ' entregáveis</span>';
-
-    desenharPontos();
 
     /* a densidade é escolhida com o texto FINAL no lugar — antes do
        embaralhador começar a trocar caracteres */
@@ -258,22 +261,7 @@
     }
   }
 
-  /* um ponto por frente ativa, em ângulos fixos: a posição de cada
-     frente no radar não muda, só acende e apaga */
-  function desenharPontos() {
-    var h = '';
-    servicos.forEach(function (s, i) {
-      if (!ativos[s.slug]) return;
-      var ang = (i / total) * Math.PI * 2 - Math.PI / 2;
-      var r = i % 2 ? 40 : 26;
-      h += '<circle class="mz-radar__ponto" cx="' + (60 + Math.cos(ang) * r).toFixed(1) +
-           '" cy="' + (60 + Math.sin(ang) * r).toFixed(1) + '" r="1.4"/>';
-    });
-    pontos.innerHTML = h;
-  }
-
-
-  /* 06. DENSIDADE — FAZER CABER SEM ROLAR --------------------
+  /* 05. DENSIDADE — FAZER CABER SEM ROLAR --------------------
      Uma tela, e nada rola dentro dela. Para cada caixa, tenta o
      nível 0 (tudo) e vai subindo até o conteúdo caber:
        · o painel sobe de nível se transbordar, ou se os cards
@@ -312,7 +300,7 @@
   }
 
 
-  /* 07. O EMBARALHADOR — 300ms ------------------------------
+  /* 06. O EMBARALHADOR — 300ms ------------------------------
      Cada caractere gira entre hexadecimais e símbolos e trava da
      esquerda para a direita. Espaço e quebra de linha nunca giram:
      é o que mantém a forma do texto legível enquanto ele assenta.
@@ -351,7 +339,7 @@
   }
 
 
-  /* 08. COPIAR E ABRIR --------------------------------------
+  /* 07. COPIAR E ABRIR --------------------------------------
      O clipboard é chamado DENTRO do clique e o link segue o seu
      caminho normal (sem preventDefault, sem window.open): é o que
      evita o bloqueador de pop-up. Se a cópia falhar, a mensagem
@@ -391,36 +379,9 @@
   });
 
 
-  /* 09. ONDA NO CLIQUE --------------------------------------
-     Nasce na coordenada exata do ponteiro. No máximo quatro vivas
-     de uma vez — clique em rajada não empilha dezenas de nós. */
-  var ondas = raiz.querySelector('[data-mz-ondas]');
   var folha = raiz.querySelector('[data-mz-folha]');
 
-  raiz.addEventListener('pointerdown', function (e) {
-    if (menosMovimento || folha.contains(e.target)) return;
-    var r = raiz.getBoundingClientRect();
-    var o = document.createElement('span');
-    o.className = 'mz-onda';
-    o.style.left = (e.clientX - r.left) + 'px';
-    o.style.top  = (e.clientY - r.top) + 'px';
-    o.addEventListener('animationend', function () { o.remove(); });
-    ondas.appendChild(o);
-    while (ondas.children.length > 4) ondas.removeChild(ondas.firstChild);
-  });
-
-
-  /* 10. RADAR SÓ GIRA NA TELA ------------------------------- */
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver(function (en) {
-      raiz.classList.toggle('is-visivel', en[0].isIntersecting);
-    }).observe(raiz);
-  } else {
-    raiz.classList.add('is-visivel');
-  }
-
-
-  /* 11. A FOLHA DO TELEFONE ---------------------------------
+  /* 08. A FOLHA DO TELEFONE ---------------------------------
      <dialog> nativo, como a lupa do styling: foco preso, Esc e
      retorno de foco vêm do navegador. Fecha por Esc, pelo botão,
      tocando fora ou puxando a pega para baixo. */
@@ -514,7 +475,7 @@
   });
 
 
-  /* 12. REMEDIR QUANDO A TELA MUDA ---------------------------
+  /* 09. REMEDIR QUANDO A TELA MUDA ---------------------------
      O ResizeObserver pega também a barra de endereço do celular
      aparecendo e sumindo (a altura é dvh). Mudar a densidade não
      muda o tamanho do painel, então não há laço. */
@@ -533,7 +494,7 @@
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajustar);
 
 
-  /* 13. LIGAR ----------------------------------------------- */
+  /* 10. LIGAR ----------------------------------------------- */
   var semJs = document.querySelector('[data-mz-semjs]');
   if (semJs) semJs.hidden = true;
   raiz.hidden = false;

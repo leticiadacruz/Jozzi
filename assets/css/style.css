@@ -1794,23 +1794,36 @@ img.onde__mapa {
 /* 10c2. SEÇÃO 03 — JOZZITACTICALMATRIX ----------------------
    O painel de combo (11/09). JS em assets/js/matriz.js.
 
-   É o único lugar do site com estética de "painel": grade tática,
-   radar, vidro, cantos em L. Isso foi pedido — e fica CONTIDO
-   aqui. Sem sombra; o vidro é blur + alfa, e os cantos são fio.
+   ⚠ REDESIGN (28/09): a primeira versão tinha estética própria de
+   "painel tático" — grade de fundo, radar girando, cartões em
+   vidro fosco, cantos em L, uma luz piscando, rótulos como
+   "Protocolo" e "Sistema ativo". A Jozzi pediu para tirar o clima
+   de ficção científica e aproximar do resto do site. O que saiu:
+   o radar (SVG + `.mz-fundo`), a onda no clique (`.mz-ondas` /
+   `.mz-onda`), o padrão de grade e o halo no fundo do painel, os
+   cantos em L dos cards e dos botões ativos, a linha de status
+   piscando, e o vocabulário "tático" no texto visível.
 
-   Paleta: as duas cores da marca. O pedido de 12/09 falava em
-   `bg-neutral-950` (quase preto); o fundo continua sendo o
-   Marsala escuro, porque a paleta do site é de duas cores. O
-   acento é o Marsala clareado com off-white (55%): o Marsala puro
-   sobre o fundo escuro dá 2,15:1, a mistura dá 4,85:1.
+   O que ficou é o MESMO material do resto do site aplicado aqui: um
+   fundo de tinta cheia — igual às seções invertidas (`.inv`) — e
+   cartões que são só um fio (`var(--fio)`) sobre esse fundo, a
+   mesma regra que `.prin` (Nossa Visão) já segue: "campo delimitado
+   por fio, sem fundo próprio". Zero sombra, zero raio de canto, zero
+   blur — as mesmas restrições que valem para `.serv__card`.
 
-   Tipografia: Gracio nos títulos, Nexa em descrição e botão,
-   Plex Mono SÓ em rótulo de telemetria, código, índice e status.
+   Paleta: as duas cores da marca. O acento é o Marsala clareado com
+   off-white (55%): o Marsala puro sobre o fundo escuro dá 2,15:1, a
+   mistura dá 4,85:1 — continua sendo o mesmo matiz, só legível.
 
-   ⚠ UMA TELA, ZERO ROLAGEM (12/09). O painel tem exatamente
-   `100dvh` e `overflow: hidden`, e NADA dentro dele rola — nem os
-   cards. O que garante que o conteúdo caiba não é rolagem, é
-   DENSIDADE: o matriz.js mede e escolhe o nível (0 a 3) que cabe.
+   Tipografia: Gracio nos títulos, Nexa em descrição e botão, Plex
+   Mono para os números e rótulos curtos — o mesmo `.ap` usado no
+   resto do site para índice de seção, etiqueta e contador.
+
+   ⚠ UMA TELA, ZERO ROLAGEM (12/09) — isto é comportamento, não
+   estética, e continua valendo. O painel tem exatamente `100dvh` e
+   `overflow: hidden`, e NADA dentro dele rola — nem os cards. O que
+   garante que o conteúdo caiba não é rolagem, é DENSIDADE: o
+   matriz.js mede e escolhe o nível (0 a 3) que cabe.
      · `data-denso-painel` no painel: aperta cabeçalho e controles
        quando os cards ficariam baixos demais;
      · `data-denso` em cada card (e em cada aba da folha): 0 mostra
@@ -1832,8 +1845,6 @@ img.onde__mapa {
 
 .matriz {
   --mz-acento: color-mix(in srgb, var(--marsala) 55%, var(--off-white));
-  --mz-vidro:  rgb(var(--marsala-fundo-rgb) / .55);
-  --mz-linha:  rgb(var(--off-white-rgb) / .14);
   --fg:    var(--papel);
   --fg-2:  rgb(var(--off-white-rgb) / .78);
   --fg-3:  rgb(var(--off-white-rgb) / .66);
@@ -1863,11 +1874,6 @@ img.onde__mapa {
   scroll-margin-top: 0;
   color: var(--fg);
   background-color: var(--marsala-fundo);
-  background-image:
-    radial-gradient(ellipse 60% 70% at 88% 0%, rgb(var(--marsala-rgb) / .38), transparent 70%),
-    linear-gradient(rgb(var(--off-white-rgb) / .05) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(var(--off-white-rgb) / .05) 1px, transparent 1px);
-  background-size: auto, 32px 32px, 32px 32px;
   /* é um painel de controle, não um texto: seleção de texto
      acidental num clique duplo atrapalhava. A mensagem de reserva
      (textarea) volta a ser selecionável lá embaixo. */
@@ -1883,56 +1889,7 @@ img.onde__mapa {
    navegador; um `relative` aqui o prenderia dentro do painel */
 .matriz > :not(dialog) { position: relative; z-index: 1; }
 
-/* ---- fundo (radar) e ondas: camadas recortadas ----
-   Recortadas para que nada delas entre no scrollHeight do painel,
-   que é o que o ajuste de densidade mede. */
-.matriz > .mz-fundo,
-.matriz > .mz-ondas {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-.matriz > .mz-fundo { z-index: 0; }
-.matriz > .mz-ondas { z-index: 3; }
-
-.mz-onda {
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  margin: -8px 0 0 -8px;
-  border: 1px solid var(--mz-acento);
-  border-radius: 50%;
-  animation: mz-onda 650ms var(--curva) forwards;
-}
-@keyframes mz-onda {
-  from { transform: scale(0); opacity: .9; }
-  to   { transform: scale(14); opacity: 0; }
-}
-
-.mz-radar {
-  position: absolute;
-  top: 55%;
-  right: -10vmin;
-  width: min(78vmin, 820px);
-  height: auto;
-  transform: translateY(-50%);
-  color: var(--mz-acento);
-  opacity: .5;
-}
-.mz-radar__anel { fill: none; stroke: currentColor; stroke-opacity: .45; stroke-width: .35; }
-.mz-radar__eixo { fill: none; stroke: currentColor; stroke-opacity: .3; stroke-width: .3; }
-.mz-radar__ponto { fill: var(--papel); }
-/* gira sempre, mas só enquanto o painel está na tela */
-.mz-radar__varre {
-  transform-origin: 60px 60px;
-  animation: mz-giro 4.8s linear infinite;
-  animation-play-state: paused;
-}
-.matriz.is-visivel .mz-radar__varre { animation-play-state: running; }
-@keyframes mz-giro { to { transform: rotate(360deg); } }
-
-/* ---- cabeçalho tático: uma linha ---- */
+/* ---- cabeçalho: título + descrição ---- */
 .mz-cab {
   flex: none;
   display: flex;
@@ -1940,19 +1897,7 @@ img.onde__mapa {
   align-items: flex-end;
   gap: var(--calha);
   padding: .5rem 0;
-  border-bottom: 1px solid var(--mz-linha);
-}
-.mz-sis { margin: 0 0 .35rem; color: var(--fg-3); }
-.mz-sis__luz {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  margin-right: .6em;
-  vertical-align: .12em;
-  border-radius: 50%;
-  /* parada de propósito: o laço do painel é o radar; uma luz
-     pulsando ao lado seria um segundo laço — ruído */
-  background: var(--mz-acento);
+  border-bottom: 1px solid var(--fio);
 }
 .mz-titulo {
   margin: 0;
@@ -2003,7 +1948,7 @@ img.onde__mapa {
   gap: .55rem;
   min-height: 32px;
   padding: .375rem .625rem;
-  border: 1px solid var(--mz-linha);
+  border: 1px solid var(--fio);
   border-radius: 0;
   background: rgb(var(--off-white-rgb) / .03);
   color: var(--fg-2);
@@ -2042,7 +1987,7 @@ img.onde__mapa {
   font-family: var(--fonte-aparato);
   font-size: var(--fs-aparato);
   letter-spacing: .12em;
-  color: var(--mz-acento);
+  color: var(--fg-3);
   font-variant-numeric: tabular-nums;
 }
 .mz-frente__n { flex: 1; min-width: 0; }
@@ -2057,35 +2002,6 @@ img.onde__mapa {
   border-color: var(--mz-acento);
 }
 
-/* ---- os cantos em L: nos cards e nos botões ligados ----
-   Oito fios de 1px, dois por canto, desenhados como fundo. As
-   variáveis são lidas em cada elemento: o card usa perna de 14px
-   em acento, o botão ligado usa 7px em off-white. */
-.mz-canto,
-.mz-preset[aria-pressed="true"]::after,
-.mz-frente[aria-pressed="true"]::after {
-  position: absolute;
-  inset: -1px;
-  pointer-events: none;
-  background:
-    linear-gradient(var(--c), var(--c)) top left     / var(--l) 1px,
-    linear-gradient(var(--c), var(--c)) top left     / 1px var(--l),
-    linear-gradient(var(--c), var(--c)) top right    / var(--l) 1px,
-    linear-gradient(var(--c), var(--c)) top right    / 1px var(--l),
-    linear-gradient(var(--c), var(--c)) bottom left  / var(--l) 1px,
-    linear-gradient(var(--c), var(--c)) bottom left  / 1px var(--l),
-    linear-gradient(var(--c), var(--c)) bottom right / var(--l) 1px,
-    linear-gradient(var(--c), var(--c)) bottom right / 1px var(--l);
-  background-repeat: no-repeat;
-}
-.mz-canto { --c: var(--mz-acento); --l: 14px; }
-.mz-preset[aria-pressed="true"]::after,
-.mz-frente[aria-pressed="true"]::after {
-  content: '';
-  --c: var(--papel);
-  --l: 7px;
-}
-
 /* ---- os três cards: dividem a altura que sobra ---- */
 .mz-cards {
   flex: 1 1 0;
@@ -2098,8 +2014,6 @@ img.onde__mapa {
 @media (min-width: 768px)  { .mz-cards { gap: 1rem; } }
 @media (min-width: 1280px) { .mz-cards { gap: 1.5rem; } }
 
-/* o card NÃO tem overflow hidden: os cantos em L passam 1px para
-   fora da borda e seriam cortados. Quem recorta é o corpo. */
 .mz-card {
   position: relative;
   display: flex;
@@ -2108,10 +2022,7 @@ img.onde__mapa {
   min-width: 0;
   min-height: 0;
   padding: .75rem;
-  border: 1px solid var(--mz-linha);
-  background: var(--mz-vidro);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  border: 1px solid var(--fio);
 }
 @media (min-width: 768px)  { .mz-card { padding: 1rem; } }
 @media (min-width: 1280px) { .mz-card { padding: 1.25rem; } }
@@ -2124,13 +2035,13 @@ img.onde__mapa {
   gap: .7rem;
   margin-bottom: .6rem;
   padding-bottom: .5rem;
-  border-bottom: 1px dashed var(--mz-linha);
+  border-bottom: 1px dashed var(--fio);
 }
 .mz-idx {
   font-family: var(--fonte-aparato);
   font-size: var(--fs-aparato);
   letter-spacing: .12em;
-  color: var(--mz-acento);
+  color: var(--fg-3);
   font-variant-numeric: tabular-nums;
 }
 .mz-card__t,
@@ -2208,7 +2119,7 @@ img.onde__mapa {
   align-items: baseline;
   gap: 1rem;
   padding: .45rem 0;
-  border-bottom: 1px solid var(--mz-linha);
+  border-bottom: 1px solid var(--fio);
 }
 .mz-tel__l:first-child { padding-top: 0; }
 .mz-val {
@@ -2318,7 +2229,7 @@ img.onde__mapa {
   height: 5.5rem;
   margin-top: .5rem;
   padding: .5rem;
-  border: 1px solid var(--mz-linha);
+  border: 1px solid var(--fio);
   border-radius: 0;
   background: transparent;
   color: var(--fg);
@@ -2369,7 +2280,6 @@ img.onde__mapa {
 .matriz[data-denso-painel="3"] .mz-titulo { font-size: min(clamp(1.35rem, 1.2vw + .9rem, 2.25rem), 5dvh); }
 .matriz[data-denso-painel="2"] .mz-cab,
 .matriz[data-denso-painel="3"] .mz-cab { padding: .35rem 0; }
-.matriz[data-denso-painel="3"] .mz-sis,
 .matriz[data-denso-painel="3"] .mz-resumo { display: none; }
 .matriz[data-denso-painel="3"] .mz-grupo__ap { margin-bottom: .25rem; }
 
@@ -2409,10 +2319,6 @@ img.onde__mapa {
   overflow: hidden;
   color: var(--fg);
   background-color: var(--marsala-fundo);
-  background-image:
-    linear-gradient(rgb(var(--off-white-rgb) / .05) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(var(--off-white-rgb) / .05) 1px, transparent 1px);
-  background-size: 32px 32px;
   transform: translateY(100%);
   transition: transform 320ms var(--curva);
 }
@@ -2445,7 +2351,7 @@ html.mz-travado { overflow: hidden; }
   min-width: 44px;
   min-height: 44px;
   padding: 0 .9rem;
-  border: 1px solid var(--mz-linha);
+  border: 1px solid var(--fio);
   border-radius: 0;
   background: none;
   color: var(--fg);
@@ -2457,7 +2363,7 @@ html.mz-travado { overflow: hidden; }
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-top: .75rem;
-  border-bottom: 1px solid var(--mz-linha);
+  border-bottom: 1px solid var(--fio);
 }
 .mz-aba {
   min-height: 48px;
@@ -2510,9 +2416,7 @@ html.mz-travado { overflow: hidden; }
   .mz-cards { display: none; }
   .mz-cab { flex-direction: column; align-items: stretch; gap: .4rem; }
   .mz-desc { max-width: none; }
-  .mz-sis__sec { display: none; }
   .mz-movel { flex: none; display: grid; gap: .6rem; }
-  .mz-radar { top: 42%; right: -30vmin; width: 110vmin; opacity: .35; }
   .mz-presets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .mz-preset {
     flex-direction: column;
@@ -2546,9 +2450,7 @@ html.mz-travado { overflow: hidden; }
   .mz-nota { font-size: .875rem; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .mz-radar__varre { animation: none; }
   .mz-folha { transition: none; }
-  .mz-onda { display: none; }
 }
 
 
