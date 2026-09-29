@@ -229,6 +229,29 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  /* JUSTIFICAR TUDO (29/09), a pedido da Jozzi. Herda de `body` para
+     não ter de repetir em cada classe de texto do site — e por isso
+     mesmo é preciso DEVOLVER `left` explicitamente em toda peça que
+     não é parágrafo corrido: título de display, aparato, botão, nav,
+     campo de formulário. `text-align: justify` só estica linhas que
+     NÃO são a última do bloco (e uma linha fechada por <br> conta
+     como última) — títulos de uma linha só e rótulos curtos não
+     mudam nada visualmente mesmo herdando a regra; o risco real é
+     só em parágrafo de verdade numa coluna estreita.
+     `hyphens: auto` (com `lang="pt-BR"` no <html>) é o que evita
+     RIOS de espaço em branco numa medida curta e estreita — sem
+     hifenização, justificar um parágrafo de 3-4 palavras por linha
+     no telefone abre buracos enormes entre palavras. Nos títulos a
+     hifenização volta a `manual`: um título nunca deve partir no
+     meio por decisão do navegador. */
+  text-align: justify;
+  text-align-last: left;
+  /* `hyphens: auto` ficou 10 minutos: no primeiro parágrafo que eu
+     testei (a lede do rolo) ele partiu "detalhe" em "deta-/lhe" —
+     pior que a rag que deveria resolver. Sem hifenização, um
+     parágrafo estreito rareia um pouco mais entre palavras, mas
+     nunca corta uma palavra ao meio por conta própria. */
+  hyphens: none;
 }
 
 ::selection { background: var(--realce); color: var(--papel); }
@@ -320,6 +343,13 @@ a { color: inherit; text-decoration: none; }
      de `.d`. Herdar `--lh-titulo` é o que garante que os dois
      registros nunca mais se descolem. */
 }
+
+/* devolve `left` a tudo que não é parágrafo corrido — título de
+   display, aparato, e os próprios h1–h4 quando não levam `.d`.
+   `hyphens: manual` junto: um título nunca deve partir sozinho por
+   decisão do navegador, só onde já existe um &shy; escrito à mão
+   (não há nenhum hoje). */
+.d, .d--2, .ap, h1, h2, h3, h4 { text-align: left; hyphens: manual; }
 
 /* aparato */
 .ap {
@@ -643,6 +673,32 @@ a { color: inherit; text-decoration: none; }
 
 .topo__nav { display: none; }
 
+/* BOTÃO DE MENU — duas barras, sem terceira: o "X" de fechar já
+   está no botão de dentro do painel, então aqui bastam duas linhas
+   para ler como "menu" sem imitar hambúrguer completo. Some a
+   partir de 900px, exatamente onde a nav do cabeçalho aparece —
+   nunca os dois ao mesmo tempo. */
+.topo__menu {
+  display: grid;
+  place-items: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  margin: 0 0 0 auto;
+  padding: 0;
+  border: 1px solid var(--fio);
+  background: none;
+  cursor: pointer;
+}
+.topo__menu__barra {
+  width: 18px;
+  height: 1px;
+  background: currentColor;
+}
+@media (min-width: 900px) {
+  .topo__menu { display: none; }
+}
+
 @media (min-width: 900px) {
   /* A nav só existe onde cabe. Abaixo de 900px sobram marca e CTA —
      e isso NÃO é perda: a régua lateral também era `display:none`
@@ -905,6 +961,10 @@ a { color: inherit; text-decoration: none; }
   min-height: 100svh;
   display: flex;
   flex-direction: column;
+  /* `flex-end`: a Jozzi confirmou que o desktop já estava certo
+     assim (29/09) — só o telefone tinha o problema de proporção.
+     A correção de proporção mora só no breakpoint ≤768px, mais
+     abaixo (justify-content: center ali dentro). */
   justify-content: flex-end;
   padding-top: clamp(5rem, 16vh, 11rem);
   padding-bottom: clamp(2.5rem, 9vh, 6rem);
@@ -1255,7 +1315,26 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 1024px) {
   /* abaixo do desktop as duas colunas viram uma só: as fotos
      descem para depois do texto, ainda lado a lado. */
-  .quem__par { grid-column: 1 / -1; margin-top: clamp(1.8rem, 5vh, 2.8rem); }
+  .quem__par {
+    grid-column: 1 / -1;
+    margin-top: clamp(1.8rem, 5vh, 2.8rem);
+    /* MESMA MARGEM DA FOTO E DO TEXTO (29/09). `justify-items:
+       center` (herdado da regra base) sobrava aqui: a figura, com
+       teto de 26rem, ficava centralizada dentro da coluna cheia —
+       um respiro à esquerda que o texto acima dela não tem. Uma
+       imagem que "sangra" pela mesma margem do texto lê como parte
+       do mesmo bloco; uma centralizada lê como um elemento à parte,
+       flutuando. */
+    justify-items: start;
+  }
+}
+@media (max-width: 768px) {
+  /* SÓ UMA IMAGEM (29/09), a pedido da Jozzi — a segunda soma
+     altura sem somar informação nova no telefone, onde a rolagem
+     já é longa. A primeira continua sendo a mesma foto de sempre;
+     a segunda só deixa de aparecer, não sai do HTML (volta sozinha
+     se a media query for removida). */
+  .quem__par__f:nth-child(2) { display: none; }
 }
 /* (o par já é de uma coluna só em qualquer largura desde 09/09 —
    a media query que empilhava no telefone deixou de ser precisa) */
@@ -1433,6 +1512,55 @@ a { color: inherit; text-decoration: none; }
   max-width: 22ch;
 }
 
+/* GRID DE CLIENTES — mosaico acima da virada (29/09).
+   Quadrados pequenos, densos, sem legenda: numa largura de
+   80–110px o nome do projeto não caberia legível, e o valor aqui
+   é o CONJUNTO — "veja quantas marcas já passaram por aqui" — não
+   o reconhecimento individual de cada uma. Quem quer o nome entra
+   no quadrado (é link de verdade) ou vai para /projetos.html.
+   Sem fundo, sem sombra, sem raio de canto: a mesma disciplina de
+   material do resto do site — aqui a "moldura" é a foto em si. */
+.marcas-mini { margin: 0 0 clamp(2.5rem, 7vh, 4rem); }
+.marcas-mini__ap { margin: 0 0 clamp(.9rem, 2.2vh, 1.3rem); }
+.marcas-mini__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 4px;
+}
+.marcas-mini__item {
+  display: block;
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: var(--papel-2);
+}
+.marcas-mini__item img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: grayscale(.15);
+  transition: filter var(--t-micro) var(--curva), transform var(--t-entra) var(--curva);
+}
+@media (hover: hover) and (pointer: fine) {
+  .marcas-mini__item:hover img,
+  .marcas-mini__item:focus-visible img { filter: grayscale(0); transform: scale(1.06); }
+}
+.marcas-mini__item:focus-visible { outline: 2px solid var(--sinal); outline-offset: 2px; }
+@media (min-width: 481px) {
+  .marcas-mini__lista { grid-template-columns: repeat(9, minmax(0, 1fr)); }
+}
+@media (min-width: 1025px) {
+  .marcas-mini__lista { grid-template-columns: repeat(14, minmax(0, 1fr)); gap: 5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marcas-mini__item img { transition: none; }
+}
+
 /* "Cada marca é singular" — veio da seção 05 (03/09). Mesma
    composição em degrau que ela tinha lá: a frase grande à
    esquerda, o texto de sustentação na metade que ela deixou
@@ -1449,6 +1577,14 @@ a { color: inherit; text-decoration: none; }
   margin: 0;
   max-width: 13ch;
   font-size: clamp(1.8rem, 3.2vw + .5rem, 3.6rem);
+}
+/* EM DESTAQUE (29/09): o aparato de sempre, mas com o sinal da
+   marca em vez do tom silencioso — é a mesma família tipográfica
+   do resto do site, só que puxada para chamar atenção, não uma
+   cor ou peso novos inventados para a ocasião. */
+.serv__virada__destaque {
+  margin: .6rem 0 0;
+  color: var(--sinal);
 }
 .serv__virada__ap {
   margin: 0 0 clamp(.9rem, 2.4vh, 1.4rem);
@@ -1819,6 +1955,20 @@ img.onde__mapa {
    Mono para os números e rótulos curtos — o mesmo `.ap` usado no
    resto do site para índice de seção, etiqueta e contador.
 
+   ⚠ HARMONIZAÇÃO (29/09): depois de tirar o clima de ficção
+   científica (28/09), o painel ainda lia como "painel de controle"
+   em vez de parte do site — 12 caixas com fio visíveis ao mesmo
+   tempo (9 chips + 3 cards), divisor tracejado no cabeçalho do
+   card (tracejado não existe em NENHUM outro lugar do site) e uma
+   linha de fio embaixo de CADA linha da telemetria, lendo como
+   planilha. A pedido da Jozzi: chip inativo perdeu o fio (só o
+   ATIVO tem borda — o resto é só texto até o dedo/mouse chegar
+   perto, igual ao `.serv__nome` do resto do site), o tracejado
+   virou espaço sem risco nenhum, a telemetria perdeu as linhas por
+   item e ganhou UM divisor só, entre o resumo e o detalhe por
+   frente. Título e nome do card cresceram um pouco — tinham corpo
+   de rótulo, não de título.
+
    ⚠ UMA TELA, ZERO ROLAGEM (12/09) — isto é comportamento, não
    estética, e continua valendo. O painel tem exatamente `100dvh` e
    `overflow: hidden`, e NADA dentro dele rola — nem os cards. O que
@@ -1902,8 +2052,10 @@ img.onde__mapa {
 .mz-titulo {
   margin: 0;
   font-family: var(--fonte-titulo);
-  /* limitado também pela ALTURA: o painel é uma tela só */
-  font-size: min(clamp(1.5rem, 1.6vw + 1rem, 3rem), 6dvh);
+  /* limitado também pela ALTURA: o painel é uma tela só. Um pouco
+     maior que antes (29/09) — media pouco mais que rótulo de card,
+     e esta é a frase que abre o painel inteiro. */
+  font-size: min(clamp(1.75rem, 1.9vw + 1.1rem, 3.25rem), 6.5dvh);
   font-weight: 500;
   letter-spacing: -.035em;
   line-height: var(--lh-titulo);
@@ -1933,13 +2085,19 @@ img.onde__mapa {
 .mz-grupo__ap { margin: 0 0 .4rem; color: var(--fg-3); }
 .mz-grupo__st { color: var(--mz-acento); }
 
-.mz-presets { display: flex; flex-wrap: wrap; gap: .4rem; }
+.mz-presets { display: flex; flex-wrap: wrap; gap: .5rem; }
 .mz-frentes {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: .4rem;
+  gap: .5rem;
 }
 
+/* CHIP SEM FIO EM REPOUSO (29/09) — nove caixas bordadas ao mesmo
+   tempo (3 presets + 6 frentes) era o maior contribuinte pro ar de
+   "painel de controle". A borda `transparent` reserva o mesmo
+   espaço de layout (não pula 1px quando ativa) sem se DESENHAR até
+   o estado pedir — mesma lógica do `.serv__nome`, que também não
+   tem fio nenhum até o ponteiro chegar perto. */
 .mz-preset,
 .mz-frente {
   position: relative;
@@ -1948,9 +2106,9 @@ img.onde__mapa {
   gap: .55rem;
   min-height: 32px;
   padding: .375rem .625rem;
-  border: 1px solid var(--fio);
+  border: 1px solid transparent;
   border-radius: 0;
-  background: rgb(var(--off-white-rgb) / .03);
+  background: transparent;
   color: var(--fg-2);
   font-family: var(--fonte-texto);
   font-size: .8125rem;
@@ -1974,12 +2132,14 @@ img.onde__mapa {
 .mz-frente:active { transform: translateY(1px); }
 @media (hover: hover) and (pointer: fine) {
   .mz-preset:hover,
-  .mz-frente:hover { border-color: rgb(var(--off-white-rgb) / .42); color: var(--fg); }
+  .mz-frente:hover { border-color: rgb(var(--off-white-rgb) / .3); color: var(--fg); }
 }
-/* no toque o alvo volta a 44px: compacto é para o mouse */
+/* no toque o alvo volta a 44px: compacto é para o mouse. E o fio
+   VOLTA em repouso — no toque não existe hover pra revelar a borda
+   antes do clique, então sem ela o chip não avisa que é clicável. */
 @media (pointer: coarse) {
   .mz-preset,
-  .mz-frente { min-height: 44px; }
+  .mz-frente { min-height: 44px; border-color: var(--fio); }
 }
 
 .mz-cod {
@@ -2033,9 +2193,7 @@ img.onde__mapa {
   display: flex;
   align-items: baseline;
   gap: .7rem;
-  margin-bottom: .6rem;
-  padding-bottom: .5rem;
-  border-bottom: 1px dashed var(--fio);
+  margin-bottom: .8rem;
 }
 .mz-idx {
   font-family: var(--fonte-aparato);
@@ -2048,12 +2206,12 @@ img.onde__mapa {
 .mz-folha__t {
   margin: 0;
   font-family: var(--fonte-titulo);
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   font-weight: 500;
   letter-spacing: -.02em;
   line-height: var(--lh-titulo);
 }
-@media (min-width: 1025px) { .mz-card__t { font-size: 1.25rem; } }
+@media (min-width: 1025px) { .mz-card__t { font-size: 1.375rem; } }
 
 /* o corpo: recorta, e empurra o bloco de baixo (nota, botão) para
    o rodapé do card */
@@ -2112,16 +2270,19 @@ img.onde__mapa {
   text-transform: uppercase;
   color: var(--fg-3);
 }
-.mz-tel { margin: 0; }
+/* SEM FIO POR LINHA (29/09) — quatro linhas, cada uma com sua
+   própria borda embaixo, liam como planilha. O espaço entre elas
+   já separa sem precisar de risco nenhum; o ÚNICO divisor que
+   sobrou é o de baixo (`.mz-tel__sub`), entre o resumo e o detalhe
+   por frente — ali sim há dois blocos de informação diferentes
+   que precisam de uma pausa visível entre eles. */
+.mz-tel { margin: 0; display: grid; gap: .65rem; }
 .mz-tel__l {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   gap: 1rem;
-  padding: .45rem 0;
-  border-bottom: 1px solid var(--fio);
 }
-.mz-tel__l:first-child { padding-top: 0; }
 .mz-val {
   margin: 0;
   font-family: var(--fonte-aparato);
@@ -2141,7 +2302,11 @@ img.onde__mapa {
 }
 .mz-barras i { height: 5px; background: rgb(var(--off-white-rgb) / .12); }
 .mz-barras i.is-on { background: var(--mz-acento); }
-.mz-tel__sub { margin-bottom: .4rem; }
+.mz-tel__sub {
+  margin: .9rem 0 .5rem;
+  padding-top: .8rem;
+  border-top: 1px solid var(--fio);
+}
 .mz-porfrente {
   display: grid;
   gap: .3rem;
@@ -2409,14 +2574,26 @@ html.mz-travado { overflow: hidden; }
 @media (min-width: 769px) and (max-width: 1024px) {
   .mz-card { padding-inline: .85rem; }
 }
-/* ≤768 — sem cards (vão para a folha). A tela se divide em três —
-   cabeçalho, controles e o gatilho da folha — e o
-   `justify-content: space-between` do painel distribui a sobra. */
+/* ≤768 — sem cards (vão para a folha). A tela tem só TRÊS grupos —
+   cabeçalho, controles, botão — e o `space-between` do painel (que
+   no desktop é inofensivo, porque `.mz-cards` tem `flex: 1` e come
+   toda a sobra) aqui distribuía a sobra INTEIRA entre os três,
+   abrindo dois vãos enormes e soltos (Jozzi apontou, 29/09): um
+   entre o cabeçalho e "Combo", outro entre as frentes e o botão.
+
+   Cabeçalho e controles são o mesmo bloco de leitura ("veja do que
+   se trata, monte o combo") — não faz sentido ter um vão grande
+   ENTRE eles. Só o botão é destino separado (a ação). Por isso o
+   painel vira `flex-start` aqui (cabeçalho e controles ficam
+   colados, com o `gap` normal entre si) e é `.mz-movel` que herda
+   a sobra inteira, com `margin-top: auto` — um vão só, intencional,
+   entre o conteúdo e o botão, não três grupos flutuando soltos. */
 @media (max-width: 768px) {
+  .matriz { justify-content: flex-start; }
   .mz-cards { display: none; }
   .mz-cab { flex-direction: column; align-items: stretch; gap: .4rem; }
   .mz-desc { max-width: none; }
-  .mz-movel { flex: none; display: grid; gap: .6rem; }
+  .mz-movel { flex: none; display: grid; gap: .6rem; margin-top: auto; }
   .mz-presets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .mz-preset {
     flex-direction: column;
@@ -2426,7 +2603,15 @@ html.mz-travado { overflow: hidden; }
   }
   .mz-frentes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .mz-preset,
-  .mz-frente { min-height: 44px; padding: .4rem .6rem; font-size: .8125rem; }
+  .mz-frente {
+    min-height: 44px;
+    padding: .4rem .6rem;
+    font-size: .8125rem;
+    /* mesma razão do `pointer: coarse` acima: sem hover pra revelar
+       a borda antes do toque, ela fica sempre visível aqui embaixo
+       de 768px — telefone de verdade, na prática. */
+    border-color: var(--fio);
+  }
 }
 /* ≥1920 e alto — monitor grande / 4K. O painel é uma tela só, e em
    2560×1440 os corpos de 13–15px deixavam os cards quase vazios.
@@ -2561,7 +2746,10 @@ html.mz-travado { overflow: hidden; }
   display: inline-flex;
   align-items: center;
   gap: .6rem;
-  margin-top: clamp(1.2rem, 3.5vh, 2rem);
+  /* o espaço de cima agora é do `.rolo__rodape` (o contêiner dos
+     dois, selo e link) — aqui zerado pra não somar com o `gap`
+     dele e abrir vão duplo quando os dois existem juntos. */
+  margin-top: 0;
   color: var(--fg);
   border-bottom: 1px solid var(--fio);
   /* alvo de toque: o texto de 11px tem ~15px de linha, e o padding
@@ -2688,6 +2876,22 @@ html.mz-travado { overflow: hidden; }
   color: var(--fg-2);
 }
 
+/* SELO DE PROJETO (29/09) — a Jozzi pediu um selo tipo "Styling —
+   Eventos" em vez do texto solto que sobrava no fim do parágrafo
+   da Collab. Pílula de fio, no mesmo idioma de material do resto
+   do site: sem fundo, sem sombra, sem raio de canto grande. Só a
+   Collab tem selo hoje — é o único projeto do rolo com essa
+   informação escrita pela própria Jozzi; os outros quatro ficam
+   sem, em vez de eu inventar uma categoria para eles. */
+.rolo__selo {
+  display: inline-block;
+  margin: 0;
+  padding: .35rem .8rem;
+  border: 1px solid var(--fio);
+  color: var(--fg-2);
+}
+.rolo__rodape { margin-top: clamp(1.2rem, 3.5vh, 2rem); }
+
 .rolo__conta {
   align-self: end;
   justify-self: end;
@@ -2744,14 +2948,30 @@ html.mz-travado { overflow: hidden; }
 
 /* com o tambor montado o link sai do fluxo e encosta na margem
    direita da face, alinhado pela base do texto */
+/* SELO EM CIMA DO "SAIBA MAIS" (29/09) — o selo vivia solto no
+   fluxo normal (esquerda, embaixo do parágrafo) enquanto o link
+   virava `position: absolute` no rodapé direito da face — os dois
+   ficavam lado a lado em vez de um em cima do outro. Agora os dois
+   entram juntos num `.rolo__rodape`, e é ESSE contêiner que vira
+   absoluto: o selo (quando existe) e o link empilham por dentro
+   dele, o selo sempre acima. Funciona igual quando não há selo —
+   o rodapé só tem um filho. */
+.rolo__rodape {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .5rem;
+}
 @media (min-width: 769px) {
   .js--rolo .rolo__item { position: absolute; }
-  .js--rolo .rolo__saiba {
+  .js--rolo .rolo__rodape {
     position: absolute;
     right: 0;
     bottom: 0;
-    margin-top: 0;
+    align-items: flex-end;
   }
+  .js--rolo .rolo__saiba,
+  .js--rolo .rolo__selo { margin-top: 0; }
 }
 
 /* motor morto: o tambor nunca se monta, a lista fica em pé */
@@ -3208,7 +3428,43 @@ html.mz-travado { overflow: hidden; }
      larguras — também melhora o alinhamento à esquerda. */
   hyphens: auto;
   -webkit-hyphens: auto;
+  /* 3 LINHAS + "LER MAIS" (29/09). O corte é visual, não de dado:
+     o texto inteiro sempre esteve no HTML (inclusive para quem
+     não tem JavaScript — ver `.js--sem-motor` abaixo) e o botão só
+     aparece quando o JS mede que o parágrafo REALMENTE passa de 3
+     linhas. Na bio do Murilo, mais curta, isso pode nem acontecer:
+     o botão fica escondido e o texto aparece inteiro, sem cortar
+     uma frase que já cabia. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
 }
+.sobre__bio.is-expandida > p:last-of-type {
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
+/* sem JavaScript não há como medir o transbordo — o texto fica
+   inteiro e o botão (que só existe para tirar o corte) nem chega
+   a fazer sentido: fica escondido por padrão (`hidden` no HTML) e
+   o JS é quem decide se mostra. */
+.sobre__leiamais {
+  display: inline-flex;
+  align-items: center;
+  /* alvo de toque: o texto tem ~16px de linha, o padding
+     invisível é que leva a caixa a 44px — mesma receita do
+     .rolo__saiba, aplicada com o mesmo `padding` em vez de
+     `min-height` sozinho, pra não abrir um vão visual entre o
+     texto e o sublinhado. */
+  min-height: 44px;
+  padding: 14px 0;
+  border: 0;
+  border-bottom: 1px solid currentColor;
+  background: none;
+  color: var(--sinal);
+  cursor: pointer;
+}
+.sobre__leiamais:focus-visible { outline-offset: 4px; }
 
 /* o campo pendente se identifica: não é texto de bio em tom baixo,
    é um lugar vazio marcado como vazio */
@@ -3296,7 +3552,12 @@ html.mz-travado { overflow: hidden; }
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
   gap: var(--calha);
-  max-width: 46rem;
+  /* 46rem deixava os três retratos presos à esquerda, com quase
+     200px de vão morto à direita numa seção que usa a grade de 12
+     colunas inteira em todo o resto (29/09, "otimizar design").
+     56rem dá o respiro de sempre sem esticar a foto além do teto
+     que ela já tem (--equipe/--sobre__fig ficam com 18rem cada). */
+  max-width: 56rem;
 }
 
 .equipe__m { position: relative; }
@@ -3444,6 +3705,11 @@ html.mz-travado { overflow: hidden; }
   .sobre__ficha--b .sobre__fig { grid-column: 10 / span 3; }
   .sobre__ficha--b .sobre__bio { grid-column: 1 / span 8; }
   .sobre__fig { grid-column: 1 / span 3; max-width: 18rem; }
+  /* mesma escala do retrato de liderança logo acima — são o
+     mesmo papel (retrato de pessoa, 3:4), mediu-se diferente
+     antes só porque um vinha de `max-width` e o outro vinha
+     inteiro da grade (29/09). */
+  .equipe__foto { max-width: 18rem; }
   /* até a coluna 12, e não até a 9: a caixa cresce para a direita
      porque é a medida que torna a justificação possível. */
   .sobre__bio { grid-column: 6 / span 7; }
@@ -3467,6 +3733,7 @@ html.mz-travado { overflow: hidden; }
   .sobre__exp    { margin-top: clamp(1.8rem, 5vh, 2.6rem); }
   .sobre__bio    { margin-top: clamp(1.8rem, 5vh, 2.6rem); }
   .sobre__fig    { max-width: 15rem; }
+  .equipe__foto  { max-width: 15rem; }
   .sobre__fig-decl { margin-top: clamp(1.8rem, 5vh, 2.6rem); max-width: 22rem; }
   .sobre__pessoa { display: grid; gap: clamp(2.5rem, 8vh, 4rem); }
   .sobre__t      { max-width: 100%; }
@@ -3603,26 +3870,26 @@ html.js--sem-motor .carregando { display: none; }
   margin: 0;
   padding: 0;
   display: grid;
-  /* uma coluna só até 480px: nomes de uma palavra só (Alfaiataria,
-     Klisievicz) em duas colunas nessa largura quebravam em três
-     linhas dentro de um quadrado — cabe, mas fica apertado. Duas
-     colunas de 480 a 1024, três dali pra cima — mesmos limiares que
-     o resto do site usa (ver bateria de testes no README). */
-  grid-template-columns: repeat(1, 1fr);
-  gap: clamp(1rem, 2.4vw, 1.75rem);
-}
-@media (min-width: 481px) {
-  .styling-grid { grid-template-columns: repeat(2, 1fr); }
+  /* DUAS COLUNAS DESDE O PRIMEIRO PIXEL (29/09), a pedido da
+     Jozzi. Nomes de uma palavra só (Alfaiataria, Klisievicz) podem
+     quebrar em três linhas dentro do quadrado num telefone bem
+     estreito — cabe, só fica mais apertado; aceito em troca de
+     "2 clientes por linha" valer em qualquer largura, e não só a
+     partir de 481px. Três colunas a partir de 1025px, como já era. */
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(.6rem, 2.4vw, 1.75rem);
 }
 
 /* `container-type: inline-size` é o que resolve o problema do
-   título em uma linha: a grade pula de 1 para 2 colunas em 481px e
-   de 2 para 3 em 1025px, e nesses saltos a largura do CARD despenca
-   — de 408px de conteúdo disponível para 180px, por exemplo, com a
-   largura da TELA quase igual. Uma fonte em vw (que só conhece a
-   tela) não tem como caber nos dois lados do salto ao mesmo tempo.
-   Em cqw ela mede o próprio card, que é quem realmente encolheu, e
-   se ajusta no mesmo instante em que a grade recompõe. */
+   título em uma linha: a grade pula de 2 para 3 colunas em 1025px
+   (29/09 — eram 1 e depois 2, o salto de 1 para 2 saiu quando a
+   Jozzi pediu duas colunas desde o primeiro pixel), e nesse salto a
+   largura do CARD despenca — de 408px de conteúdo disponível para
+   180px, por exemplo, com a largura da TELA quase igual. Uma fonte
+   em vw (que só conhece a tela) não tem como caber nos dois lados
+   do salto ao mesmo tempo. Em cqw ela mede o próprio card, que é
+   quem realmente encolheu, e se ajusta no mesmo instante em que a
+   grade recompõe. */
 .styling-grid__item {
   display: block;
   container-type: inline-size;
@@ -3887,6 +4154,107 @@ html.js--sem-motor .carregando { display: none; }
 }
 .lupa::backdrop { background: rgb(var(--marrom-rgb) / .92); }
 
+/* MENU (29/09) — painel de navegação do telefone. Desliza da
+   DIREITA (a folha da matriz desliza de BAIXO — gestos diferentes
+   para papéis diferentes: aqui é navegação primária do site, lá
+   era detalhe de um componente). Mesmo <dialog> nativo da lupa:
+   showModal(), Esc e foco preso vêm do navegador, sem biblioteca.
+   Fundo de tinta cheia — o mesmo das seções invertidas — porque é
+   uma pausa sobre a página, não mais uma seção dela. */
+.menu {
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: min(86vw, 22rem);
+  height: 100svh;
+  max-height: 100svh;
+  margin: 0;
+  padding: clamp(1.5rem, 5vh, 2.5rem) var(--margem);
+  border: 0;
+  border-left: 1px solid rgb(var(--off-white-rgb) / .18);
+  background: var(--marsala-fundo);
+  color: var(--papel);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2rem, 7vh, 3.5rem);
+  transform: translateX(100%);
+  transition: transform var(--t-cheia) var(--curva);
+}
+.menu.is-aberto { transform: translateX(0); }
+.menu::backdrop { background: rgb(var(--marsala-fundo-rgb) / .55); }
+@media (min-width: 900px) {
+  /* o botão que abre já some daqui pra cima; o painel também não
+     tem por que existir num layout que já tem a nav inline */
+  .menu { display: none; }
+}
+
+.menu__cab { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.menu__marca { width: 6.5rem; height: auto; color: var(--papel); }
+.menu__fechar {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin: 0 -.5rem 0 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--papel);
+  cursor: pointer;
+}
+.menu__x {
+  position: relative;
+  width: 16px;
+  height: 16px;
+}
+.menu__x::before,
+.menu__x::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+}
+.menu__x::before { transform: rotate(45deg); }
+.menu__x::after  { transform: rotate(-45deg); }
+
+.menu__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1.1rem;
+}
+.menu__lista a {
+  display: block;
+  min-height: 44px;
+  padding: .5rem 0;
+  font-family: var(--fonte-titulo);
+  font-size: 1.6rem;
+  font-weight: 500;
+  letter-spacing: -.03em;
+  color: rgb(var(--off-white-rgb) / .82);
+}
+.menu__lista a:focus-visible,
+.menu__lista a.is-ativo { color: var(--papel); }
+
+.menu__cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  margin-top: auto;
+  padding: .75rem 1.25rem;
+  border: 1px solid var(--papel);
+  color: var(--papel);
+}
+.menu__cta:focus-visible { color: var(--papel); }
+
+@media (prefers-reduced-motion: reduce) {
+  .menu { transition: none; }
+}
+
 .lupa__palco {
   position: absolute;
   inset: 0;
@@ -3997,9 +4365,20 @@ html.js--sem-motor .carregando { display: none; }
 }
 .fim__creditos {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
-  gap: 1.5rem;
+  gap: .5rem 1.5rem;
 }
+.fim__lgpd {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  border-bottom: 1px solid transparent;
+  transition: color var(--t-micro) var(--curva), border-color var(--t-micro) var(--curva);
+}
+.fim__lgpd:hover,
+.fim__lgpd:focus-visible { color: var(--fg); border-bottom-color: var(--fio); }
 /* mesma arte do cabeçalho, escala oposta: lá são 11px de altura,
    aqui é a largura inteira da página. O logotipo abre e fecha o
    documento — e é a proporção extrema do lockup que faz isso
@@ -4163,6 +4542,51 @@ html.js--sem-motor .carregando { display: none; }
   .olhar__lista { grid-template-columns: 1fr; }
   .prin__p { max-width: none; }
 
+  /* SERVIÇOS EM CARROSSEL (29/09), a pedido da Jozzi. No telefone
+     os seis cards empilhados viravam uma rolagem só de mais de uma
+     tela por card — trocado por um trilho horizontal, um card por
+     vez (com um pouco do próximo à mostra, convite a continuar).
+     `scroll-snap-type` é CSS puro: nenhuma biblioteca de carrossel
+     entrou no projeto.
+     Cada card ganha a largura quase inteira da tela (85%) em vez de
+     dividir com os vizinhos empilhados embaixo — é isso que os
+     torna "maiores": mais espaço para respirar, não uma proporção
+     de foto diferente do resto do sistema (a chapa continua 16:9,
+     a mesma dos outros lugares).
+     As etiquetas ("selos") ficam SEMPRE abertas — no toque não há
+     hover para revelá-las, e pedir um segundo toque só para ver o
+     que o card oferece era fricção que o desktop não tem. */
+  .serv__lista {
+    display: flex;
+    grid-template-columns: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: var(--recuo);
+    -webkit-overflow-scrolling: touch;
+    margin-left: calc(var(--recuo) * -1);
+    margin-right: calc(var(--margem) * -1);
+    padding-left: var(--recuo);
+    padding-right: var(--margem);
+  }
+  .serv__card {
+    flex: 0 0 85%;
+    scroll-snap-align: start;
+  }
+  .js--serv .serv__painel { clip-path: inset(0 0 0 0); }
+
+  /* MAIS CURTA NO TELEFONE (29/09). A seção forçava uma tela cheia
+     (`min-height: 100svh`) mesmo quando os quatro cards, empilhados,
+     já cabiam em bem menos — o texto aprovado não mudou uma vírgula,
+     só o respiro em volta dele, que estava sobrando pra preencher
+     uma altura que não precisa mais existir no telefone. */
+  .olhar {
+    min-height: 0;
+    padding-top: clamp(3rem, 8vh, 4.5rem);
+    padding-bottom: clamp(3rem, 8vh, 4.5rem);
+  }
+  .olhar__lista { gap: .75rem; }
+  .prin { padding: 1rem 1.1rem; gap: .5rem; }
+
   .quem {
     grid-template-columns: 1fr;
     align-items: start;
@@ -4177,26 +4601,62 @@ html.js--sem-motor .carregando { display: none; }
   .quem .secao__ap { order: 1; }
   .quem__t     { order: 2; }
   .quem__corpo { order: 4; }
+  /* ⚠ BUG PRÉ-EXISTENTE, achado e corrigido em 29/09: `.quem__par`
+     (a foto) é irmão de `.quem__txt`, não filho — o `display:
+     contents` não afeta a ORDEM dele, só a dos três de dentro do
+     texto. Sem `order` aqui ele valia 0 por padrão, que é MENOR
+     que o 1 do aparato — a foto entrava antes de tudo, inclusive do
+     título. É esse bug que fazia a imagem aparecer ACIMA de "Mais
+     que estética" no telefone, exatamente o contrário do que a
+     Jozzi pediu ("título em cima das imagens"). */
+  .quem__par { order: 3; }
 
   /* sem trava de medida: a coluna já é estreita, e 12ch aqui
      picava a frase em seis linhas */
   .abertura__t { max-width: none; }
 
-  /* no mobile a composição inverte: a frase sobe para o topo e o
-     vazio fica ENTRE o bloco e o rodapé da seção, emoldurado dos
-     dois lados. Vazio ancorado lê como composição; vazio solto no
-     topo lê como página que não carregou. */
-  .abertura { justify-content: space-between; }
+  /* PROPORCIONAL SÓ NO TELEFONE (29/09, revisado 29/09) — o desktop
+     já estava certo (`flex-end`, base da regra), intocado. O
+     `center` sozinho não bastou: o "Rolar" é `position: absolute`
+     com `bottom` fixo, fora do bloco que centraliza — o grupo
+     (título+frentes+lede) ficava centralizado sozinho, e sobrava um
+     vazio sem função ENTRE a frase de baixo e o "Rolar", mais outro
+     vazio abaixo dele até o fim da seção. Dois vazios soltos, em vez
+     de um respiro só.
+     A correção: o "Rolar" ENTRA no fluxo no telefone (deixa de ser
+     absoluto) e vira o último item do mesmo grupo que centraliza —
+     título, frentes, lede E rolar se movem juntos, como um bloco
+     só. O que sobra vira UM respiro só, dividido em cima e embaixo
+     do grupo inteiro — isso é distribuição, não vazio disperso. */
+  /* padding também era herdado do desktop — lá é assimétrico de
+     propósito (mais respiro em cima, onde o bloco cola no rodapé
+     por `flex-end`); aqui, centralizado, o mesmo padding
+     assimétrico só empurrava o grupo pra cima do centro geométrico
+     da tela. Par de valores iguais no telefone. */
+  .abertura {
+    justify-content: center;
+    padding-top: clamp(3.5rem, 11vh, 6rem);
+    padding-bottom: clamp(3.5rem, 11vh, 6rem);
+  }
 
   .abertura__bloco {
     grid-template-columns: 1fr;
     gap: clamp(1.1rem, 3vh, 1.6rem);
-    margin-bottom: 0;
+    margin-bottom: clamp(1.8rem, 5vh, 2.8rem);
   }
   .abertura__frentes {
     text-align: left;
     padding-top: 0;
     gap: .3em;
+  }
+
+  .abertura__rolar {
+    position: static;
+    /* continua encostado na margem direita — mesma posição do
+       desktop, só que fluindo com o resto do grupo agora, em vez de
+       fixo no rodapé da seção */
+    align-self: flex-end;
+    margin-top: clamp(2rem, 7vh, 3.5rem);
   }
 }
 

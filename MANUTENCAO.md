@@ -2131,6 +2131,221 @@ para cá.** Essa página nunca teve o dispositivo de capa emprestada — só
 **Testado:** 390 e 1440px, 28 cards, 23 imagens carregando sem 404 nem
 quebra, sem estouro horizontal, zero erro de JavaScript.
 
+## Rodada grande de correções — desktop e mobile (29/09)
+
+Lista de 17 pedidos, misturada em texto corrido + duas listas repetidas
+(desktop/mobile). O que foi feito, item por item:
+
+**Texto justificado em todo o site.** `body { text-align: justify;
+text-align-last: left; hyphens: none }`, com `.d, .d--2, .ap, h1–h4` devolvendo
+`text-align: left` explicitamente (títulos e rótulos não justificam — só
+parágrafo corrido justifica de verdade, porque `justify` não mexe na ÚLTIMA
+linha de um bloco nem na que termina em `<br>`). ⚠ `hyphens: auto` foi tentado
+e **removido na mesma sessão**: na primeira checagem visual ele partiu
+"detalhe" em "deta-/lhe" na lede do rolo — pior que o problema que deveria
+resolver. Ficou só o justify, sem hifenização automática.
+
+**Grid de clientes acima de "Cada marca é singular"** (`.marcas-mini`, dentro
+de `#servicos`). Mosaico denso de quadrados pequenos (6 colunas no telefone,
+9 a partir de 481px, 14 a partir de 1025px), cada quadrado é a MESMA foto de
+capa que já usamos em `styling.html`/`projetos.html`, sem legenda (não caberia
+legível). 23 dos 27 projetos entram — os 4 sem capa própria (Widepine, Shop
+Carol, A.TEC, Stella Maranhão) ficaram de fora, em vez de aparecer quebrado ou
+com foto emprestada sem pedir.
+
+**"De Curitiba para todo o Brasil."** — texto da própria Jozzi, adicionado
+como `.serv__virada__destaque` logo abaixo de "Cada marca é singular.", na cor
+`--sinal` (o mesmo Marsala de sempre, só que puxado pra ficar visível — nada
+de cor nova inventada).
+
+**Rolo (Projetos):**
+- `.rolo__selo` — pílula de fio (SEM `border-radius`: era a primeira vez que
+  o site usava raio de canto em algum lugar, e isso quebrava a disciplina de
+  "cantos retos" que vale pro resto inteiro; corrigido antes de publicar). Só
+  a Collab tem selo ("Styling — Eventos") porque só ela tinha essa informação
+  escrita — os outros quatro projetos do rolo não têm categoria conhecida, e
+  eu não inventei uma pra eles.
+- Os 5 parágrafos do rolo foram cortados para a PRIMEIRA FRASE (texto
+  original, só truncado — nada reescrito); o texto completo continua inteiro
+  na página de caso de cada projeto, a um clique via "Saiba mais".
+- "Traduzimos a essência de cada marca,<br>do detalhe ao resultado final." —
+  quebra de linha forçada exatamente onde a Jozzi pediu.
+
+**Menu do telefone** (novo). Abaixo de 900px o cabeçalho ganhou um botão de
+duas barras que abre um `<dialog>` deslizando da direita — mesmo padrão nativo
+da lupa (`showModal()`, Esc e foco preso vêm do navegador). Os sete links são
+escritos à mão de novo lá dentro, no mesmo espírito do resto da navegação do
+site (nunca montada por JS). Resolve o "Ponto em aberto" documentado desde
+04/09: o telefone não tinha NENHUMA navegação de seção antes disso.
+
+**Rodapé — botão de Privacidade &amp; LGPD**, em TODAS as 32 páginas. A página
+que ele abre (`privacidade.html`) é só a moldura — **não escrevi política de
+privacidade nenhuma**. Isso é texto jurídico real (o que é coletado, por
+quanto tempo, com quem é compartilhado, como pedir exclusão, quem é o
+encarregado) e inventar uma cláusula de LGPD é pior do que deixar em branco:
+vira compromisso legal por escrito que a Jozzi nunca revisou. O campo está
+marcado como pendente, no mesmo padrão de "a fornecer" do resto do site.
+
+**Sobre — três correções:**
+- `.equipe__foto` (retratos da equipe de 3) ganhou o MESMO teto de largura que
+  `.sobre__fig` (retratos da Letícia/Murilo) — antes um vinha de `max-width`
+  fixo e o outro vinha inteiro da grade, e mediam diferente sem razão.
+  `.equipe__lista` também ganhou mais largura (46rem → 56rem): sobrava vão
+  morto à direita numa seção que usa a grade de 12 colunas em todo o resto.
+- **"Ler mais"** nas bios: `.sobre__bio > p:last-of-type` corta em 3 linhas
+  (`-webkit-line-clamp`) e o botão só aparece quando o JS MEDE que o corte tira
+  alguma coisa de verdade (`scrollHeight > clientHeight`). Na bio do Murilo,
+  mais curta, o botão pode nem aparecer — o texto já cabia. Função nova em
+  `main.js`: `medirLeiaMais()` / `ligarLeiaMais()`, remedida no resize e depois
+  de `document.fonts.ready` (fonte não carregada mede linha errado).
+- "Mais que estética" no telefone: **uma imagem só** (a segunda
+  `.quem__par__f` some com `display:none`) e **BUG PRÉ-EXISTENTE achado e
+  corrigido**: `.quem__par` (a foto) não tinha `order` definido no breakpoint
+  de ≤768px, e como `.quem__txt` virou `display:contents` reordenando só os
+  filhos DE DENTRO dele, a foto (order 0 implícito) entrava ANTES do aparato,
+  do título e do corpo — exatamente o oposto do que "título em cima das
+  imagens" pedia. Não fui eu quem causou; sempre esteve assim desde que esse
+  `display:contents` foi escrito.
+
+**Nossa Visão no telefone:** tirou o `min-height: 100svh` forçado (o texto
+aprovado — "não alterar a lógica verbal sem aprovação" — não mudou uma
+vírgula, só o respiro em volta dele que enchia uma tela inteira à toa).
+
+**Serviços no telefone:** virou carrossel horizontal com `scroll-snap` (CSS
+puro, nenhuma biblioteca), um card ocupando ~85% da tela (com um pouco do
+próximo à mostra). As etiquetas ficam SEMPRE abertas no toque — no telefone
+não existe hover pra revelar, então esperar um segundo toque só pra ver o que
+o card oferece era fricção que o desktop não tem.
+
+**"2 clientes por linha" em `styling.html`/`projetos.html`:** a grade
+compartilhada (`.styling-grid`) foi de "1 coluna até 481px" para "2 colunas
+desde o primeiro pixel" — 3 continua a partir de 1025px.
+
+**Scroll do telefone "que acabe rápido":** o Lenis (que suaviza a RODA DO
+MOUSE, pensada pra saltos) deixou de subir em `pointer: coarse` — o dedo já é
+contínuo, e por cima dele o Lenis só acrescentava um atraso de assentamento
+que a rolagem por inércia nativa do telefone não tem. Os links por âncora
+(`href="#secao"`) usam `scrollIntoView({behavior:'smooth'})` nesse caso, sem
+Lenis no meio.
+
+**Pendente, não fiz — precisa da Jozzi:**
+- Selo "Styling — Eventos" só existe pra Collab; os outros quatro projetos do
+  rolo não têm categoria conhecida.
+- 4 projetos sem capa própria (Widepine, Shop Carol, A.TEC, Stella Maranhão)
+  ficaram fora do mosaico de clientes.
+- `privacidade.html` não tem texto jurídico — só a moldura.
+- "Otimizar design da equipe": só fiz a correção de escala + largura; não
+  mudei a interação de hover (nome/cargo só aparecem ao passar o mouse), que é
+  o mesmo padrão que Serviços já usa — pareceu mais consistente manter do que
+  inventar uma segunda regra de revelação só pra essa seção.
+- "Fotos no padrão de escala em Sobre" — cobri os 3 retratos de pessoa
+  (Letícia, Murilo, equipe); a foto declarativa (`.sobre__fig-decl`, 4:5)
+  continua com escala própria de propósito — é outro papel, não um retrato.
+
+**Testado (29/09):** index.html, styling.html, projetos.html, privacidade.html
+e styling/a-tec.html em 375/900/1440px — zero imagem quebrada, zero link
+quebrado, zero estouro horizontal, zero erro de JavaScript. Testado à parte:
+carrossel de Serviços com rolagem gradual real (todas as 6 fotos carregam),
+menu do telefone (abre, fecha ao clicar num link E devolve o foco, fecha com
+Esc, fecha tocando fora).
+
+## Três correções pontuais (29/09, parte 3)
+
+**Abertura recomposta — SÓ NO TELEFONE.** Primeira tentativa mexeu nos dois
+formatos; a Jozzi confirmou que o desktop já estava certo (`flex-end`, que
+voltou a ser a regra base, intacta) e que o problema era só o mobile: era
+`justify-content: space-between` lá, empurrando o título pro topo e o rodapé
+pro fim da tela, com um vazio enorme e sem função no MEIO. Fica escopado ao
+`@media (max-width: 768px)`: `.abertura { justify-content: center; }` só
+existe dentro dele — o bloco inteiro (título, frentes, lede) vai pro meio da
+tela SÓ no telefone. Desktop não tem essa regra em lugar nenhum. O convite a
+rolar (`.abertura__rolar`) é `position: absolute` desde sempre e não faz
+parte dessa conta em nenhum dos dois formatos.
+
+**JozziTacticalMatrix harmonizada.** O redesign de 28/09 tirou o clima de
+ficção científica, mas o painel ainda lia como "painel de controle" — 12
+caixas com fio visíveis ao mesmo tempo (9 chips + 3 cards), divisor tracejado
+no cabeçalho do card (tracejado não existe em NENHUM outro lugar do site) e
+uma linha embaixo de CADA linha da telemetria, lendo como planilha. Três
+mudanças:
+- **Chip sem fio em repouso.** `.mz-preset`/`.mz-frente` só ganham borda
+  quando ATIVOS, em foco, ou em `:hover` — mesma lógica do `.serv__nome`, que
+  também não tem fio até o ponteiro chegar perto. No toque (`pointer: coarse`
+  e ≤768px, onde não existe hover pra revelar a borda antes do clique) o fio
+  volta a aparecer sempre — sem isso o chip vira botão invisível no celular.
+- **Tracejado fora**, sem substituto — o espaço entre o índice do card e o
+  título já separa sozinho.
+- **Telemetria sem fio por linha.** `.mz-tel` virou `display: grid` com
+  `gap`; sobrou UM divisor só, `.mz-tel__sub`, entre o resumo (4 linhas) e o
+  detalhe por frente — os dois blocos de informação diferente que precisam de
+  pausa visível entre eles.
+- Título do painel e nome do card cresceram um pouco (tinham corpo de
+  rótulo, não de título de seção).
+
+**Selo em cima do "Saiba mais" no rolo.** O selo (`.rolo__selo`) vivia solto
+no fluxo normal, à esquerda, enquanto `.rolo__saiba` virava `position:
+absolute` no rodapé DIREITO da face a partir de 769px — os dois ficavam lado
+a lado em vez de empilhados. Os dois agora entram juntos dentro de um
+`<div class="rolo__rodape">` (`display: flex; flex-direction: column`), e é
+ESSE contêiner que vira absoluto no desktop — o selo, quando existe, fica
+sempre acima do link. Funciona igual nos quatro projetos sem selo: o rodapé
+só tem um filho, e a posição do "Saiba mais" não muda em nenhum dos cinco
+(medido: mesma altura em Collab, com selo, e Claudia Choma, sem).
+
+**Testado:** index.html (as três mudanças), styling.html, projetos.html,
+privacidade.html e styling/a-tec.html em 375/900/1440px — zero imagem
+quebrada de verdade (a auditoria automática aponta algumas por timing de
+lazy-load do carrossel/grade, confirmadas carregando bem com espera maior —
+ver rodada anterior), zero estouro horizontal, zero erro de JavaScript. A
+matriz testada nos dois formatos: chips sem fio em repouso no mouse, com fio
+no toque, telemetria sem linhas por item.
+
+## Abertura no telefone — distribuição, parte 2 (29/09)
+
+A centralização por si só não bastou: o "Rolar" é `position: absolute` com
+`bottom` fixo, FORA do grupo que o `justify-content: center` centraliza — o
+título+frentes+lede formavam um bloco centralizado sozinho, e sobravam DOIS
+vazios soltos (um entre a frase e o "Rolar", outro entre o "Rolar" e o fim da
+seção) em vez de um respiro só.
+
+Correção: `.abertura__rolar` ENTRA no fluxo no telefone (`position: static`,
+`align-self: flex-end` pra continuar encostado na margem direita — mesma
+posição do desktop). Ele vira o último item do mesmo grupo que centraliza:
+título, frentes, lede e rolar se movem juntos. O padding também deixou de
+herdar os valores assimétricos do desktop (lá é de propósito, porque o bloco
+cola no rodapé por `flex-end`) e ganhou um par simétrico próprio no telefone.
+Medido: 178px em cima do grupo, 168px embaixo — praticamente igual.
+
+**Desktop segue intocado** (`flex-end`, os valores de padding originais) —
+confirmado por captura de tela idêntica à de antes desta rodada inteira.
+
+**Testado:** 375×812, 375×667 (tela mais baixa, sem cortar nada) e desktop
+1440×900. Sem erro novo na auditoria geral.
+
+## JozziTacticalMatrix — mesmo bug da abertura, no telefone (29/09)
+
+A Jozzi apontou vão grande demais no mobile. Era o MESMO padrão do problema
+da abertura, horas antes: `.matriz` tem `justify-content: space-between`
+como regra base — inofensiva no desktop, porque lá `.mz-cards` tem `flex: 1`
+e come toda a sobra de altura. No telefone `.mz-cards` é `display: none` (as
+telas de card vão para a folha), sobrando só TRÊS grupos soltos — cabeçalho,
+controles, botão — e o `space-between` abria DOIS vãos enormes: um entre o
+cabeçalho e "Combo", outro entre as frentes e "Ver detalhes do combo".
+
+Cabeçalho e controles são o mesmo bloco de leitura ("veja do que se trata,
+monte o combo") — não deveria haver vão grande ENTRE eles. Só o botão é
+destino separado. Correção, escopada a ≤768px:
+- `.matriz { justify-content: flex-start; }` — cabeçalho e controles ficam
+  colados, com o `gap` pequeno normal entre si.
+- `.mz-movel { margin-top: auto; }` — herda a sobra INTEIRA sozinho, um vão
+  só e intencional antes do botão, não três grupos flutuando.
+
+**Desktop intocado** — a mudança vive só dentro do `@media (max-width:
+768px)`; confirmado por captura de tela idêntica à de antes.
+
+**Testado:** 375×812, 375×667 (tela mais baixa, sem cortar nada), desktop
+1440×900 (os 3 cards, sem mudança). Sem erro novo na auditoria geral.
+
 ## O que NÃO fazer
 
 - **Não subsetar a Gracio.** É a fonte desenhada da marca (`assets/fonts/

@@ -908,6 +908,47 @@
      elemento novo. O <span role="status"> entrega a mesma
      informação à tecnologia assistiva.
      -------------------------------------------------------- */
+  /* 06c. LER MAIS — bios da seção Sobre ------------------------
+     O texto inteiro sempre esteve no HTML; o corte de 3 linhas é
+     só CSS (`-webkit-line-clamp`). Aqui a única função é medir se
+     o corte está de fato tirando alguma coisa (`scrollHeight` >
+     `clientHeight`) e, só nesse caso, mostrar o botão. Uma bio
+     curta (a do Murilo, pendente) pode nem precisar de botão — o
+     texto cabe inteiro em 3 linhas e o corte não faz nada.
+     Reaproveitado no resize: a mesma bio pode passar de "cabe" a
+     "não cabe" só por a coluna ter ficado mais estreita. */
+  var leiaMaisLigado = false;
+
+  function medirLeiaMais() {
+    [].slice.call(document.querySelectorAll('.sobre__bio')).forEach(function (bio) {
+      var p = bio.querySelector('p:last-of-type');
+      var bt = bio.querySelector('[data-leiamais]');
+      if (!p || !bt) return;
+      /* uma bio que já está aberta não deve fechar sozinha só
+         porque a janela mudou de tamanho */
+      if (bio.classList.contains('is-expandida')) return;
+      bt.hidden = p.scrollHeight <= p.clientHeight + 1;
+    });
+  }
+
+  function ligarLeiaMais() {
+    if (!document.querySelector('[data-leiamais]')) return;
+    medirLeiaMais();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(medirLeiaMais);
+
+    if (leiaMaisLigado) return;
+    leiaMaisLigado = true;
+    document.addEventListener('click', function (e) {
+      var bt = e.target.closest('[data-leiamais]');
+      if (!bt) return;
+      var bio = bt.closest('.sobre__bio');
+      var expandida = bio.classList.toggle('is-expandida');
+      bt.textContent = expandida ? 'Ler menos' : 'Ler mais';
+      bt.setAttribute('aria-expanded', String(expandida));
+    });
+  }
+
+
   function ligarCopia() {
     var alvo = document.querySelector('[data-copiar]');
     var estado = document.querySelector('.contato__estado');
@@ -935,23 +976,46 @@
 
   /* 07. ROLAGEM INTERPOLADA --------------------------------- */
   function ligarLenis() {
-    if (menosMovimento || typeof window.Lenis === 'undefined') return;
+    if (menosMovimento) return;
 
-    document.documentElement.style.scrollBehavior = 'auto';
+    /* NO TOQUE, SEM LENIS (29/09) — a Jozzi pediu um scroll
+       "dinâmico, que acabe rápido" no telefone. O `lerp: 0.09` do
+       desktop existe para suavizar a RODA DO MOUSE, que anda em
+       saltos; o dedo já é contínuo, e o Lenis por cima dele só
+       acrescentava um atraso de assentamento que o toque nativo do
+       telefone não tem — a rolagem por inércia do próprio sistema
+       operacional já é rápida e já acaba rápido. */
+    var pointerGrosso = window.matchMedia('(pointer: coarse)').matches;
 
-    var lenis = new window.Lenis({ lerp: 0.09, wheelMultiplier: 1 });
+    if (!pointerGrosso && typeof window.Lenis !== 'undefined') {
+      document.documentElement.style.scrollBehavior = 'auto';
 
-    (function passo(tempo) {
-      lenis.raf(tempo);
-      window.requestAnimationFrame(passo);
-    })(0);
+      var lenis = new window.Lenis({ lerp: 0.09, wheelMultiplier: 1 });
 
+      (function passo(tempo) {
+        lenis.raf(tempo);
+        window.requestAnimationFrame(passo);
+      })(0);
+
+      document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+        link.addEventListener('click', function (e) {
+          var destino = document.querySelector(link.getAttribute('href'));
+          if (!destino) return;
+          e.preventDefault();
+          lenis.scrollTo(destino, { offset: 0 });
+        });
+      });
+      return;
+    }
+
+    /* sem Lenis: a rolagem por âncora ainda precisa ser suave, só
+       que pela API nativa — sem o atraso de assentamento */
     document.querySelectorAll('a[href^="#"]').forEach(function (link) {
       link.addEventListener('click', function (e) {
         var destino = document.querySelector(link.getAttribute('href'));
         if (!destino) return;
         e.preventDefault();
-        lenis.scrollTo(destino, { offset: 0 });
+        destino.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     });
   }
@@ -1166,6 +1230,48 @@
      por isso que os botões de ampliar nascem no HTML mas não fazem
      nada até este módulo ligar.
      ----------------------------------------------------------- */
+  /* 06d. MENU DO TELEFONE ---------------------------------
+     Mesmo padrão da lupa: <dialog> nativo, showModal(), Esc e
+     foco preso vêm do navegador. Fecha pelo X, tocando fora, por
+     Esc, ou clicando em qualquer link de dentro — é navegação por
+     âncora, então o gesto natural é o menu sair do caminho assim
+     que a pessoa escolhe para onde ir. */
+  function ligarMenu() {
+    var menu = document.querySelector('[data-menu]');
+    var abrir = document.querySelector('[data-menu-abre]');
+    if (!menu || !abrir || !menu.showModal) return;
+
+    var fechar = menu.querySelector('[data-menu-fecha]');
+    var saida = null;
+
+    function abrirMenu() {
+      if (menu.open) return;
+      menu.classList.remove('is-aberto');
+      menu.showModal();
+      window.requestAnimationFrame(function () {
+        window.requestAnimationFrame(function () { menu.classList.add('is-aberto'); });
+      });
+    }
+
+    function fecharMenu() {
+      if (!menu.open) return;
+      menu.classList.remove('is-aberto');
+      if (menosMovimento) { menu.close(); return; }
+      window.clearTimeout(saida);
+      saida = window.setTimeout(function () { if (menu.open) menu.close(); }, 420);
+    }
+
+    abrir.addEventListener('click', abrirMenu);
+    if (fechar) fechar.addEventListener('click', fecharMenu);
+    menu.addEventListener('cancel', function (e) { e.preventDefault(); fecharMenu(); });
+    menu.addEventListener('click', function (e) { if (e.target === menu) fecharMenu(); });
+    [].slice.call(menu.querySelectorAll('[data-menu-link]')).forEach(function (a) {
+      a.addEventListener('click', fecharMenu);
+    });
+    menu.addEventListener('close', function () { menu.classList.remove('is-aberto'); abrir.focus(); });
+  }
+
+
   function ligarLupa() {
     var lupa = document.getElementById('lupa');
     if (!lupa || !lupa.showModal) return;
@@ -1256,12 +1362,14 @@
          seria medido com o tamanho da lista empilhada e o tambor
          giraria inteiro em poucos pixels de rolagem. */
       ligarRolo();
+      ligarMenu();
       ligarLupa();
       ligarMarca();
       ligarRelogio();
       ligarServicos();
       ligarCursor();
       ligarCopia();
+      ligarLeiaMais();
       ligarLenis();
     };
 
@@ -1276,6 +1384,7 @@
         /* as medidas do aparato e da diagonal dependem da altura
            real das seções: reflow muda todas elas de uma vez */
         medir();
+        medirLeiaMais();
       }, 180);
     });
   }

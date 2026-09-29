@@ -24,7 +24,7 @@
      ANTES do style.css, para os tokens de familia ja acharem
      as fontes declaradas quando forem resolvidos. -->
 <link rel="stylesheet" href="https://use.typekit.net/oyj0zig.css">
-<link rel="stylesheet" href="assets/css/style.css?v=133">
+<link rel="stylesheet" href="assets/css/style.css?v=144">
 
 <script>
 (function () {
@@ -158,7 +158,44 @@
     </ul>
   </nav>
 
+  <!-- BOTÃO DE MENU (29/09) — só existe visualmente abaixo de 900px,
+       onde a nav acima some. Sem ele o telefone não tinha NENHUMA
+       navegação de seção (ponto em aberto documentado desde 04/09).
+       Abre o <dialog> logo abaixo — mesmo padrão nativo da lupa e
+       da folha da matriz: showModal(), foco preso e Esc pelo
+       próprio navegador, nada de biblioteca. -->
+  <button class="topo__menu" type="button" data-menu-abre aria-haspopup="dialog" aria-label="Abrir menu">
+    <span class="topo__menu__barra" aria-hidden="true"></span>
+    <span class="topo__menu__barra" aria-hidden="true"></span>
+  </button>
 </header>
+
+<dialog class="menu" data-menu aria-label="Menu de navegação">
+  <div class="menu__cab">
+    <svg class="menu__marca" viewBox="0 0 1000 64.22" aria-hidden="true" focusable="false">
+      <use href="#marca-jozzi"></use>
+    </svg>
+    <button class="menu__fechar" type="button" data-menu-fecha aria-label="Fechar menu">
+      <span class="menu__x" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <!-- mesmos sete links do cabeçalho, escritos à mão de novo — a
+       navegação inteira do site é assim, nunca montada por JS. -->
+  <nav class="menu__nav ap" data-nav-secao aria-label="Seções desta página">
+    <ul class="menu__lista" role="list">
+      <li><a href="#quem-somos" data-menu-link>Quem somos</a></li>
+      <li><a href="#nossa-visao" data-menu-link>Nossa visão</a></li>
+      <li><a href="#servicos" data-menu-link>Serviços</a></li>
+      <li><a href="#marcas" data-menu-link>Projetos</a></li>
+      <li><a href="#sobre" data-menu-link>Sobre</a></li>
+      <li><a href="#contato" data-menu-link>Contato</a></li>
+      <li><a href="#onde-ficamos" data-menu-link>Onde ficamos</a></li>
+    </ul>
+  </nav>
+
+  <a class="menu__cta ap" href="projetos.html">Ver todos os projetos</a>
+</dialog>
 
 
 
@@ -386,7 +423,7 @@
 
   <p class="serv__t d d--2 rv">Como criamos para você.</p>
 
-  <ul class="serv__lista" role="list">
+  <ul class="serv__lista" role="list" data-lenis-prevent>
 
     <li class="serv__card rv" role="listitem" data-cursor="Ver">
       <div class="serv__plate">
@@ -557,8 +594,122 @@
        premissa que abria os seis serviços; agora é a conclusão que
        eles sustentam — você lê o que a Jozzi faz e só então por que
        cada marca precisa de um recorte diferente. -->
+  <!-- GRID DE CLIENTES (29/09), a pedido da Jozzi: acima da virada,
+       um mosaico quadrado com os projetos que JÁ TÊM capa própria —
+       23 dos 27 (styling.html e projetos.html têm os 27; aqui, os 4
+       sem foto real ainda — Widepine, Shop Carol, A.TEC, Stella
+       Maranhão — ficaram de fora em vez de aparecer quebrados ou
+       com uma foto emprestada de outro projeto). A imagem é a mesma
+       capa que já usamos nas outras grades, em miniatura e sem
+       legenda (na largura de cada quadrado o nome ficaria
+       ilegível). Cada quadrado é um link de verdade para a página
+       do projeto — o nome vem do `alt` da própria imagem. Mesma
+       ordem 01–27 das outras duas grades, só que pulando quem não
+       tem foto. -->
+  <div class="marcas-mini">
+    <p class="marcas-mini__ap ap rv">Marcas que já confiaram na Jozzi</p>
+    <ul class="marcas-mini__lista rv" role="list">
+      <li><a class="marcas-mini__item" href="projetos/descomplica-pericias.html" data-cursor="Ver">
+        <img src="assets/img/projetos/descomplica-pericias/01.avif" alt="Descomplica Perícias"
+             width="933" height="1400" loading="lazy" decoding="async">
+      </a></li>
+      <li><a class="marcas-mini__item" href="styling/solstice-magazine.html" data-cursor="Ver">
+        <img src="assets/img/styling/solstice-magazine/01.avif" alt="Solstice Magazine"
+             width="933" height="1400" loading="lazy" decoding="async">
+      </a></li>
+      <li><a class="marcas-mini__item" href="styling/bazaar-fashion.html" data-cursor="Ver">
+        <img src="assets/img/styling/bazaar-fashion/01.avif" alt="Bazaar Fashion"
+             width="933" height="1400" loading="lazy" decoding="async">
+      </a></li>
+      <li><a class="marcas-mini__item" href="styling/eterea-cookies.html" data-cursor="Ver">
+        <img src="assets/img/styling/eterea-cookies/01.avif" alt="Etérea Cookies"
+             width="933" height="1400" loading="lazy" decoding="async">
+      </a></li>
+      <li><a class="marcas-mini__item" href="projetos/claudia-choma.html" data-cursor="Ver">
+        <img src="assets/img/projetos/claudia-choma/01.avif" alt="Claudia Choma"
+             width="933" height="1400" loading="lazy" decoding="async">
+      </a></li>
+      <li><a class="marcas-mini__item" href="styling/tate-the-lable.html" data-cursor="Ver">
+        <img src="assets/img/styling/tate-the-lable/01.avif" alt="Tate The Lable"
+             width="933" height="1400" loading="lazy" decoding="async">
+      </a></li>
+      <li><a class="marcas-mini__item" href="projetos/collab.html" data-cursor="Ver">
+        <img src="assets/img/projetos/collab/01.avif" alt="Collab"
+             width="933" height="1400" loading="lazy" decoding="async">
+      </a></li>
+      <li><a class="marcas-mini__item" href="styling/old-money.html" data-cursor="Ver">
+        <img src="assets/img/styling/old-money/01.avif" alt="Old Money"
+             width="933" height="1400" loading="lazy" decoding="async">
+      </a></li>
+      <li><a class="marcas-mini__item" href="styling/jessica.html" data-cursor="Ver">
+        <img src="assets/img/styling/jessica/01.avif" alt="Jéssica"
+             width="933" height="1400" loading="lazy" decoding="async">
+      </a></li>
+      <li><a class="marcas-mini__item" href="styling/coccola-club.html" data-cursor="Ver">
+        <img src="assets/img/styling/coccola-club/01.avif" alt="Coccola Club"
+             width="933" height="1400" loading="lazy" decoding="async">
+      </a></li>
+      <li><a class="marcas-mini__item" href="styling/amanda-ii.html" data-cursor="Ver">
+        <img src="assets/img/styling/amanda-ii/01.avif" alt="Amanda II"
+             width="933" height="1400" loading="lazy" decoding="async">
+      </a></li>
+      <li><a class="marcas-mini__item" href="styling/maysa.html" data-cursor="Ver">
+        <img src="assets/img/styling/maysa/01.avif" alt="Maysa"
+             width="933" height="1400" loading="lazy" decoding="async">
+      </a></li>
+      <li><a class="marcas-mini__item" href="styling/allysiane.html" data-cursor="Ver">
+        <img src="assets/img/styling/allysiane/01.avif" alt="Allysiane"
+             width="933" height="1400" loading="lazy" decoding="async">
+      </a></li>
+      <li><a class="marcas-mini__item" href="styling/amanda-woman.html" data-cursor="Ver">
+        <img src="assets/img/styling/amanda-woman/01.avif" alt="Amanda Woman"
+             width="933" height="1400" loading="lazy" decoding="async">
+      </a></li>
+      <li><a class="marcas-mini__item" href="styling/sis2-alfaiataria.html" data-cursor="Ver">
+        <img src="assets/img/styling/sis2-alfaiataria/01.avif" alt="Sis2 Alfaiataria"
+             width="933" height="1400" loading="lazy" decoding="async">
+      </a></li>
+      <li><a class="marcas-mini__item" href="styling/carol-andrade.html" data-cursor="Ver">
+        <img src="assets/img/styling/carol-andrade/01.avif" alt="Carol Andrade"
+             width="933" height="1400" loading="lazy" decoding="async">
+      </a></li>
+      <li><a class="marcas-mini__item" href="styling/new-again.html" data-cursor="Ver">
+        <img src="assets/img/styling/new-again/01.avif" alt="New Again"
+             width="933" height="1400" loading="lazy" decoding="async">
+      </a></li>
+      <li><a class="marcas-mini__item" href="styling/effea.html" data-cursor="Ver">
+        <img src="assets/img/styling/effea/01.avif" alt="Effeá"
+             width="933" height="1400" loading="lazy" decoding="async">
+      </a></li>
+      <li><a class="marcas-mini__item" href="styling/lacoste.html" data-cursor="Ver">
+        <img src="assets/img/styling/lacoste/01.avif" alt="Lacoste"
+             width="933" height="1400" loading="lazy" decoding="async">
+      </a></li>
+      <li><a class="marcas-mini__item" href="styling/leandra-klisievicz.html" data-cursor="Ver">
+        <img src="assets/img/styling/leandra-klisievicz/01.avif" alt="Leandra Klisievicz"
+             width="933" height="1400" loading="lazy" decoding="async">
+      </a></li>
+      <li><a class="marcas-mini__item" href="styling/luciana-burgos.html" data-cursor="Ver">
+        <img src="assets/img/styling/luciana-burgos/01.avif" alt="Luciana Burgos"
+             width="933" height="1400" loading="lazy" decoding="async">
+      </a></li>
+      <li><a class="marcas-mini__item" href="styling/circulei.html" data-cursor="Ver">
+        <img src="assets/img/styling/circulei/01.avif" alt="Circulei"
+             width="933" height="1400" loading="lazy" decoding="async">
+      </a></li>
+      <li><a class="marcas-mini__item" href="styling/carol-merlo.html" data-cursor="Ver">
+        <img src="assets/img/styling/carol-merlo/01.avif" alt="Carol Merlo"
+             width="933" height="1400" loading="lazy" decoding="async">
+      </a></li>
+    </ul>
+  </div>
+
   <div class="serv__virada">
     <p class="serv__virada__t d rv" data-linhas>Cada marca é singular.</p>
+    <!-- destaque pedido pela Jozzi (29/09): a frase é dela, texto direto, não
+         copy minha — "de Curitiba para todo o Brasil" em evidência junto da
+         virada. -->
+    <p class="serv__virada__destaque ap rv">De Curitiba para todo o Brasil.</p>
     <div class="serv__virada__c">
       <h3 class="serv__virada__ap ap rv">Nossas expertises</h3>
       <p class="rv">Como o nosso próprio lema já diz, somos experts em criar para você. Como
@@ -708,7 +859,7 @@
     <div class="rolo__cabeca">
       <div class="rolo__cabeca__t">
         <h2 class="secao__ap ap rv" id="marcas-titulo">Projetos que já fizemos</h2>
-        <p class="marcas__lede lede rv">Traduzimos a essência de cada marca, do detalhe ao resultado final.</p>
+        <p class="marcas__lede lede rv">Traduzimos a essência de cada marca,<br>do detalhe ao resultado final.</p>
       </div>
       <a class="rolo__cta ap rv" href="projetos.html">
         Ver todos os projetos<span class="rolo__cta__seta" aria-hidden="true"></span>
@@ -722,37 +873,51 @@
 
       <li class="rolo__item" data-rolo-item>
         <h3 class="rolo__nome d d--2">Collab</h3>
-        <p class="rolo__frase lede">O Collab Brechós chegou à Jozzi como um evento de moda circular premium que ainda precisava se posicionar nas redes sociais e atingir novos públicos. Com um diagnóstico do objetivo da marca, construímos um plano de comunicação que acompanhou todas as fases presentes nas datas do evento: descoberta, desejo, adesão e conversão. Após a criação da identidade, posicionamos a marca como o maior encontro de brechós de Curitiba, expressando o seu diferencial de propor uma moda secondhand com curadoria especializada. 
-          -styling, eventos
-          </p>
+        <p class="rolo__frase lede">O Collab Brechós chegou à Jozzi como um evento de moda circular premium que ainda precisava se posicionar nas redes sociais e atingir novos públicos.</p>
+        <div class="rolo__rodape">
+        <p class="rolo__selo ap">Styling &mdash; Eventos</p>
         <a class="rolo__saiba ap" href="projetos/collab.html">Saiba mais<span class="rolo__saiba__seta" aria-hidden="true"></span></a>
+        </div>
       </li>
 
       <li class="rolo__item" data-rolo-item>
         <h3 class="rolo__nome d d--2">Claudia Choma</h3>
-        <p class="rolo__frase lede">A Claudia Choma, nutricionista materno-infantil há mais de 33 anos e professora aposentada da Universidade Federal do Paraná, chegou à Jozzi com o objetivo de finalizar a sua carreira no consultório, tendo um posicionamento maior nas redes sociais. A partir disso, criamos a identidade da marca, que combinou o estilo clássico e romântico da cliente com a tendência estratégica atual de profissionais da nutrição no meio digital. Com a execução de um plano de conteúdos - da roteirização à aprovação - e de um site profissional, os resultados, além de impressionantes, foram reais quando tratamos de métricas. 
-        </p>
+        <p class="rolo__frase lede">A Claudia Choma, nutricionista materno-infantil há mais de 33 anos e professora aposentada da Universidade Federal do Paraná, chegou à Jozzi com o objetivo de finalizar a sua carreira no consultório, tendo um posicionamento maior nas redes sociais.</p>
+
+        <div class="rolo__rodape">
         <a class="rolo__saiba ap" href="projetos/claudia-choma.html">Saiba mais<span class="rolo__saiba__seta" aria-hidden="true"></span></a>
+
+        </div>
       </li>
 
       <li class="rolo__item" data-rolo-item>
         <h3 class="rolo__nome d d--2">Descomplica Perícias</h3>
-        <p class="rolo__frase lede">A relação do direito com o mundo digital requer atenção e cuidado na construção da linguagem ideal. O escritório de advocacia com foco em perícias e direito médico Descomplica Perícias, chegou à Jozzi com o objetivo de promover a marca nas redes sociais. Com a produção de styling e da criação da identidade, do blog de conteúdos e de um plano concreto de postagens em paralelo ao tráfego pago, passamos a fazer uma análise das métricas que geram um alcance maior do público específico almejado. Foi assim que transformamos a imagem da Descomplica em uma oportunidade autêntica de ter uma orientação especializada, adaptando a linguagem jurídica às tendências do mercado. 
-        </p>
+        <p class="rolo__frase lede">A relação do direito com o mundo digital requer atenção e cuidado na construção da linguagem ideal.</p>
+
+        <div class="rolo__rodape">
         <a class="rolo__saiba ap" href="projetos/descomplica-pericias.html">Saiba mais<span class="rolo__saiba__seta" aria-hidden="true"></span></a>
+
+        </div>
       </li>
 
       <li class="rolo__item" data-rolo-item>
         <h3 class="rolo__nome d d--2">Widepine Cafés</h3>
-        <p class="rolo__frase lede">A marca WIDEPINE chegou à Jozzi com uma identidade já preexistente e uma consolidação forte no mercado, mas tendo o desejo de ampliar a experiência do site. Com uma pesquisa de referências e de mercado, construímos banners mais dinâmicos e atualizamos as ferramentas de acesso para formatos mais otimizados. O dono da marca acompanhou cada mudança para que o web development acompanhasse o que ele realmente queria transmitir. Com a execução de um novo copywriting geral do site, a marca pôde fortalecer ainda mais o seu posicionamento, propondo uma melhor experiência ao visitante. 
-        </p>
+        <p class="rolo__frase lede">A marca WIDEPINE chegou à Jozzi com uma identidade já preexistente e uma consolidação forte no mercado, mas tendo o desejo de ampliar a experiência do site.</p>
+
+        <div class="rolo__rodape">
         <a class="rolo__saiba ap" href="projetos/widepine-cafes.html">Saiba mais<span class="rolo__saiba__seta" aria-hidden="true"></span></a>
+
+        </div>
       </li>
 
       <li class="rolo__item" data-rolo-item>
         <h3 class="rolo__nome d d--2">Shop Carol</h3>
-        <p class="rolo__frase lede">A marca Shop Carol, consolidada como uma das melhores em Curitiba de curadoria secondhand premium, buscava um planejamento e criação de social media mais efetivo, além de um posicionamento de moda maior. Ao entendermos a estética da marca, construímos, lado a lado da cliente, um projeto completo de styling, produção de moda, direção criativa e organização de conteúdos para o Instagram. Assim, conseguimos fortalecer a sua imagem ainda mais através de um branding que valorizou o diferencial com sofisticação.</p>
+        <p class="rolo__frase lede">A marca Shop Carol, consolidada como uma das melhores em Curitiba de curadoria secondhand premium, buscava um planejamento e criação de social media mais efetivo, além de um posicionamento de moda maior.</p>
+
+        <div class="rolo__rodape">
         <a class="rolo__saiba ap" href="projetos/shop-carol.html">Saiba mais<span class="rolo__saiba__seta" aria-hidden="true"></span></a>
+
+        </div>
       </li>
 
 
@@ -866,6 +1031,7 @@
         <h4 class="sobre__nome d d--2 rv">Letícia Cruz</h4>
         <p class="sobre__papel ap rv">Fundadora e diretora criativa</p>
         <p class="rv">Letícia Cruz é formada em Design de Moda pela Universidade Positivo (UP) e tem uma trajetória rica de experiências como stylist e produtora de moda. Ao passar a maior parte do tempo imersa na criação de campanhas, editoriais e conteúdos, Letícia sempre teve o desejo de unir o lado criativo com a entrega de estratégias para marcas em uma só direção. Foi assim que nasceu a Jozzi: o lugar que cria para você e com a maior qualidade possível dentro da sua proposta, buscando um olhar de 360 graus em cada etapa, para não sermos só mais uma agência. A mensagem principal de sua criação também carrega memória, porque Letícia passou metade de sua vida em Joanesburgo, na África do Sul, cidade dona do apelido carinhoso “Jozi”. Com uma conexão entre história e propósito, o seu pilar é que grandes marcas também são as que geram memória.</p>
+        <button class="sobre__leiamais ap" type="button" data-leiamais aria-expanded="false" hidden>Ler mais</button>
       </div>
     </article>
 
@@ -885,6 +1051,7 @@
         <p class="sobre__papel ap rv">Cargo a definir</p>
         <p class="sobre__bio__pendente rv" data-pendente>Biografia a definir &mdash; mesma extensão
         e mesmo tom da anterior. Este campo não foi preenchido por inferência.</p>
+        <button class="sobre__leiamais ap" type="button" data-leiamais aria-expanded="false" hidden>Ler mais</button>
       </div>
     </article>
 
@@ -1204,6 +1371,14 @@
        Qual dos dois é o nome oficial é decisão da Jozzi. -->
   <div class="fim__creditos">
     <p class="ap">Protótipo de direção &mdash; seções 00 a 07</p>
+    <!-- BOTÃO LGPD (29/09), a pedido da Jozzi. A página que ele abre
+         é só a MOLDURA — não escrevi uma política de privacidade,
+         porque isso é texto jurídico real (o que a Jozzi coleta, por
+         quanto tempo guarda, com quem compartilha, como pedir
+         exclusão) e eu não tenho essa informação. Inventar cláusula
+         de LGPD é pior do que deixar em branco: vira compromisso
+         legal por escrito que ninguém verificou. -->
+    <a class="fim__lgpd ap" href="privacidade.html">Privacidade &amp; LGPD</a>
   </div>
 
   <!-- o lockup tem 15,6:1. Em largura cheia isso deixa de ser um
