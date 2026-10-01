@@ -2639,6 +2639,35 @@ html.mz-travado { overflow: hidden; }
 }
 
 
+/* 10c3. MOVIMENTO REFINADO (30/09) ---------------------------
+   Duas adições, ambas só `transform`/`opacity` e ambas ligadas pelo
+   JS (sem a classe, a regra não existe — e movimento reduzido nunca
+   a recebe):
+   · parallax do fundo da abertura — `--par` é escrito pelo main.js;
+     a imagem já vem ampliada 12% para o deslocamento não expor a
+     borda do recorte;
+   · foto que ainda não carregou fica transparente sobre o tom
+     `--papel-2` da moldura e entra em 500ms quando chega.
+   O que o briefing pedia e NÃO entrou, por regra do projeto: sombra e
+   elevação em card (zero sombra no site inteiro) e shimmer em laço
+   (existe uma animação em laço só — a do "Rolar"). Ver MANUTENCAO. */
+.js--parallax .abertura__fundo img {
+  transform: translate3d(0, var(--par, 0px), 0) scale(1.12);
+  will-change: transform;
+}
+/* prefixo `.js` de propósito: as regras de transição originais
+   destas fotos moram MAIS ABAIXO no arquivo, com a mesma
+   especificidade, e venceriam esta em silêncio (só `transform`),
+   levando embora a transição de opacidade. */
+.js .styling-grid__foto__real,
+.js .caso__foto img,
+.js .marcas-mini__item img {
+  transition: opacity 500ms var(--curva), transform var(--t-entra) var(--curva), filter var(--t-micro) var(--curva);
+}
+.styling-grid__foto__real.is-pendente,
+.caso__foto img.is-pendente,
+.marcas-mini__item img.is-pendente { opacity: 0; }
+
 /* 10d. CURSOR -----------------------------------------------
    Um rótulo, não um círculo. Preso ao ponteiro, sem atraso e sem
    mola: o rastro elástico é justamente o clichê a evitar.
@@ -4635,34 +4664,29 @@ html.js--sem-motor .carregando { display: none; }
      picava a frase em seis linhas */
   .abertura__t { max-width: none; }
 
-  /* PROPORCIONAL SÓ NO TELEFONE (29/09, revisado 29/09) — o desktop
-     já estava certo (`flex-end`, base da regra), intocado. O
-     `center` sozinho não bastou: o "Rolar" é `position: absolute`
-     com `bottom` fixo, fora do bloco que centraliza — o grupo
-     (título+frentes+lede) ficava centralizado sozinho, e sobrava um
-     vazio sem função ENTRE a frase de baixo e o "Rolar", mais outro
-     vazio abaixo dele até o fim da seção. Dois vazios soltos, em vez
-     de um respiro só.
-     A correção: o "Rolar" ENTRA no fluxo no telefone (deixa de ser
-     absoluto) e vira o último item do mesmo grupo que centraliza —
-     título, frentes, lede E rolar se movem juntos, como um bloco
-     só. O que sobra vira UM respiro só, dividido em cima e embaixo
-     do grupo inteiro — isso é distribuição, não vazio disperso. */
-  /* padding também era herdado do desktop — lá é assimétrico de
-     propósito (mais respiro em cima, onde o bloco cola no rodapé
-     por `flex-end`); aqui, centralizado, o mesmo padding
-     assimétrico só empurrava o grupo pra cima do centro geométrico
-     da tela. Par de valores iguais no telefone. */
+  /* ABERTURA NO TELEFONE — REFORMULADA (30/09), a pedido da Jozzi.
+     Três zonas na altura da tela, de cima pra baixo:
+       1. título + frentes (o bloco de abertura);
+       2. "Rolar", no MEIO — centralizado, entre as duas;
+       3. a frase "O lab de marketing…", embaixo, com o fio em cima.
+     A frase é o último item do DOM e o "Rolar" vem depois dela, então
+     a ordem visual sai de `order`, não de mexer no HTML (o desktop
+     usa a mesma marcação). `space-between` com TRÊS zonas põe o
+     "Rolar" exatamente à meia distância das outras duas — é o que o
+     torna "o meio". O "Rolar" entra no fluxo (deixa de ser absoluto);
+     no desktop ele continua absoluto, intocado. Desktop não tem
+     nenhuma destas regras. */
   .abertura {
-    justify-content: center;
-    padding-top: clamp(3.5rem, 11vh, 6rem);
-    padding-bottom: clamp(3.5rem, 11vh, 6rem);
+    justify-content: space-between;
+    padding-top: clamp(5.5rem, 15vh, 8rem);
+    padding-bottom: clamp(2rem, 6vh, 3.5rem);
   }
 
   .abertura__bloco {
+    order: 1;
     grid-template-columns: 1fr;
     gap: clamp(1.1rem, 3vh, 1.6rem);
-    margin-bottom: clamp(1.8rem, 5vh, 2.8rem);
+    margin-bottom: 0;
   }
   .abertura__frentes {
     text-align: left;
@@ -4671,12 +4695,15 @@ html.js--sem-motor .carregando { display: none; }
   }
 
   .abertura__rolar {
+    order: 2;
     position: static;
-    /* continua encostado na margem direita — mesma posição do
-       desktop, só que fluindo com o resto do grupo agora, em vez de
-       fixo no rodapé da seção */
-    align-self: flex-end;
-    margin-top: clamp(2rem, 7vh, 3.5rem);
+    align-self: center;
+    justify-items: center;
+    margin: 0;
+  }
+
+  .abertura__pe {
+    order: 3;
   }
 }
 

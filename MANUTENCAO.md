@@ -2368,6 +2368,54 @@ quebram em linhas.
 logo abaixo repete o nome três vezes no mesmo rodapé. Foi o pedido; se
 parecer demais, a linha "Produzido por" é a candidata a sair.
 
+## Abertura no telefone — reformulada (30/09)
+
+Pedido: "Rolar" no meio, a frase "O lab de marketing…" embaixo. Substitui
+as duas tentativas anteriores (centralizar; trazer o Rolar pro fluxo).
+Três zonas na altura da tela: (1) título + frentes em cima; (2) "Rolar"
+centralizado no meio; (3) a frase embaixo, com o fio por cima dela.
+`justify-content: space-between` com TRÊS itens põe o Rolar à meia distância
+exata dos outros dois — medido: vãos iguais (141/141 em 375×812, 85/85 em
+375×667, 77/77 em 360×640) e centro horizontal em x=188 numa tela de 375.
+A ordem visual vem de `order` (bloco 1, rolar 2, frase 3), não de mexer no
+HTML — o desktop usa a mesma marcação e **não tem nenhuma dessas regras**
+(captura de tela do desktop idêntica à anterior). Tudo dentro do
+`@media (max-width: 768px)`.
+
+## Movimento refinado — o que entrou e o que não entrou (30/09)
+
+Veio um briefing genérico de e-commerce (Next.js, carrinho, drawers, sombra
+em card, shimmer). O site é estático e sem carrinho, então foi mapeado contra
+o que JÁ existia antes de escrever qualquer coisa.
+
+**Já existia, não mexi:** entrada escalonada da abertura (`data-atraso`,
+revelação por palavra), revelar no scroll (`.rv` + IntersectionObserver),
+zoom controlado nas fotos (1,03–1,06 com `--curva`), menu e folha
+deslizantes (`<dialog>` + `transform`), tudo com `prefers-reduced-motion`.
+
+**Entrou (só `transform`/`opacity`, ambos ligados pelo JS):**
+- **Parallax do fundo da abertura** — `ligarParalaxe()`. Escreve `--par`
+  (18% da rolagem, só na primeira tela) numa imagem, uma vez por quadro; o
+  CSS (`.js--parallax .abertura__fundo img`) aplica `translate3d` e já
+  amplia 12% pra não expor a borda. Medido: 90px a 500px de rolagem.
+- **Foto entra suave** — `ligarFotosSuaves()`. A moldura já tem o tom
+  `--papel-2` por trás (é o "esqueleto"); a foto que ainda não carregou fica
+  `is-pendente` (opacidade 0) e entra em 500ms quando chega. Foto já em cache
+  nunca recebe a classe. Vale para a grade de styling/projetos, galeria dos
+  casos e o mosaico de clientes. ⚠ A regra usa prefixo `.js` de propósito: as
+  transições originais dessas fotos moram mais abaixo no arquivo com a mesma
+  especificidade e venceriam a nova em silêncio, levando embora a opacidade.
+
+**Não entrou, por regra do projeto (não por esquecimento):**
+- Sombra e elevação (`translateY`) em card — zero sombra no site inteiro.
+- Shimmer em laço — só existe uma animação em laço, a do "Rolar".
+- Biblioteca de animação (GSAP/Framer) — o stack é CSS + JS nativo.
+- "Adicionar ao carrinho" / variações de cor — não existe carrinho.
+
+**Build/lint:** não há (sem `package.json`). Verificação: `node --check`,
+chaves do CSS balanceadas, auditoria geral nas páginas principais, e teste de
+movimento reduzido (nenhuma das duas coisas liga). Sem erro de JavaScript.
+
 ## O que NÃO fazer
 
 - **Não subsetar a Gracio.** É a fonte desenhada da marca (`assets/fonts/

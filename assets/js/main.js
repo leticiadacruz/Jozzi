@@ -908,6 +908,56 @@
      elemento novo. O <span role="status"> entrega a mesma
      informação à tecnologia assistiva.
      -------------------------------------------------------- */
+  /* 06b2. PARALLAX DA ABERTURA ---------------------------------
+     O fundo desce mais devagar que a página: a imagem se desloca
+     18% da rolagem (e só durante a primeira tela). É UMA escrita de
+     `--par` por quadro, num único elemento, e o CSS transforma — só
+     `transform`, nada de layout, nada lido dentro do quadro (a
+     rolagem vem do evento, que já a entrega). A imagem é ampliada
+     12% no CSS para o deslocamento nunca expor a borda. Desligado
+     em movimento reduzido: sem a classe `js--parallax` no <html> a
+     regra de CSS nem existe. */
+  function ligarParalaxe() {
+    var img = document.querySelector('.abertura__fundo img');
+    if (!img || menosMovimento) return;
+    document.documentElement.classList.add('js--parallax');
+
+    var quadro = 0;
+    function escrever() {
+      quadro = 0;
+      var y = window.pageYOffset || 0;
+      if (y > window.innerHeight * 1.2) return;
+      img.style.setProperty('--par', (y * 0.18).toFixed(1) + 'px');
+    }
+    window.addEventListener('scroll', function () {
+      if (!quadro) quadro = window.requestAnimationFrame(escrever);
+    }, { passive: true });
+  }
+
+
+  /* 06b3. FOTO ENTRA SUAVE ----------------------------------------
+     O "esqueleto" já existe: cada moldura de foto tem o tom
+     `--papel-2` por trás. O que faltava é a foto ENTRAR por cima
+     dele em vez de estalar no meio da rolagem. Só as fotos que
+     AINDA NÃO carregaram ganham `is-pendente` (opacidade 0), e
+     `load`/`error` tiram a classe. Foto que já veio do cache nunca
+     recebe a classe — não pisca. Sem JavaScript a classe nunca é
+     posta e a foto aparece como sempre. */
+  function ligarFotosSuaves() {
+    if (menosMovimento) return;
+    [].slice.call(document.querySelectorAll(
+      '.styling-grid__foto__real, .caso__foto img, .marcas-mini__item img'
+    )).forEach(function (img) {
+      if (img.complete) return;
+      img.classList.add('is-pendente');
+      var pronta = function () { img.classList.remove('is-pendente'); };
+      img.addEventListener('load', pronta, { once: true });
+      img.addEventListener('error', pronta, { once: true });
+      if (img.complete) pronta();
+    });
+  }
+
+
   /* 06c. LER MAIS — bios da seção Sobre ------------------------
      O texto inteiro sempre esteve no HTML; o corte de 3 linhas é
      só CSS (`-webkit-line-clamp`). Aqui a única função é medir se
@@ -1370,6 +1420,8 @@
       ligarCursor();
       ligarCopia();
       ligarLeiaMais();
+      ligarParalaxe();
+      ligarFotosSuaves();
       ligarLenis();
     };
 
