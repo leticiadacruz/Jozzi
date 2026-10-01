@@ -24,7 +24,7 @@
      ANTES do style.css, para os tokens de familia ja acharem
      as fontes declaradas quando forem resolvidos. -->
 <link rel="stylesheet" href="https://use.typekit.net/oyj0zig.css">
-<link rel="stylesheet" href="assets/css/style.css?v=147">
+<link rel="stylesheet" href="assets/css/style.css?v=154">
 
 <script>
 (function () {
@@ -423,7 +423,7 @@
 
   <p class="serv__t d d--2 rv">Como criamos para você.</p>
 
-  <ul class="serv__lista" role="list" data-lenis-prevent>
+  <ul class="serv__lista" role="list">
 
     <li class="serv__card rv" role="listitem" data-cursor="Ver">
       <div class="serv__plate">
@@ -607,8 +607,7 @@
        ordem 01–27 das outras duas grades, só que pulando quem não
        tem foto. -->
   <div class="marcas-mini">
-    <p class="marcas-mini__ap ap rv">Marcas que já confiaram na Jozzi</p>
-    <ul class="marcas-mini__lista rv" role="list">
+    <ul class="marcas-mini__lista rv" role="list" aria-label="Marcas que já confiaram na Jozzi">
       <li><a class="marcas-mini__item" href="projetos/descomplica-pericias.html" data-cursor="Ver">
         <img src="assets/img/projetos/descomplica-pericias/01.avif" alt="Descomplica Perícias"
              width="933" height="1400" loading="lazy" decoding="async">
@@ -705,11 +704,11 @@
   </div>
 
   <div class="serv__virada">
-    <p class="serv__virada__t d rv" data-linhas>Cada marca é singular.</p>
+    <p class="serv__virada__t d rv" data-linhas>De Curitiba para todo o Brasil.</p>
     <!-- destaque pedido pela Jozzi (29/09): a frase é dela, texto direto, não
          copy minha — "de Curitiba para todo o Brasil" em evidência junto da
          virada. -->
-    <p class="serv__virada__destaque ap rv">De Curitiba para todo o Brasil.</p>
+    <p class="serv__virada__destaque rv">Cada marca é singular.</p>
     <div class="serv__virada__c">
       <h3 class="serv__virada__ap ap rv">Nossas expertises</h3>
       <p class="rv">Como o nosso próprio lema já diz, somos experts em criar para você. Como
@@ -732,7 +731,7 @@
   </p>
 
   <div class="matriz" id="JozziTacticalMatrix" data-matriz data-inv hidden
-       data-whatsapp="https://wa.me/message/A5HZRIZWCMH3O1" aria-labelledby="mz-titulo" role="region">
+       data-whatsapp="https://wa.me/message/A5HZRIZWCMH3O1" data-numero="5541991692374" aria-labelledby="mz-titulo" role="region">
     <div class="mz-cab">
       <h3 class="mz-titulo" id="mz-titulo">Monte o seu combo.</h3>
       <p class="mz-desc">Combine as frentes, veja o escopo que elas cobrem juntas e peça um orçamento feito para a sua marca.</p>
@@ -1400,7 +1399,7 @@
 <!-- a matriz roda ANTES do main.js: ela tira o `hidden` do painel, e o
      main.js mede as faixas escuras ([data-inv]) ao subir. Na ordem
      inversa ele mediria o painel com altura zero. -->
-<script src="assets/js/matriz.js?v=3" defer></script>
+<script src="assets/js/matriz.js?v=5" defer></script>
 <script src="assets/js/main.js" defer></script>
 </body>
 </html>

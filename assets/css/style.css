@@ -1520,7 +1520,13 @@ a { color: inherit; text-decoration: none; }
    no quadrado (é link de verdade) ou vai para /projetos.html.
    Sem fundo, sem sombra, sem raio de canto: a mesma disciplina de
    material do resto do site — aqui a "moldura" é a foto em si. */
-.marcas-mini { margin: 0 0 clamp(2.5rem, 7vh, 4rem); }
+/* 01/10: a barra de divisão passou do topo da virada para o topo do
+   mosaico — cards → fio → marcas → "Cada marca é singular". */
+.marcas-mini {
+  margin: clamp(2.5rem, 8vh, 4.5rem) 0 clamp(2.5rem, 7vh, 4rem);
+  padding-top: clamp(2rem, 6vh, 3.5rem);
+  border-top: 1px solid var(--fio);
+}
 .marcas-mini__ap { margin: 0 0 clamp(.9rem, 2.2vh, 1.3rem); }
 .marcas-mini__lista {
   list-style: none;
@@ -1569,13 +1575,12 @@ a { color: inherit; text-decoration: none; }
    seção, separava-se dos cards por baixo; agora que os FECHA, o
    fio vem por cima e o respiro é no topo. */
 .serv__virada {
-  margin: clamp(2.5rem, 8vh, 4.5rem) 0 0;
-  padding-top: clamp(2rem, 6vh, 3.5rem);
-  border-top: 1px solid var(--fio);
+  margin: 0;
+  padding-top: 0;
 }
 .serv__virada__t {
   margin: 0;
-  max-width: 13ch;
+  max-width: 16ch;
   font-size: clamp(1.8rem, 3.2vw + .5rem, 3.6rem);
 }
 /* EM DESTAQUE (29/09): o aparato de sempre, mas com o sinal da
@@ -1583,8 +1588,19 @@ a { color: inherit; text-decoration: none; }
    do resto do site, só que puxada para chamar atenção, não uma
    cor ou peso novos inventados para a ocasião. */
 .serv__virada__destaque {
-  margin: .6rem 0 0;
+  margin: clamp(.8rem, 2vh, 1.2rem) 0 0;
   color: var(--sinal);
+  /* 01/10: maior, a pedido da Jozzi — antes herdava o corpo pequeno
+     do aparato (.ap) */
+  font-size: clamp(1.05rem, 1.4vw + .55rem, 1.75rem);
+  /* folga para a revelação (clip-path) não cortar o "g" de singular */
+  line-height: 1.5;
+  padding-bottom: .25em;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  /* 01/10: trocou de lugar com o título — agora é "Cada marca é
+     singular." em Nexa (fonte de texto), sem o aparato mono */
+  font-family: var(--fonte-texto);
 }
 .serv__virada__ap {
   margin: 0 0 clamp(.9rem, 2.4vh, 1.4rem);
@@ -1603,8 +1619,12 @@ a { color: inherit; text-decoration: none; }
      (09/09). A calha de uma coluna inteira entre os dois fazia o
      par ler como duas colunas independentes em vez de uma frase
      com o seu desdobramento. */
-  .serv__virada__t { grid-column: 1 / span 5; }
-  .serv__virada__c { grid-column: 6 / span 6; }
+  .serv__virada__t { grid-column: 1 / span 5; grid-row: 1 / span 2; }
+  /* 01/10: "Cada marca é singular." fica ACIMA de "Nossas
+     expertises", na coluna da direita; o título ocupa as duas
+     linhas à esquerda, alinhado pela base. */
+  .serv__virada__destaque { grid-column: 6 / span 6; grid-row: 1; margin: 0; }
+  .serv__virada__c { grid-column: 6 / span 6; grid-row: 2; margin-top: clamp(.8rem, 2vh, 1.2rem); }
 }
 @media (max-width: 1024px) {
   .serv__virada__c { margin-top: clamp(1.5rem, 4vh, 2.2rem); }

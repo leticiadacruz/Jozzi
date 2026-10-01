@@ -35,6 +35,20 @@
 
   var menosMovimento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var WHATSAPP = raiz.getAttribute('data-whatsapp');
+  /* NÚMERO COMERCIAL (opcional). O link `wa.me/message/…` da Jozzi
+     NÃO carrega texto: o redirecionamento dele descarta o `?text=`
+     (testado em 01/10 — a resposta é idêntica com e sem o parâmetro).
+     Só `wa.me/<número>?text=…` preenche a conversa. Enquanto
+     `data-numero` estiver vazio no HTML, vale o fluxo antigo (copiar
+     e colar); com o número, a mensagem já vai preenchida e a cópia
+     deixa de ser necessária. Formato: só dígitos com DDI, ex.:
+     55DDNÚMERO. */
+  var NUMERO = (raiz.getAttribute('data-numero') || '').replace(/\D/g, '');
+
+  function linkWhatsapp(sel) {
+    if (!NUMERO || !sel.length) return WHATSAPP;
+    return 'https://wa.me/' + NUMERO + '?text=' + encodeURIComponent(mensagem(sel));
+  }
   var SCRAMBLE_MS = 300;
   var CARACTERES = '0123456789ABCDEF#%&*+/<>=';
 
@@ -210,9 +224,9 @@
       '<p class="mz-msg" data-scr>' + esc(vazio ? 'Selecione ao menos uma frente.' : mensagem(sel).replace('\n\n', '\n')) + '</p></div>' +
       '</div>' +
       '<div class="mz-bloco mz-orc__pe">' +
-      '<a class="mz-cta" data-mz-cta href="' + esc(WHATSAPP) + '" target="_blank" rel="noopener noreferrer"' +
+      '<a class="mz-cta" data-mz-cta href="' + esc(linkWhatsapp(sel)) + '" target="_blank" rel="noopener noreferrer"' +
         (vazio ? ' aria-disabled="true"' : '') + '>Solicitar orçamento no WhatsApp</a>' +
-      '<p class="mz-aviso" role="status" data-mz-aviso>A mensagem é copiada ao clicar; no WhatsApp, é só colar.</p>' +
+      '<p class="mz-aviso" role="status" data-mz-aviso>' + (NUMERO ? 'A conversa abre no WhatsApp já com a mensagem preenchida.' : 'A mensagem é copiada ao clicar; no WhatsApp, é só colar.') + '</p>' +
       '<textarea class="mz-copia" data-mz-copia readonly hidden aria-label="Mensagem para copiar"></textarea>' +
       '</div>';
   }
@@ -357,6 +371,9 @@
       aviso.textContent = 'Selecione ao menos uma frente para montar a mensagem.';
       return;
     }
+
+    /* com número, o href já carrega o texto — nada a copiar */
+    if (NUMERO) return;
 
     var msg = mensagem(sel);
     function manual() {

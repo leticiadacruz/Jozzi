@@ -2416,6 +2416,32 @@ deslizantes (`<dialog>` + `transform`), tudo com `prefers-reduced-motion`.
 chaves do CSS balanceadas, auditoria geral nas páginas principais, e teste de
 movimento reduzido (nenhuma das duas coisas liga). Sem erro de JavaScript.
 
+## Jozzi Matrix — WhatsApp com mensagem preenchida
+
+- O link `wa.me/message/…` **não aceita texto**: o redirecionamento descarta o `?text=` (testado). Só `https://wa.me/<número>?text=…` preenche a conversa.
+- `#JozziTacticalMatrix` tem o atributo `data-numero=""` (index.html). **Preencher com o número comercial, só dígitos com DDI** (ex.: `55DDNÚMERO`). Nunca inventar.
+- Com número: o `href` do CTA já nasce com a mensagem codificada (funciona com clique, botão do meio, toque longo) e nada é copiado.
+- Sem número (hoje): fluxo antigo — copia a mensagem e abre o link `wa.me/message/…`.
+- Ao trocar o número, subir a versão de `matriz.js?v=` no index.html.
+
+## Rodada 01/10 — número do WhatsApp, mosaico sem legenda, trava no scroll
+
+- `data-numero` do Matrix preenchido com o número informado pela Jozzi (41 99169-2374 → `5541991692374`). `matriz.js?v=5`.
+- Mosaico de marcas: legenda visível "Marcas que já confiaram na Jozzi" removida; o texto virou `aria-label` da lista (leitor de tela continua lendo). O mosaico já vem antes de "Cada marca é singular".
+- Trava ao rolar em "Como criamos para você": a `<ul class="serv__lista">` tinha `data-lenis-prevent`. Com ele, a roda do mouse sobre os cards deixava de ser suavizada pelo Lenis e virava rolagem nativa, brigando com a inércia dele (para/solta ao entrar e sair da área). Atributo removido. No telefone o Lenis já está desligado e o carrossel horizontal é nativo, então nada se perde. Não reproduzi a trava em teste automatizado (quadros estáveis, ~16,5 ms) — a causa é por leitura do código; conferir no dispositivo.
+
+- Ordem em Serviços (01/10, 2ª passada): cards → barra de divisão → mosaico de marcas → "Cada marca é singular". O `border-top` saiu de `.serv__virada` e foi para `.marcas-mini`. `style.css?v=148`.
+
+- "De Curitiba para todo o Brasil." ampliado (`.serv__virada__destaque`: `clamp(1.05rem, 1.4vw + .55rem, 1.75rem)`). `style.css?v=149`.
+
+- Troca (01/10): o título da virada agora é "De Curitiba para todo o Brasil." (Gracio) e "Cada marca é singular." virou a linha de destaque abaixo, em Nexa (`.serv__virada__destaque`, sem `.ap`). `.serv__virada__t` max-width 16ch.
+
+- "Cada marca é singular." cortada (01/10): no desktop a frase não tinha coluna no grid da virada (`≥1025px`) e caía numa trilha de largura zero. Agora ocupa a coluna 1–5, linha 2, sob o título; o texto de sustentação ocupa as duas linhas. Também ganhou `line-height: 1.5` + `padding-bottom` para a revelação (`clip-path`) não cortar o "g". `style.css?v=152`.
+
+- Virada no desktop (01/10): "Cada marca é singular." passou para a coluna da direita, ACIMA de "Nossas expertises"; o título "De Curitiba para todo o Brasil." ocupa as duas linhas à esquerda. No telefone a ordem já era essa. `style.css?v=153`.
+
+- "Cada marca é singular." em maiúsculas via CSS (`text-transform: uppercase` + `letter-spacing: .04em` em `.serv__virada__destaque`); o HTML segue em caixa normal. `style.css?v=154`.
+
 ## O que NÃO fazer
 
 - **Não subsetar a Gracio.** É a fonte desenhada da marca (`assets/fonts/
