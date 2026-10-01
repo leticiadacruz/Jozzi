@@ -4370,6 +4370,26 @@ html.js--sem-motor .carregando { display: none; }
   justify-content: space-between;
   gap: .5rem 1.5rem;
 }
+/* ASSINATURA DO SITE (30/09): "© 2026 Jozzi Creative Lab…" e
+   "Produzido por <logo>". O logo é o MESMO sprite do cabeçalho
+   (`#marca-jozzi`), herdando `currentColor` — o arquivo anexado
+   pela Jozzi tinha os mesmos 16 caminhos, só com `#758692` fixo, e
+   essa cor está fora da paleta de duas cores do site. No telefone as
+   três peças (©, produzido por, LGPD) quebram em linhas, cada uma
+   no próprio ritmo, em vez de espremer numa só. */
+.fim__copy { margin: 0; }
+.fim__prod {
+  display: inline-flex;
+  align-items: center;
+  gap: .7em;
+  margin: 0;
+}
+.fim__prod__marca {
+  display: block;
+  width: clamp(7.5rem, 11vw, 9.5rem);
+  height: auto;
+  color: var(--fg);
+}
 .fim__lgpd {
   display: inline-flex;
   align-items: center;

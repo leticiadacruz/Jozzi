@@ -2346,6 +2346,28 @@ destino separado. Correção, escopada a ≤768px:
 **Testado:** 375×812, 375×667 (tela mais baixa, sem cortar nada), desktop
 1440×900 (os 3 cards, sem mudança). Sem erro novo na auditoria geral.
 
+## Assinatura do site no rodapé (30/09)
+
+Rodapé de TODAS as 32 páginas: "© 2026 Jozzi Creative Lab. Todos os direitos
+reservados." + "Produzido por" + o logotipo, no lugar da linha "Protótipo de
+direção — …", que era provisória e variava por página.
+
+⚠ **O pedido original dizia "© 2026 Collab Brechós Ltda."** — a Collab é
+CLIENTE da Jozzi (case em `projetos/collab.html`), não a dona deste site.
+Perguntei antes de publicar uma atribuição de propriedade a outra empresa; a
+Jozzi confirmou que foi engano, e o titular é a própria Jozzi Creative Lab.
+
+**O logo é o sprite que já existia** (`#marca-jozzi`, `currentColor`). O SVG
+anexado tinha os mesmos 16 caminhos (conferido), só com `fill: #758692`
+fixo — cor fora da paleta de duas cores. Reaproveitar o sprite mantém o
+Marsala e não duplica geometria. Classes: `.fim__copy`, `.fim__prod`,
+`.fim__prod__marca`. No telefone as três peças (©, produzido por, LGPD)
+quebram em linhas.
+
+**Aberto:** "Produzido por Jozzi" ao lado de "© Jozzi" e do logotipo gigante
+logo abaixo repete o nome três vezes no mesmo rodapé. Foi o pedido; se
+parecer demais, a linha "Produzido por" é a candidata a sair.
+
 ## O que NÃO fazer
 
 - **Não subsetar a Gracio.** É a fonte desenhada da marca (`assets/fonts/
