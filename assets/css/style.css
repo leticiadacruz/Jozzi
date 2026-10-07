@@ -772,6 +772,45 @@ a { color: inherit; text-decoration: none; }
 .rolo__cta:hover .rolo__cta__seta,
 .rolo__cta:focus-visible .rolo__cta__seta { transform: translateX(4px); }
 
+/* SOU CLIENTE (07/10) — atalho para a central de aprovação de
+   conteúdos (app.jozzicreative.com.br), só para clientes. Mesmo
+   vocabulário do `.rolo__cta`: fio na cor de sinal, sem fundo, sem
+   sombra; no hover preenche. Fica no cabeçalho em todas as larguras
+   (no telefone, ao lado do botão de menu). */
+.topo__cliente {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: .6em;
+  min-height: 44px;
+  padding: .5em .9em;
+  border: 1px solid var(--sinal);
+  color: var(--sinal);
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background-color var(--t-micro) var(--curva),
+              color var(--t-micro) var(--curva);
+}
+.topo__cliente:hover,
+.topo__cliente:focus-visible { background: var(--sinal); color: var(--tinta); }
+.topo__cliente__seta {
+  width: 1.2em;
+  height: 1px;
+  background: currentColor;
+  flex: none;
+  transition: transform var(--t-micro) var(--curva);
+}
+.topo__cliente:hover .topo__cliente__seta,
+.topo__cliente:focus-visible .topo__cliente__seta { transform: translateX(4px); }
+/* com o botão antes dele, o menu não pode mais empurrar sozinho
+   para a direita — senão o espaço livre se divide entre os dois */
+.topo__cliente + .topo__menu { margin-left: 0; }
+.topo__cliente:not(:first-child) { margin-left: 0; }
+@media (max-width: 899px) {
+  .topo { gap: .6rem; }
+  .topo__cliente { padding: .4em .7em; gap: .45em; }
+}
+
 /* Sem `padding-top` no body: o cabeçalho é transparente em repouso
    e a abertura nasce POR BAIXO dele de propósito — é o que faz a
    imagem de fundo dela chegar ao topo da tela. A abertura já tem

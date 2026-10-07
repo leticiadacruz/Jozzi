@@ -2442,6 +2442,13 @@ movimento reduzido (nenhuma das duas coisas liga). Sem erro de JavaScript.
 
 - "Cada marca é singular." em maiúsculas via CSS (`text-transform: uppercase` + `letter-spacing: .04em` em `.serv__virada__destaque`); o HTML segue em caixa normal. `style.css?v=154`.
 
+## Botão "Sou cliente" no cabeçalho (07/10)
+
+- Link `https://app.jozzicreative.com.br/login` (central de aprovação de conteúdos, só para clientes), nos 32 HTMLs: `<a class="topo__cliente ap">Sou cliente<span class="topo__cliente__seta"></span></a>`.
+- Na home fica entre a nav e o botão de menu; nas demais páginas, depois do "Voltar para…". Aparece em todas as larguras (no telefone, ao lado do menu — cabe a 375px sem rolagem horizontal).
+- Estilo = `.rolo__cta` em menor: fio na cor de sinal, sem fundo/sombra/raio; hover preenche e a seta anda 4px. Abre na mesma aba.
+- `style.css?v=155`.
+
 ## O que NÃO fazer
 
 - **Não subsetar a Gracio.** É a fonte desenhada da marca (`assets/fonts/
