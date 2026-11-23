@@ -1035,7 +1035,7 @@ a { color: inherit; text-decoration: none; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: center 22%;
   display: block;
   filter: grayscale(1) contrast(1.04);
 }
@@ -1061,16 +1061,16 @@ a { color: inherit; text-decoration: none; }
   z-index: 1;
   background:
     linear-gradient(to right,
-      rgb(var(--off-white-rgb) / .93) 0%,
-      rgb(var(--off-white-rgb) / .88) 42%,
-      rgb(var(--off-white-rgb) / .62) 78%,
-      rgb(var(--off-white-rgb) / .50) 100%);
+      rgb(var(--off-white-rgb) / .72) 0%,
+      rgb(var(--off-white-rgb) / .50) 42%,
+      rgb(var(--off-white-rgb) / .12) 78%,
+      rgb(var(--off-white-rgb) / 0) 100%);
 }
 @media (max-width: 768px) {
   /* no telefone o texto ocupa a largura toda: o véu não tem para
      onde abrir sem passar por baixo dele */
   .abertura__veu {
-    background: rgb(var(--off-white-rgb) / .93);
+    background: rgb(var(--off-white-rgb) / .68);
   }
 }
 
@@ -3466,6 +3466,8 @@ html.mz-travado { overflow: hidden; }
 .sobre__texto .sobre__t { margin-bottom: clamp(1rem, 2.6vh, 1.6rem); }
 .sobre__fig-decl { margin: 0; }
 .fig__campo--45 { aspect-ratio: 4 / 5; }
+/* imagem inteira, sem recorte: a proporção do arquivo (931×1400) */
+.fig__campo--inteira { aspect-ratio: 931 / 1400; }
 
 /* ---- 2 · a virada ---- */
 .sobre__virada {
@@ -3638,19 +3640,64 @@ html.mz-travado { overflow: hidden; }
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
   gap: var(--calha);
   /* 46rem deixava os três retratos presos à esquerda, com quase
      200px de vão morto à direita numa seção que usa a grade de 12
      colunas inteira em todo o resto (29/09, "otimizar design").
      56rem dá o respiro de sempre sem esticar a foto além do teto
      que ela já tem (--equipe/--sobre__fig ficam com 18rem cada). */
-  max-width: 56rem;
+  /* 72rem (18/11): com cinco pessoas, 56rem quebrava em 4 + 1. */
+  max-width: 84rem;
 }
 
 .equipe__m { position: relative; }
 
 .equipe__foto { overflow: hidden; }
+/* TESTE EM P&B (18/11): para voltar à cor, apagar esta regra. */
+.equipe__foto .prov { filter: grayscale(1); }
+
+/* ANIMAÇÕES DA EQUIPE (18/11). Tudo é entrada ou resposta ao
+   ponteiro — nada roda em laço, respeitando a regra "nenhuma
+   animação infinita".
+   1. Entrada em cascata: cada retrato espera 90ms a mais que o
+      anterior, e o gesto de máscara de sempre (`revelar`) segue
+      valendo — só o atraso é novo.
+   2. A foto assenta: nasce ampliada e desce até 1 enquanto a
+      máscara abre, como uma câmera que se afasta.
+   3. Holofote: sob o ponteiro, a foto ganha cor e sobe 8px; as
+      outras escurecem. */
+.equipe__m:nth-child(2) { --i: 1; }
+.equipe__m:nth-child(3) { --i: 2; }
+.equipe__m:nth-child(4) { --i: 3; }
+.equipe__m:nth-child(5) { --i: 4; }
+
+.js .equipe__m.is-dentro { animation-delay: calc(var(--i, 0) * 90ms); }
+
+.equipe__foto { transition: transform var(--t-entra) var(--curva); }
+.equipe__foto .prov {
+  transition:
+    transform 1400ms var(--curva),
+    filter var(--t-entra) var(--curva);
+}
+.js .equipe__m .prov { transform: scale(1.18); }
+.js .equipe__m.is-dentro .prov {
+  transform: scale(1);
+  transition-delay: calc(var(--i, 0) * 90ms), 0ms;
+}
+.js--sem-motor .equipe__m .prov { transform: none; }
+
+@media (hover: hover) and (pointer: fine) {
+  .equipe__m:hover .equipe__foto { transform: translateY(-8px); }
+  .equipe__m:hover .prov,
+  .equipe__m:focus-within .prov {
+    filter: grayscale(0);
+    transition-delay: 0ms;
+  }
+  .equipe__lista:hover .equipe__m:not(:hover) .prov {
+    filter: grayscale(1) brightness(.62);
+  }
+}
 
 .equipe__nome {
   margin: 0;
@@ -3674,11 +3721,11 @@ html.mz-travado { overflow: hidden; }
      o `<li>` carrega `.rv`, e pelo mesmo motivo do `.prin__w` ele
      não pode receber transform. Ampliar por dentro também é o
      gesto melhor — a moldura fica firme e a imagem se aproxima. */
-  .equipe__foto .prov {
-    transition: transform var(--t-entra) var(--curva);
+  .js .equipe__m.is-dentro:hover .prov,
+  .js .equipe__m.is-dentro:focus-within .prov {
+    transform: scale(1.06);
+    transition-duration: var(--t-entra), var(--t-entra);
   }
-  .equipe__m:hover .prov,
-  .equipe__m:focus-within .prov { transform: scale(1.06); }
 
   /* a legenda sai do fluxo e vira painel sobre a foto */
   .equipe__info {
@@ -3699,7 +3746,7 @@ html.mz-travado { overflow: hidden; }
     pointer-events: none;
   }
   .equipe__m:hover .equipe__info,
-  .equipe__m:focus-within .equipe__info { opacity: 1; transform: translateY(0); }
+  .equipe__m:focus-within .equipe__info { opacity: 1; transform: translateY(-8px); }
 
   /* o painel traz o próprio contraste, então os dois tons do
      texto saem do off-white e não dos tokens da seção */
@@ -3714,6 +3761,10 @@ html.mz-travado { overflow: hidden; }
   .prin:focus-within { transform: none; }
   .equipe__m:hover .prov,
   .equipe__m:focus-within .prov { transform: none; }
+  .equipe__foto,
+  .equipe__m:hover .equipe__foto { transition: none; transform: none; }
+  .js .equipe__m .prov { transform: none; }
+  .js .equipe__m.is-dentro { animation-delay: 0ms; }
 }
 
 /* ---- ≥1025: as três grades ---- */
@@ -3797,7 +3848,7 @@ html.mz-travado { overflow: hidden; }
      mesmo papel (retrato de pessoa, 3:4), mediu-se diferente
      antes só porque um vinha de `max-width` e o outro vinha
      inteiro da grade (29/09). */
-  .equipe__foto { max-width: 18rem; }
+  .equipe__foto { max-width: 22rem; }
   /* até a coluna 12, e não até a 9: a caixa cresce para a direita
      porque é a medida que torna a justificação possível. */
   .sobre__bio { grid-column: 6 / span 7; }
@@ -3821,7 +3872,7 @@ html.mz-travado { overflow: hidden; }
   .sobre__exp    { margin-top: clamp(1.8rem, 5vh, 2.6rem); }
   .sobre__bio    { margin-top: clamp(1.8rem, 5vh, 2.6rem); }
   .sobre__fig    { max-width: 15rem; }
-  .equipe__foto  { max-width: 15rem; }
+  .equipe__foto  { max-width: 18rem; }
   .sobre__fig-decl { margin-top: clamp(1.8rem, 5vh, 2.6rem); max-width: 22rem; }
   .sobre__pessoa { display: grid; gap: clamp(2.5rem, 8vh, 4rem); }
   .sobre__t      { max-width: 100%; }
@@ -4774,6 +4825,61 @@ html.js--sem-motor .carregando { display: none; }
   .fim { flex-direction: column; gap: .35rem; }
 }
 
+
+/* 12b. CAMADA DE MOVIMENTO 2 — "cool, mas chic" (18/11) -------
+   Mesmo gesto de sempre (máscara de baixo para cima), agora com
+   três acabamentos. Nada em laço: a regra "nenhuma animação
+   infinita" segue valendo.
+   1. Foco suave: o elemento entra levemente desfocado e se
+      define, em 900ms em vez de 600 — mais lento, mais editorial.
+   2. Foto que assenta: a imagem nasce ampliada e se afasta
+      enquanto a máscara abre.
+   3. Deriva na rolagem: a foto desliza dentro da moldura conforme
+      a página passa (animação ligada à rolagem, só onde o
+      navegador suporta; nos outros a foto fica parada).
+   Em cascata, quem entra junto entra em sequência: ver
+   `ligarObservador` no main.js. */
+@keyframes revelar {
+  from { clip-path: inset(-14% 0 102% 0); transform: translateY(14px); filter: blur(6px); }
+  to   { clip-path: inset(-14% 0 -8% 0);  transform: none;             filter: none; }
+}
+.js .rv.is-dentro { animation-duration: 900ms; }
+
+/* 2 · a foto assenta (molduras de foto das seções, exceto a equipe,
+   que tem a própria coreografia) */
+.js .fig.rv .fig__campo img { transform: scale(1.14); }
+.js .fig.rv.is-dentro .fig__campo img {
+  transform: scale(1);
+  transition: transform 1800ms var(--curva);
+}
+.js--sem-motor .fig.rv .fig__campo img { transform: none; }
+
+@media (hover: hover) and (pointer: fine) {
+  .js .fig.rv.is-dentro:hover .fig__campo img { transform: scale(1.045); }
+}
+
+/* 3 · deriva na rolagem */
+@supports (animation-timeline: view()) {
+  @keyframes deriva {
+    from { translate: 0 -5%; }
+    to   { translate: 0 5%; }
+  }
+  .js .fig.rv .fig__campo img,
+  .js .equipe__foto .prov {
+    scale: 1.14;
+    animation: deriva linear both;
+    animation-timeline: view();
+    animation-range: cover 0% cover 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .rv.is-dentro { animation-duration: 1ms; filter: none; }
+  .js .fig.rv .fig__campo img,
+  .js .fig.rv.is-dentro .fig__campo img,
+  .js .fig.rv.is-dentro:hover .fig__campo img { transform: none; transition: none; scale: none; animation: none; }
+  .js .equipe__foto .prov { scale: none; animation: none; }
+}
 
 /* 13. MOVIMENTO REDUZIDO E IMPRESSÃO ------------------------ */
 @media (prefers-reduced-motion: reduce) {

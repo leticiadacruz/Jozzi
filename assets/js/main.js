@@ -152,9 +152,13 @@
     }
 
     observador = new IntersectionObserver(function (entradas) {
+      /* cascata: quem entra no mesmo lote entra em sequência,
+         80ms de diferença, no máximo 5 passos */
+      var n = 0;
       entradas.forEach(function (e) {
         if (!e.isIntersecting) return;
-        revelar(e.target, 0);
+        revelar(e.target, Math.min(n, 5) * 80);
+        n += 1;
         observador.unobserve(e.target);
       });
     }, { rootMargin: '0px 0px -12% 0px', threshold: 0 });
