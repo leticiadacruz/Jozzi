@@ -199,19 +199,18 @@
       return '<div class="mz-tel__l"><dt class="mz-rot">' + rot + '</dt><dd class="mz-val" data-scr>' + val + '</dd></div>';
     }
     return '<div class="mz-bloco"><dl class="mz-tel">' +
-      linha('Frentes ativas', dois(sel.length) + '/' + dois(total)) +
-      linha('Entregáveis mapeados', dois(entregaveis)) +
+      linha('Frentes escolhidas', dois(sel.length) + '/' + dois(total)) +
+      linha('Entregas previstas', dois(entregaveis)) +
       linha('Combo', esc(protocolo ? protocolo.cod + ' · ' + protocolo.nome : 'Personalizado')) +
-      linha('Status', sel.length ? 'Combo pronto' : 'Aguardando seleção') +
       '</dl>' +
       '<div class="mz-barras" aria-hidden="true">' + barras + '</div>' +
-      (sel.length ? '<p class="mz-rot mz-tel__sub">Entregáveis por frente</p><ul class="mz-porfrente" role="list">' +
+      (sel.length ? '<p class="mz-rot mz-tel__sub">Entregas por frente</p><ul class="mz-porfrente" role="list">' +
         sel.map(function (s) {
           return '<li><span class="mz-cod" data-scr>' + s.cod + '</span>' +
                  '<span class="mz-porfrente__n" data-scr>' + esc(s.nome) + '</span>' +
                  '<span class="mz-val" data-scr>' + dois(s.tags.length) + '</span></li>';
         }).join('') + '</ul>' : '') +
-      '</div><p class="mz-nota">Contagem feita a partir das frentes e etiquetas desta seção.</p>';
+      '</div><p class="mz-nota">Somamos as frentes e as entregas listadas nos serviços.</p>';
   }
 
   function htmlOrcamento(sel) {

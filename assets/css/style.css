@@ -4940,3 +4940,179 @@ html.js--sem-motor .carregando { display: none; }
   body { background: #fff; color: #000; }
   .js .rv { opacity: 1; clip-path: none; transform: none; animation: none; }
 }
+
+
+/* ============================================================
+   10c2-ed. MONTE O SEU COMBO — VERSÃO EDITORIAL (23/11)
+   A Jozzi pediu menos "tech" e mais a estética da agência. O painel
+   deixa o fundo de tinta e passa para o PAPEL, como o resto do
+   site: título grande em Gracio, números como índice de revista,
+   colunas separadas por um fio só em cima (sem caixas), escolhas
+   como texto sublinhado, e o Marsala como único destaque. Saíram as
+   barras de nível e os rótulos em mono caixa-alta nos valores.
+   Este bloco vem DEPOIS de 10c2 de propósito: só redefine cor e
+   acabamento. A lógica de "uma tela, zero rolagem" e a densidade
+   (matriz.js) continuam valendo, então tamanho e espaçamento não
+   mudam de natureza.
+   ============================================================ */
+.matriz {
+  --mz-acento: var(--marsala);
+  --fg:    var(--tinta);
+  --fg-2:  rgb(var(--marrom-rgb) / .8);
+  --fg-3:  rgb(var(--marrom-rgb) / .62);
+  --fio:   rgb(var(--marrom-rgb) / .2);
+  background-color: var(--papel);
+}
+.matriz .mz-cab {
+  border-bottom: 0;
+  align-items: flex-end;
+  padding-bottom: .25rem;
+}
+.matriz .mz-titulo {
+  font-size: min(clamp(2.25rem, 3.4vw + .9rem, 4.75rem), 8dvh);
+  font-weight: 400;
+  letter-spacing: -.045em;
+  line-height: .98;
+}
+.matriz .mz-desc { color: var(--fg-2); max-width: 38ch; }
+
+/* escolhas: texto, não botão. O ativo ganha Marsala e um fio. */
+.matriz .mz-grupo__ap { color: var(--fg-3); }
+.matriz .mz-grupo__st { color: var(--marsala); }
+.matriz .mz-preset,
+.matriz .mz-frente {
+  padding: .3rem 0;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: none;
+  color: var(--fg-2);
+}
+.matriz .mz-preset { margin-right: 1.25rem; }
+.matriz .mz-preset[aria-pressed="true"],
+.matriz .mz-frente[aria-pressed="true"] {
+  background: none;
+  border-bottom-color: var(--marsala);
+  color: var(--marsala);
+}
+.matriz .mz-frente { gap: .7rem; margin-right: 1rem; }
+.matriz .mz-frente__st { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .matriz .mz-preset:hover,
+  .matriz .mz-frente:hover { border-color: transparent; border-bottom-color: var(--fio); color: var(--fg); }
+  .matriz .mz-preset[aria-pressed="true"]:hover,
+  .matriz .mz-frente[aria-pressed="true"]:hover { border-bottom-color: var(--marsala); color: var(--marsala); }
+}
+@media (pointer: coarse) {
+  .matriz .mz-preset,
+  .matriz .mz-frente { border-color: transparent; border-bottom-color: var(--fio); }
+}
+.matriz .mz-preset:focus-visible,
+.matriz .mz-frente:focus-visible,
+.matriz .mz-abrir:focus-visible,
+.matriz .mz-painel:focus-visible { outline-color: var(--tinta); }
+
+/* colunas: um fio em cima e o número grande, como índice */
+.matriz .mz-card {
+  padding: 1rem 0 0;
+  border: 0;
+  border-top: 1px solid var(--tinta);
+}
+.matriz .mz-card__cab { gap: .9rem; margin-bottom: 1rem; }
+.matriz .mz-idx {
+  font-family: var(--fonte-titulo);
+  font-size: 1.05rem;
+  letter-spacing: 0;
+  color: var(--marsala);
+}
+.matriz .mz-card__t,
+.matriz .mz-folha__t {
+  font-size: clamp(1.5rem, 1vw + 1.1rem, 2.1rem);
+  font-weight: 400;
+  letter-spacing: -.035em;
+}
+.matriz .mz-cod { font-family: var(--fonte-titulo); letter-spacing: 0; color: var(--marsala); }
+.matriz .mz-escopo__n { font-size: 1rem; }
+
+/* resumo: sem barras e sem mono; valores em texto corrido */
+.matriz .mz-barras { display: none; }
+.matriz .mz-rot { letter-spacing: .1em; color: var(--fg-3); }
+.matriz .mz-val {
+  font-family: var(--fonte-texto);
+  font-size: .9375rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--fg);
+}
+.matriz .mz-tel__sub { border-top-color: var(--fio); }
+
+/* mensagem e botão */
+.matriz .mz-msg {
+  background: rgb(var(--marrom-rgb) / .05);
+  border-left-color: var(--marsala);
+}
+.matriz .mz-cta {
+  background: var(--tinta);
+  color: var(--papel);
+  font-weight: 500;
+}
+@media (hover: hover) and (pointer: fine) {
+  .matriz .mz-cta:not([aria-disabled="true"]):hover { background: var(--marsala); }
+}
+.matriz .mz-cta:focus-visible { outline-color: var(--tinta); }
+.matriz .mz-copia:not([hidden]) { border-color: var(--fio); }
+
+/* folha do telefone: também no papel */
+.matriz .mz-folha { background-color: var(--papel); color: var(--tinta); }
+.matriz .mz-folha::backdrop { background: rgb(var(--marsala-fundo-rgb) / .5); }
+.matriz .mz-folha__barra { background: rgb(var(--marrom-rgb) / .3); }
+.matriz .mz-abrir { background: var(--tinta); border-color: var(--tinta); color: var(--papel); }
+
+
+/* ============================================================
+   10d-ed. QUEM ESTÁ POR TRÁS DA JOZZI — NOVO LAYOUT (23/11)
+   A Jozzi pediu outro layout para o bloco. Antes: duas fichas em
+   ziguezague, retrato pequeno ao lado da bio. Agora: DUAS CAPAS
+   lado a lado, como páginas de revista — retrato alto em cima,
+   número, nome em Gracio, cargo e bio embaixo — e a segunda ficha
+   desce um degrau, para o olho percorrer em diagonal em vez de
+   duas fileiras iguais. Só vale no desktop; no telefone continua a
+   pilha de antes (retrato, depois texto).
+   Bio: a regra de 3 linhas + "Ler mais" e o JS que mede o
+   transbordo não mudam.
+   ============================================================ */
+@media (min-width: 1025px) {
+  .sobre__pessoa {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: calc(var(--calha) * 2);
+    row-gap: 0;
+    align-items: start;
+  }
+  .sobre__pessoa .sobre__pessoa__t { grid-column: 1 / -1; max-width: 18ch; }
+  .sobre__pessoa .sobre__ficha {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    grid-template-columns: none;
+  }
+  .sobre__pessoa .sobre__ficha--b { margin-top: clamp(4rem, 14vh, 9rem); }
+  .sobre__pessoa .sobre__fig { order: 1; width: 100%; max-width: 30rem; grid-column: auto; grid-row: auto; }
+  .sobre__pessoa .sobre__ficha__n {
+    order: 2;
+    grid-column: auto;
+    grid-row: auto;
+    margin: 1.6rem 0 .5rem;
+    font-family: var(--fonte-titulo);
+    font-size: 1rem;
+    letter-spacing: 0;
+    color: var(--marsala);
+  }
+  .sobre__pessoa .sobre__bio { order: 3; grid-column: auto; grid-row: auto; margin-top: 0; max-width: 34rem; }
+  .sobre__pessoa .sobre__nome { font-size: clamp(2rem, 2.6vw + .6rem, 3.4rem); letter-spacing: -.04em; }
+  .sobre__pessoa .sobre__bio > p:last-of-type { text-align: left; }
+}
+/* a legenda repetia o nome que agora vem logo abaixo, em Gracio */
+@media (min-width: 1025px) {
+  .sobre__pessoa .sobre__fig figcaption { display: none; }
+}
