@@ -5096,7 +5096,8 @@ html.js--sem-motor .carregando { display: none; }
     gap: 0;
     grid-template-columns: none;
   }
-  .sobre__pessoa .sobre__ficha--b { margin-top: clamp(4rem, 14vh, 9rem); }
+  /* fundadores alinhados pelo topo (24/11): sem degrau */
+  .sobre__pessoa .sobre__ficha--b { margin-top: 0; }
   .sobre__pessoa .sobre__fig { order: 1; width: 100%; max-width: 30rem; grid-column: auto; grid-row: auto; }
   .sobre__pessoa .sobre__ficha__n {
     order: 2;
@@ -5115,4 +5116,107 @@ html.js--sem-motor .carregando { display: none; }
 /* a legenda repetia o nome que agora vem logo abaixo, em Gracio */
 @media (min-width: 1025px) {
   .sobre__pessoa .sobre__fig figcaption { display: none; }
+}
+
+
+/* ============================================================
+   CORREÇÕES V3 (24/11) — copy nova, mobile e alinhamentos
+   ============================================================ */
+/* subtítulo de "Quem somos" */
+.quem__sub {
+  margin: 0 0 clamp(1.4rem, 3.5vh, 2.2rem);
+  font-size: clamp(1.05rem, .6vw + .9rem, 1.35rem);
+  line-height: 1.35;
+  color: var(--marsala);
+}
+/* a foto de Quem somos cresce no desktop (inteira, 2:3) */
+@media (min-width: 1025px) {
+  .quem__par__f { max-width: min(100%, 34rem); }
+}
+
+/* bios inteiras: nada de corte em 3 linhas nem "Ler mais" */
+.sobre__bio > p:not(.sobre__papel) {
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
+  margin: 0 0 1rem;
+  color: var(--fg-2);
+  text-align: left;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+.sobre__bio > p:last-of-type { margin-bottom: 0; }
+.sobre__leiamais { display: none !important; }
+@media (min-width: 1025px) {
+  .sobre__pessoa .sobre__bio > p:last-of-type { text-align: left; }
+}
+
+@media (max-width: 1024px) {
+  /* QUEM SOMOS no telefone: a seção sobe, e o texto se afasta da foto */
+  .quem { padding-top: clamp(2.2rem, 6vh, 3.5rem); padding-bottom: 3rem; }
+  .quem__sub { order: 2; }
+  .quem__par__f { max-width: none; }
+  .quem__corpo { margin-top: 2.2rem; }
+
+  /* A JOZZI: a imagem vira divisão de seção, de ponta a ponta e inteira */
+  .sobre__fig-decl {
+    max-width: none;
+    margin-left: calc(var(--recuo) * -1);
+    margin-right: calc(var(--margem) * -1);
+    margin-top: 1.2rem;
+    margin-bottom: 0;
+  }
+  .sobre__fig-decl figcaption { display: none; }
+  .sobre__texto { margin-top: 2rem; }
+  .sobre__decl { gap: 0; }
+  .sobre__pessoa { margin-top: 3rem; padding-top: 2.2rem; }
+  .sobre__pessoa__t { margin-bottom: 1.8rem; }
+  .sobre__fig { max-width: min(100%, 22rem); }
+  .sobre__ficha__n { margin-top: 1.4rem; }
+}
+
+@media (max-width: 768px) {
+  /* SERVIÇOS no telefone: o espaço de cima fecha, o card cresce e a
+     descrição só aparece ao tocar no nome */
+  .serv { padding-top: 3.2rem; }
+  .serv__lista { margin-top: 1.4rem; align-items: flex-start; }
+  .serv__card { flex-basis: 90%; }
+  .serv__plate { aspect-ratio: 4 / 3; }
+  .js--serv .serv__txt {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height .35s var(--curva), padding .35s var(--curva), opacity .25s linear;
+  }
+  .js--serv .serv__card.is-ativo .serv__txt {
+    max-height: 20rem;
+    padding-top: .1rem;
+    padding-bottom: 1.3rem;
+    opacity: 1;
+  }
+  .js--serv .serv__nome {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .js--serv .serv__nome::after {
+    content: "+";
+    flex: none;
+    font-family: var(--fonte-aparato);
+    font-size: 1.1rem;
+    color: var(--marsala);
+  }
+  .js--serv .serv__card.is-ativo .serv__nome::after { content: "\2013"; }
+
+  /* MONTE O SEU PLANO no telefone: cabeçalho empilhado e à esquerda */
+  .matriz .mz-cab { flex-direction: column; align-items: flex-start; gap: .6rem; padding-bottom: .6rem; }
+  .matriz .mz-titulo { font-size: clamp(2rem, 9.5vw, 2.7rem); }
+  .matriz .mz-desc { max-width: none; -webkit-line-clamp: 3; font-size: .9375rem; }
+}
+@media (max-width: 1024px) {
+  .quem__t { margin-bottom: 1rem; }
+  .quem__sub { margin-bottom: 1.6rem; }
 }

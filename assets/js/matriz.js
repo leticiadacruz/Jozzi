@@ -160,7 +160,7 @@
   /* 04. A MENSAGEM ------------------------------------------ */
   function mensagem(sel) {
     var l = ['Olá, Jozzi! Vim pelo site e quero um orçamento personalizado.', ''];
-    l.push('Combo: ' + (protocolo ? protocolo.nome : 'personalizado'));
+    l.push('Plano: ' + (protocolo ? protocolo.nome : 'personalizado'));
     sel.forEach(function (s) {
       l.push('• ' + s.nome + (s.tags.length ? ' (' + s.tags.join(', ') + ')' : ''));
     });
@@ -180,7 +180,7 @@
   var total = servicos.length;
 
   function htmlEscopo(sel) {
-    if (!sel.length) return '<p class="mz-vazio">Nenhuma frente selecionada. Escolha um combo ou ligue as frentes acima.</p>';
+    if (!sel.length) return '<p class="mz-vazio">Nenhuma frente selecionada. Escolha um plano ou ligue as frentes acima.</p>';
     return '<ol class="mz-escopo" role="list">' + sel.map(function (s) {
       return '<li class="mz-escopo__i">' +
                '<span class="mz-cod" data-scr>' + s.cod + '</span>' +
@@ -201,7 +201,7 @@
     return '<div class="mz-bloco"><dl class="mz-tel">' +
       linha('Frentes escolhidas', dois(sel.length) + '/' + dois(total)) +
       linha('Entregas previstas', dois(entregaveis)) +
-      linha('Combo', esc(protocolo ? protocolo.cod + ' · ' + protocolo.nome : 'Personalizado')) +
+      linha('Plano', esc(protocolo ? protocolo.cod + ' · ' + protocolo.nome : 'Personalizado')) +
       '</dl>' +
       '<div class="mz-barras" aria-hidden="true">' + barras + '</div>' +
       (sel.length ? '<p class="mz-rot mz-tel__sub">Entregas por frente</p><ul class="mz-porfrente" role="list">' +
@@ -251,7 +251,7 @@
     stProtocolo.textContent = '· ' + (protocolo ? protocolo.nome : 'Personalizado');
     stContagem.textContent = '· ' + dois(sel.length) + '/' + dois(total);
     resumo.innerHTML = '<span data-scr>' + dois(sel.length) + '/' + dois(total) + ' frentes · ' +
-                       dois(entregaveis) + ' entregáveis</span>';
+                       dois(entregaveis) + ' entregas</span>';
 
     /* a densidade é escolhida com o texto FINAL no lugar — antes do
        embaralhador começar a trocar caracteres */
@@ -268,8 +268,8 @@
          para de clicar — não uma a cada frente */
       window.clearTimeout(avisoVivo);
       avisoVivo = window.setTimeout(function () {
-        vivo.textContent = 'Combo ' + (protocolo ? protocolo.nome : 'personalizado') + ': ' +
-          sel.length + ' de ' + total + ' frentes, ' + entregaveis + ' entregáveis.';
+        vivo.textContent = 'Plano ' + (protocolo ? protocolo.nome : 'personalizado') + ': ' +
+          sel.length + ' de ' + total + ' frentes, ' + entregaveis + ' entregas.';
       }, 450);
     }
   }

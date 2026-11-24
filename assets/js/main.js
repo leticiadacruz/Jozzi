@@ -66,7 +66,11 @@
       span.className = 'pal';
       span.textContent = palavra;
       el.appendChild(span);
-      if (i < todas.length - 1) el.appendChild(document.createTextNode(' '));
+      /* data-quebra="N": quebra de linha forçada depois da N-ésima palavra
+         (a abertura pediu "We create" / "for you." em duas linhas) */
+      var quebra = parseInt(el.getAttribute('data-quebra'), 10);
+      if (quebra && i === quebra - 1 && i < todas.length - 1) el.appendChild(document.createElement('br'));
+      else if (i < todas.length - 1) el.appendChild(document.createTextNode(' '));
       saida.push(span);
     });
 
