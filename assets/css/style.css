@@ -5220,3 +5220,31 @@ html.js--sem-motor .carregando { display: none; }
   .quem__t { margin-bottom: 1rem; }
   .quem__sub { margin-bottom: 1.6rem; }
 }
+
+/* EQUIPE: todos na mesma linha (24/11). Desktop: cinco colunas
+   iguais. Telefone: uma fileira que rola para o lado, com um retrato
+   e meio à mostra, como o carrossel de Serviços. */
+@media (min-width: 769px) {
+  .equipe__lista {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    max-width: none;
+  }
+}
+@media (max-width: 768px) {
+  .equipe__lista {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    margin-left: calc(var(--recuo) * -1);
+    margin-right: calc(var(--margem) * -1);
+    padding-left: var(--recuo);
+    padding-right: var(--margem);
+  }
+  .equipe__m { flex: 0 0 44%; scroll-snap-align: start; }
+}
+/* a equipe atravessa as duas colunas do bloco dos fundadores */
+@media (min-width: 1025px) {
+  .sobre__pessoa .equipe { grid-column: 1 / -1; }
+}
