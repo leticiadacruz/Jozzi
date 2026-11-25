@@ -35,7 +35,7 @@
      ANTES do style.css, para os tokens de familia ja acharem
      as fontes declaradas quando forem resolvidos. -->
 <link rel="stylesheet" href="https://use.typekit.net/oyj0zig.css">
-<link rel="stylesheet" href="assets/css/style.css?v=167">
+<link rel="stylesheet" href="assets/css/style.css?v=171">
 
 <script>
 (function () {
@@ -111,6 +111,13 @@
      de 4s para nunca prender ninguém.
      ============================================================ -->
 <div class="carregando" id="carregando" aria-hidden="true">
+  <div class="carregando__topo ap">
+    <span>Curitiba &middot; marketing e moda</span>
+    <span class="carregando__servico" data-carregando-servico></span>
+  </div>
+
+  <p class="carregando__num" data-carregando-pct>00</p>
+
   <div class="carregando__marca">
     <svg class="carregando__svg" viewBox="0 0 1000 64.22" role="img" aria-label="Jozzi Creative Lab">
       <use href="#marca-jozzi"></use>
@@ -123,7 +130,6 @@
     </div>
     <p class="carregando__linha ap">
       <span>we are creating for you&hellip;</span>
-      <span data-carregando-pct>00%</span>
     </p>
   </div>
 </div>
@@ -739,25 +745,25 @@
        data-whatsapp="https://wa.me/message/A5HZRIZWCMH3O1" data-numero="5541991692374" aria-labelledby="mz-titulo" role="region">
     <div class="mz-cab">
       <h3 class="mz-titulo" id="mz-titulo">Monte o seu plano.</h3>
-      <p class="mz-desc">Combine as frentes, veja o escopo que elas cobrem juntas e peça um orçamento feito para a sua marca.</p>
+      <p class="mz-desc">Escolha o que a sua marca precisa. A Jozzi analisa o seu pedido e volta com uma proposta sob medida.</p>
     </div>
 
-    <p class="mz-dica">Escolha um plano pronto ou toque nas frentes para montar o seu.</p>
+    <p class="mz-dica">Comece por um plano pronto ou toque nas frentes que fazem sentido para a sua marca.</p>
 
     <div class="mz-ctrl">
       <div class="mz-grupo">
-        <p class="mz-grupo__ap ap" id="mz-ap-presets">Plano <span class="mz-grupo__st" data-mz-protocolo></span></p>
+        <p class="mz-grupo__ap ap" id="mz-ap-presets">Passo 1 &mdash; comece por um plano pronto <span class="mz-grupo__st" data-mz-protocolo></span></p>
         <div class="mz-presets" role="group" aria-labelledby="mz-ap-presets" data-mz-presets></div>
       </div>
       <div class="mz-grupo">
-        <p class="mz-grupo__ap ap" id="mz-ap-frentes">Frentes <span class="mz-grupo__st" data-mz-contagem></span></p>
+        <p class="mz-grupo__ap ap" id="mz-ap-frentes">Passo 2 &mdash; marque as frentes que fazem sentido <span class="mz-grupo__st" data-mz-contagem></span></p>
         <div class="mz-frentes" role="group" aria-labelledby="mz-ap-frentes" data-mz-frentes></div>
       </div>
     </div>
 
     <div class="mz-cards" data-mz-cards>
       <article class="mz-card" aria-labelledby="mz-c1">
-        <header class="mz-card__cab"><span class="mz-idx ap">01</span><h4 class="mz-card__t" id="mz-c1">Escopo</h4></header>
+        <header class="mz-card__cab"><span class="mz-idx ap">01</span><h4 class="mz-card__t" id="mz-c1">O seu plano</h4></header>
         <div class="mz-card__corpo" data-mz-alvo="escopo"></div>
       </article>
       <article class="mz-card" aria-labelledby="mz-c2">
@@ -765,7 +771,7 @@
         <div class="mz-card__corpo" data-mz-alvo="telemetria"></div>
       </article>
       <article class="mz-card" aria-labelledby="mz-c3">
-        <header class="mz-card__cab"><span class="mz-idx ap">03</span><h4 class="mz-card__t" id="mz-c3">Orçamento</h4></header>
+        <header class="mz-card__cab"><span class="mz-idx ap">03</span><h4 class="mz-card__t" id="mz-c3">Pedir proposta</h4></header>
         <div class="mz-card__corpo" data-mz-alvo="orcamento"></div>
       </article>
     </div>
@@ -783,9 +789,9 @@
           <button class="mz-fechar" type="button" data-mz-fechar>Fechar</button>
         </div>
         <div class="mz-abas" role="tablist" aria-label="Detalhes do plano">
-          <button class="mz-aba" type="button" role="tab" id="mz-aba-escopo" aria-controls="mz-painel-escopo" aria-selected="true"><span class="mz-idx">01.</span> Escopo</button>
+          <button class="mz-aba" type="button" role="tab" id="mz-aba-escopo" aria-controls="mz-painel-escopo" aria-selected="true"><span class="mz-idx">01.</span> Seu plano</button>
           <button class="mz-aba" type="button" role="tab" id="mz-aba-telemetria" aria-controls="mz-painel-telemetria" aria-selected="false" tabindex="-1"><span class="mz-idx">02.</span> Resumo</button>
-          <button class="mz-aba" type="button" role="tab" id="mz-aba-orcamento" aria-controls="mz-painel-orcamento" aria-selected="false" tabindex="-1"><span class="mz-idx">03.</span> Orçamento</button>
+          <button class="mz-aba" type="button" role="tab" id="mz-aba-orcamento" aria-controls="mz-painel-orcamento" aria-selected="false" tabindex="-1"><span class="mz-idx">03.</span> Proposta</button>
         </div>
       </div>
       <div class="mz-folha__corpo">
@@ -1401,11 +1407,6 @@
        Qual dos dois é o nome oficial é decisão da Jozzi. -->
   <div class="fim__creditos">
     <p class="fim__copy ap">&copy; 2026 Jozzi Creative Lab. Todos os direitos reservados.</p>
-    <p class="fim__prod ap">Produzido por
-      <svg class="fim__prod__marca" viewBox="0 0 1000 64.22" role="img" aria-label="Jozzi Creative Lab">
-        <use href="#marca-jozzi"></use>
-      </svg>
-    </p>
     <!-- BOTÃO LGPD (29/09), a pedido da Jozzi. A página que ele abre
          é só a MOLDURA — não escrevi uma política de privacidade,
          porque isso é texto jurídico real (o que a Jozzi coleta, por
@@ -1430,7 +1431,7 @@
 <!-- a matriz roda ANTES do main.js: ela tira o `hidden` do painel, e o
      main.js mede as faixas escuras ([data-inv]) ao subir. Na ordem
      inversa ele mediria o painel com altura zero. -->
-<script src="assets/js/matriz.js?v=8" defer></script>
+<script src="assets/js/matriz.js?v=9" defer></script>
 <script src="assets/js/main.js" defer></script>
 </body>
 </html>

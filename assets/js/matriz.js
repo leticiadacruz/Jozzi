@@ -124,7 +124,12 @@
     b.type = 'button';
     b.className = 'mz-preset';
     b.setAttribute('aria-pressed', 'false');
-    b.innerHTML = '<span class="mz-cod">' + p.cod + '</span><span class="mz-preset__n">' + esc(p.nome) + '</span>';
+    var nomesPreset = p.frentes.map(function (slug) {
+      var f = servicos.filter(function (s) { return s.slug === slug; })[0];
+      return f ? f.nome : '';
+    }).filter(Boolean).join(' · ');
+    b.innerHTML = '<span class="mz-cod">' + p.cod + '</span><span class="mz-preset__n">' + esc(p.nome) + '</span>' +
+                  '<span class="mz-preset__d">' + esc(nomesPreset) + '</span>';
     b.addEventListener('click', function () {
       aplicarPreset(p);
       atualizar(true);
@@ -139,7 +144,9 @@
     b.className = 'mz-frente';
     b.setAttribute('aria-pressed', 'false');
     b.innerHTML = '<span class="mz-cod">' + s.cod + '</span>' +
-                  '<span class="mz-frente__n">' + esc(s.nome) + '</span>' +
+                  '<span class="mz-frente__n">' + esc(s.nome) +
+                    (s.tags.length ? '<small class="mz-frente__tags">' + esc(s.tags.join(' · ')) + '</small>' : '') +
+                  '</span>' +
                   '<span class="mz-frente__st" aria-hidden="true"></span>';
     b.addEventListener('click', function () {
       if (ativos[s.slug]) delete ativos[s.slug]; else ativos[s.slug] = true;
@@ -224,7 +231,7 @@
       '</div>' +
       '<div class="mz-bloco mz-orc__pe">' +
       '<a class="mz-cta" data-mz-cta href="' + esc(linkWhatsapp(sel)) + '" target="_blank" rel="noopener noreferrer"' +
-        (vazio ? ' aria-disabled="true"' : '') + '>Solicitar orçamento no WhatsApp</a>' +
+        (vazio ? ' aria-disabled="true"' : '') + '>Pedir proposta no WhatsApp</a>' +
       '<p class="mz-aviso" role="status" data-mz-aviso>' + (NUMERO ? 'A conversa abre no WhatsApp já com a mensagem preenchida.' : 'A mensagem é copiada ao clicar; no WhatsApp, é só colar.') + '</p>' +
       '<textarea class="mz-copia" data-mz-copia readonly hidden aria-label="Mensagem para copiar"></textarea>' +
       '</div>';

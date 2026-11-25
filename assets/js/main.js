@@ -1188,6 +1188,11 @@
 
     var barra  = cortina.querySelector('[data-carregando-barra]');
     var numero = cortina.querySelector('[data-carregando-pct]');
+    var servico = cortina.querySelector('[data-carregando-servico]');
+    var frentes = [].slice.call(document.querySelectorAll('.abertura__frentes li')).map(function (li) {
+      return li.textContent.trim();
+    }).filter(Boolean);
+    var frenteAtual = -1;
 
     var t0      = Date.now();
     var alvo    = 8;      /* para onde a barra está indo */
@@ -1222,7 +1227,20 @@
       if (barra && !cheia) barra.style.setProperty('--p', (v / 100).toFixed(4));
       if (numero) {
         var n = Math.min(100, Math.floor(v));
-        numero.textContent = (n < 10 ? '0' : '') + n + '%';
+        numero.textContent = (n < 10 ? '0' : '') + n;
+      }
+      /* as frentes da abertura passam, uma a uma, conforme a barra
+         avança — o texto vem da própria lista da abertura, não é
+         escrito aqui */
+      if (servico && frentes.length) {
+        var i = Math.min(frentes.length - 1, Math.floor((Math.min(v, 99.9) / 100) * frentes.length));
+        if (i !== frenteAtual) {
+          frenteAtual = i;
+          servico.textContent = frentes[i];
+          servico.classList.remove('is-troca');
+          void servico.offsetWidth;
+          servico.classList.add('is-troca');
+        }
       }
     }
 

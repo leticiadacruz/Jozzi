@@ -5352,3 +5352,219 @@ html.js--sem-motor .carregando { display: none; }
   color: var(--fg);
 }
 .legal a { color: var(--fg); text-decoration: underline; text-underline-offset: .22em; text-decoration-thickness: 1px; }
+
+
+/* ============================================================
+   10j-ed. CARREGAMENTO — VERSÃO EDITORIAL (25/11)
+   Mesma lógica de antes (a barra anda com fontes e load, piso e teto
+   no main.js). Muda a composição: um número GRANDE em Gracio como
+   protagonista, as frentes da Jozzi passando no canto conforme a
+   barra avança, e a marca embaixo. Tudo entra em sequência e, na
+   saída, o número e o topo sobem antes da cortina.
+   ============================================================ */
+.js .carregando {
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  align-content: stretch;
+  gap: clamp(1rem, 3vh, 1.8rem);
+}
+.carregando__topo {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  color: var(--fg-3);
+  padding-top: calc(var(--topo-h, 4rem) * .25);
+}
+.carregando__servico { color: var(--papel); text-align: right; }
+.carregando__servico.is-troca { animation: carregando-troca .45s var(--curva) both; }
+.carregando__num {
+  align-self: end;
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-size: clamp(6rem, 26vw, 19rem);
+  font-weight: 400;
+  line-height: .78;
+  letter-spacing: -.05em;
+  font-variant-numeric: tabular-nums;
+  color: var(--papel);
+}
+.carregando__num::after {
+  content: "%";
+  margin-left: .06em;
+  font-size: .3em;
+  letter-spacing: 0;
+  vertical-align: top;
+  color: rgb(var(--off-white-rgb) / .5);
+}
+.carregando__trilha { height: 6px; }
+
+/* entrada em sequência (só a primeira, sem laço) */
+.js .carregando > * { animation: carregando-entra .7s var(--curva) backwards; }
+.js .carregando > :nth-child(1) { animation-delay: .05s; }
+.js .carregando > :nth-child(2) { animation-delay: .15s; }
+.js .carregando > :nth-child(3) { animation-delay: .3s; }
+.js .carregando > :nth-child(4) { animation-delay: .4s; }
+@keyframes carregando-entra {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes carregando-troca {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* saída: o número e o topo sobem um pouco antes da cortina */
+.carregando.is-fora .carregando__num,
+.carregando.is-fora .carregando__topo {
+  opacity: 0;
+  transform: translateY(-1.4rem);
+  transition: opacity .35s linear, transform .6s var(--curva);
+}
+
+@media (max-width: 768px) {
+  .carregando__num { font-size: clamp(5.5rem, 38vw, 10rem); }
+  .carregando__topo { flex-direction: column; gap: .35rem; }
+  .carregando__servico { text-align: left; }
+}
+/* respiro entre o número e a marca, e alinhamento óptico à margem */
+.carregando__num { margin-left: -.07em; padding-bottom: .16em; }
+
+
+/* ============================================================
+   MONTE O SEU PLANO — MAIS INTERATIVO E CLARO (25/11)
+   O painel confundia: parecia que a pessoa montava tudo sozinha.
+   Agora são dois passos explícitos (plano pronto → frentes), as
+   escolhas são CARTÕES que acendem, e o lado direito mostra o plano
+   escolhido e o botão de pedir proposta. O "Resumo" saiu do desktop.
+   ============================================================ */
+/* cartões de escolha (todas as larguras) */
+.matriz .mz-presets { gap: .75rem; }
+.matriz .mz-frentes { gap: .75rem; }
+.matriz .mz-preset,
+.matriz .mz-frente {
+  margin: 0;
+  padding: .9rem 1rem;
+  border: 1px solid var(--fio);
+  border-radius: 0;
+  background: transparent;
+  transition: background-color .25s var(--curva), color .25s var(--curva),
+              border-color .25s var(--curva), transform .25s var(--curva);
+}
+.matriz .mz-cod { display: none; }
+.matriz .mz-preset { flex-direction: column; align-items: flex-start; gap: .3rem; justify-content: flex-start; }
+.matriz .mz-preset__n {
+  font-family: var(--fonte-titulo);
+  font-size: 1.15rem;
+  letter-spacing: -.02em;
+  line-height: 1.1;
+}
+.matriz .mz-preset__d { font-size: .8125rem; line-height: 1.35; color: var(--fg-3); }
+.matriz .mz-frente { align-items: flex-start; gap: .8rem; }
+.matriz .mz-frente__n { display: grid; gap: .25rem; font-size: 1rem; color: var(--fg); }
+.matriz .mz-frente__tags { font-size: .75rem; line-height: 1.35; color: var(--fg-3); }
+.matriz .mz-frente .mz-frente__st {
+  display: block;
+  flex: none;
+  position: relative;
+  width: 20px;
+  height: 20px;
+  margin-top: .1rem;
+  border: 1px solid var(--fg-3);
+  border-radius: 50%;
+  background: transparent;
+  transition: background-color .25s var(--curva), border-color .25s var(--curva);
+}
+.matriz .mz-frente .mz-frente__st::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 3px;
+  width: 5px;
+  height: 9px;
+  border: solid var(--papel);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) scale(0);
+  transition: transform .25s var(--curva);
+}
+/* acesos: cartão cheio, em tinta */
+.matriz .mz-preset[aria-pressed="true"],
+.matriz .mz-frente[aria-pressed="true"] {
+  background: var(--tinta);
+  border-color: var(--tinta);
+  color: var(--papel);
+}
+.matriz .mz-preset[aria-pressed="true"] .mz-preset__d,
+.matriz .mz-frente[aria-pressed="true"] .mz-frente__n,
+.matriz .mz-frente[aria-pressed="true"] .mz-frente__tags { color: rgb(var(--off-white-rgb) / .86); }
+.matriz .mz-frente[aria-pressed="true"] .mz-frente__st { background: var(--marsala); border-color: var(--marsala); }
+.matriz .mz-frente[aria-pressed="true"] .mz-frente__st::after { transform: rotate(45deg) scale(1); }
+@media (hover: hover) and (pointer: fine) {
+  .matriz .mz-preset:hover,
+  .matriz .mz-frente:hover { border-color: var(--tinta); transform: translateY(-2px); }
+  .matriz .mz-preset[aria-pressed="true"]:hover,
+  .matriz .mz-frente[aria-pressed="true"]:hover { color: var(--papel); }
+}
+.matriz .mz-preset:active,
+.matriz .mz-frente:active { transform: scale(.985); }
+
+/* passos: rótulos mais claros */
+.matriz .mz-grupo__ap { margin-bottom: .7rem; color: var(--fg-2); }
+
+/* botão de pedir proposta, em destaque */
+.matriz .mz-cta { min-height: 52px; font-size: 1rem; }
+
+@media (max-width: 768px) {
+  .matriz .mz-preset__d,
+  .matriz .mz-frente__tags { display: none; }
+  .matriz .mz-preset,
+  .matriz .mz-frente { padding: .7rem .75rem; min-height: 52px; }
+  .matriz .mz-preset__n { font-size: 1rem; }
+}
+
+/* DESKTOP: duas colunas — escolher à esquerda, plano e pedido à direita */
+@media (min-width: 1025px) {
+  .matriz {
+    height: auto;
+    max-height: none;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow: visible;
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    grid-template-areas: "cab cab" "ctrl cards";
+    column-gap: clamp(2rem, 5vw, 5rem);
+    row-gap: clamp(1.5rem, 4vh, 2.5rem);
+    align-content: center;
+    padding-top: calc(var(--topo-h) + 2rem);
+    padding-bottom: 3rem;
+  }
+  .matriz .mz-cab { grid-area: cab; }
+  .matriz .mz-ctrl { grid-area: ctrl; display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.8rem; align-content: start; }
+  .matriz .mz-cards {
+    grid-area: cards;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    height: auto;
+    min-height: 0;
+    position: sticky;
+    top: calc(var(--topo-h) + 1rem);
+    align-self: start;
+  }
+  .matriz .mz-card { height: auto; }
+  .matriz .mz-card:nth-child(2) { display: none; }
+  .matriz .mz-card__corpo { flex: none; overflow: visible; gap: 1rem; }
+  .matriz .mz-frentes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .matriz .mz-movel { display: none; }
+}
+
+/* números 01/02 das fichas dos fundadores saíram (25/11) */
+.sobre__ficha__n { display: none !important; }
+/* planos prontos lado a lado; lista do plano em largura inteira */
+.matriz .mz-presets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.matriz .mz-preset { width: 100%; }
+.matriz .mz-escopo__i { grid-template-columns: minmax(0, 1fr); gap: 0; }
+.matriz .mz-escopo__n { font-family: var(--fonte-titulo); font-size: 1.05rem; letter-spacing: -.02em; }
+@media (min-width: 1025px) {
+  .matriz .mz-card .mz-idx { display: none; }
+  .matriz .mz-escopo { gap: .9rem; }
+}
