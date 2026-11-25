@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+# O site está com noindex enquanto for protótipo (ver README).
+# Ao liberar, troque o endereço abaixo pelo domínio final.
+Sitemap: https://jozzi.vercel.app/sitemap.xml

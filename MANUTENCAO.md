@@ -2520,3 +2520,21 @@ assets/fonts/               Gracio (marca) + IBM Plex Mono
 assets/img/                 imagens do site + logotipo + favicon
 assets/img/styling/<slug>/  as fotos de cada projeto de styling
 ```
+
+
+---
+
+## Segurança e publicação (25/11)
+
+- **`vercel.json`** define os cabeçalhos de segurança de todas as páginas
+  (CSP, X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy).
+- ⚠ **A CSP tem o hash (`sha256-…`) do único script inline do `<head>`**
+  (o que marca `.js` na página). Se esse script for editado, o hash muda e
+  o site quebra: recalcule e troque o valor em `vercel.json`. Fontes
+  externas liberadas: Adobe Fonts (`use.typekit.net`, `p.typekit.net`) e o
+  mapa do Google (`www.google.com`). Qualquer outro serviço externo novo
+  precisa ser adicionado à CSP.
+- **`.vercelignore`** impede que `MANUTENCAO.md`, `README.md` e
+  `package-lock.json` sejam publicados.
+- **`404.html`** é a página de erro; **`robots.txt`** e **`sitemap.xml`**
+  usam `jozzi.vercel.app`: trocar pelo domínio final no lançamento.
