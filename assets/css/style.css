@@ -5334,3 +5334,21 @@ html.js--sem-motor .carregando { display: none; }
   hyphens: auto;
   -webkit-hyphens: auto;
 }
+
+/* PÁGINA DE PRIVACIDADE: texto longo, medida de leitura confortável (25/11) */
+.legal { max-width: 46rem; margin-top: clamp(1.5rem, 4vh, 2.5rem); color: var(--fg-2); }
+.legal p, .legal ul { margin: 0 0 1rem; line-height: 1.6; }
+.legal ul { padding-left: 1.2rem; }
+.legal li { margin-bottom: .55rem; }
+.legal strong { color: var(--fg); font-weight: 600; }
+.legal__atual { color: var(--fg-3); margin-bottom: 1.4rem; }
+.legal__t {
+  margin: clamp(1.8rem, 4vh, 2.6rem) 0 .7rem;
+  font-family: var(--fonte-titulo);
+  font-size: clamp(1.25rem, 1vw + 1rem, 1.7rem);
+  font-weight: 400;
+  letter-spacing: -.03em;
+  line-height: var(--lh-titulo);
+  color: var(--fg);
+}
+.legal a { color: var(--fg); text-decoration: underline; text-underline-offset: .22em; text-decoration-thickness: 1px; }
