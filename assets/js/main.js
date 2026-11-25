@@ -1063,6 +1063,33 @@
           lenis.scrollTo(destino, { offset: 0 });
         });
       });
+
+      /* O ROLO ANDA UM CLIENTE POR GESTO (25/11) — com a roda do mouse
+         o tambor pedia dois ou três toques para trocar de cliente e
+         parecia travado. Dentro do trilho, cada gesto da roda leva
+         direto à face seguinte (ou à anterior); nas pontas o gesto
+         passa para a página, então ninguém fica preso. A trava curta
+         impede que a inércia do trackpad pule vários clientes. */
+      var roloTrava = 0;
+      document.addEventListener('wheel', function (e) {
+        if (!med.rolo || roloItens.length < 2 || e.ctrlKey) return;
+        if (e.target.closest && e.target.closest('[data-lenis-prevent]')) return;
+        var dir = e.deltaY > 0 ? 1 : (e.deltaY < 0 ? -1 : 0);
+        if (!dir) return;
+        var y = window.pageYOffset;
+        var r = med.rolo;
+        if (y < r.topo - 2 || y > r.topo + r.curso + 2) return;
+        var n = roloItens.length - 1;
+        var atual = Math.round((y - r.topo) / r.curso * n);
+        var alvo = atual + dir;
+        if (alvo < 0 || alvo > n) return;
+        e.preventDefault();
+        e.stopPropagation();
+        var agora = Date.now();
+        if (agora < roloTrava) return;
+        roloTrava = agora + 650;
+        lenis.scrollTo(r.topo + alvo / n * r.curso, { duration: 0.85, lock: true });
+      }, { capture: true, passive: false });
       return;
     }
 
