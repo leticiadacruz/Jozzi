@@ -2785,7 +2785,7 @@ html.mz-travado { overflow: hidden; }
      animação, porque não há nenhuma: quem anda é o dedo. */
   /* 88svh e não 62: o texto de cada projeto passou de duas linhas
      para um parágrafo, e o curso tem de dar tempo de ler. */
-  --rolo-passo: 60svh;
+  --rolo-passo: 36svh;
   /* Profundidade e raio como NÚMEROS puros, não comprimentos: é o
      que permite calcular o fator de compensação abaixo (CSS não
      divide length por length, mas divide número por número).
@@ -5606,4 +5606,87 @@ html.js--sem-motor .carregando { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .equipe__m { transition: none; }
+}
+
+/* QUEM ESTÁ POR TRÁS DA JOZZI, mais organizado (25/11). Cada ficha é
+   uma coluna de largura única: retrato, fio, nome, função, texto —
+   tudo alinhado pela mesma borda, e o nome deixa de colar na foto. */
+.sobre__pessoa .sobre__bio > p:not(.sobre__papel) { hyphens: manual; -webkit-hyphens: manual; max-width: 60ch; }
+.sobre__pessoa .sobre__papel { margin: .5rem 0 1.1rem; }
+@media (min-width: 1025px) {
+  .sobre__pessoa .sobre__ficha { max-width: 30rem; }
+  .sobre__pessoa .sobre__fig { max-width: none; }
+  .sobre__pessoa .sobre__bio {
+    max-width: none;
+    margin-top: 1.5rem;
+    padding-top: 1.3rem;
+    border-top: 1px solid var(--fio);
+  }
+  .sobre__pessoa .sobre__nome { font-size: clamp(1.7rem, 1.4vw + .9rem, 2.4rem); }
+}
+@media (max-width: 1024px) {
+  .sobre__pessoa .sobre__bio { padding-top: 1.1rem; border-top: 1px solid var(--fio); margin-top: 1.2rem; }
+}
+
+/* MONTE O SEU PLANO: TUDO NA MESMA TELA (25/11). No desktop o painel
+   tem exatamente a altura da janela e tudo foi compactado para caber:
+   título menor, cartões mais baixos, tags em uma linha, prévia da
+   mensagem curta. Nada de rolar para chegar ao botão. */
+@media (min-width: 1025px) {
+  .matriz {
+    height: 100dvh;
+    max-height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+    padding-top: calc(var(--topo-h) + .6rem);
+    padding-bottom: 1rem;
+    row-gap: clamp(.5rem, 1.8dvh, 1.2rem);
+    align-content: start;
+  }
+  .matriz .mz-titulo { font-size: min(clamp(1.7rem, 1.5vw + 1rem, 2.7rem), 6dvh); }
+  .matriz .mz-cab { padding: .2rem 0 .6rem; }
+  .matriz .mz-ctrl { gap: clamp(.6rem, 2dvh, 1.2rem); }
+  .matriz .mz-presets,
+  .matriz .mz-frentes { gap: .5rem; }
+  .matriz .mz-preset,
+  .matriz .mz-frente { padding: clamp(.45rem, 1.2dvh, .8rem) .8rem; }
+  .matriz .mz-preset { gap: .15rem; }
+  .matriz .mz-preset__n { font-size: 1rem; }
+  .matriz .mz-preset__d,
+  .matriz .mz-frente__tags {
+    font-size: .72rem;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+  }
+  .matriz .mz-frente__n { gap: .1rem; font-size: .92rem; }
+  .matriz .mz-frente .mz-frente__st { width: 18px; height: 18px; }
+  .matriz .mz-cards { gap: clamp(.6rem, 2dvh, 1.1rem); }
+  .matriz .mz-card { padding: .8rem 1rem; }
+  .matriz .mz-card__t { font-size: 1.15rem; }
+  .matriz .mz-card__corpo { gap: .6rem; }
+  .matriz .mz-escopo { gap: .45rem; }
+  .matriz .mz-escopo__n { font-size: .92rem; }
+  .matriz .mz-escopo__tags { -webkit-line-clamp: 1; }
+  .matriz .mz-msg { -webkit-line-clamp: 3; }
+  .matriz .mz-orc__txt { -webkit-line-clamp: 1; }
+}
+@media (min-width: 1025px) and (max-height: 760px) {
+  .matriz .mz-desc,
+  .matriz .mz-orc__txt,
+  .matriz .mz-nota { display: none; }
+  .matriz .mz-escopo__tags { display: none; }
+  .matriz .mz-preset__d { display: none; }
+}
+@media (min-width: 1025px) {
+  .matriz { align-content: center; }
+}
+@media (min-width: 1025px) and (min-height: 780px) {
+  .matriz .mz-preset__d,
+  .matriz .mz-frente__tags { -webkit-line-clamp: 2; font-size: .75rem; }
+  .matriz .mz-preset,
+  .matriz .mz-frente { padding: .8rem 1rem; }
+  .matriz .mz-escopo__tags { -webkit-line-clamp: 2; }
+  .matriz .mz-msg { -webkit-line-clamp: 4; }
 }
